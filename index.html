@@ -13,26 +13,35 @@
     --left-bubble-color: 45, 45, 48;
     --right-bubble-color: 184, 125, 75;
     
+    /* 特效变量（可通过设置调整） */
+    --bubble-blur: 10px;         /* 气泡毛玻璃模糊 */
+    --bubble-glow: 0px;           /* 气泡发光强度 */
+    --bubble-glow-color: 212, 165, 116;
+    --header-blur: 0px;           /* 顶部模糊 */
+    --input-blur: 0px;            /* 输入框模糊 */
+    
+    /* 浅色主题 */
     --bg-color: #f5f6f8;
     --text-color: #1c1c1e;
     --text-dim: #8e8e93;
-    --input-bg: rgba(255, 255, 255, 0.8);
-    --border-color: rgba(0, 0, 0, 0.08);
+    --header-bg: #ffffff;
+    --input-bg: #ffffff;
+    --border-color: rgba(0, 0, 0, 0.1);
     --toast-bg: rgba(255, 255, 255, 0.95);
     --toast-text: #1c1c1e;
     --modal-bg: #ffffff;
     --modal-text: #1c1c1e;
     --modal-label: #8e8e93;
     --modal-input-bg: #f2f2f7;
-    --time-bg: rgba(0, 0, 0, 0.06);
-    --time-text: #8e8e93;
   }
 
+  /* 深色主题 */
   [data-theme="dark"] {
     --bg-color: #0a0a0c;
     --text-color: #ececec;
     --text-dim: #8a8a8e;
-    --input-bg: rgba(255, 255, 255, 0.08);
+    --header-bg: #141416;
+    --input-bg: #1c1c1e;
     --border-color: rgba(255, 255, 255, 0.1);
     --toast-bg: rgba(45, 45, 48, 0.95);
     --toast-text: #ffffff;
@@ -40,8 +49,6 @@
     --modal-text: #ffffff;
     --modal-label: #8a8a8e;
     --modal-input-bg: #2c2c2e;
-    --time-bg: rgba(255, 255, 255, 0.1);
-    --time-text: #8a8a8e;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -49,14 +56,14 @@
   body { color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 15px; display: flex; flex-direction: column; }
 
   /* ---------- 顶部栏 ---------- */
-  .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; position: absolute; top: 0; left: 0; right: 0; z-index: 100; padding-top: max(16px, env(safe-area-inset-top)); pointer-events: none; }
-  .header-btn { pointer-events: auto; background: transparent; border: none; color: var(--text-color); font-size: 22px; cursor: pointer; padding: 4px 8px; opacity: 0.8; transition: opacity 0.2s; }
-  .header-btn:active { opacity: 0.4; }
-  .header-title { font-size: 16px; font-weight: 600; flex: 1; text-align: center; pointer-events: none; text-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--header-bg); backdrop-filter: blur(var(--header-blur)); -webkit-backdrop-filter: blur(var(--header-blur)); border-bottom: 1px solid var(--border-color); flex-shrink: 0; z-index: 100; padding-top: max(12px, env(safe-area-inset-top)); }
+  .header-btn { background: transparent; border: none; color: var(--text-color); font-size: 20px; cursor: pointer; padding: 4px 8px; transition: opacity 0.2s; }
+  .header-btn:active { opacity: 0.5; }
+  .header-title { font-size: 16px; font-weight: 600; flex: 1; text-align: center; }
 
-  /* ---------- 气泡弹窗 (Toast) ---------- */
-  .toast-container { position: fixed; top: 80px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 200; pointer-events: none; }
-  .toast { background: var(--toast-bg); color: var(--toast-text); padding: 12px 18px; border-radius: 20px; font-size: 14px; max-width: 85%; word-break: break-all; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 0.5px solid var(--border-color); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.4s ease 3.6s forwards; pointer-events: auto; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  /* ---------- 气泡弹窗 ---------- */
+  .toast-container { position: fixed; top: 70px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 200; pointer-events: none; }
+  .toast { background: var(--toast-bg); color: var(--toast-text); padding: 12px 18px; border-radius: 20px; font-size: 14px; max-width: 85%; word-break: break-all; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 1px solid var(--border-color); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.4s ease 3.6s forwards; pointer-events: auto; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
   .toast img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
   .toast .toast-name { color: var(--accent); font-weight: 600; font-size: 13px; white-space: nowrap; }
   .toast .toast-text { flex: 1; line-height: 1.4; }
@@ -64,71 +71,72 @@
   @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-15px); } }
 
   /* ---------- 聊天区域 ---------- */
-  .chat-area { flex: 1; overflow-y: auto; padding: 80px 16px 180px 16px; display: flex; flex-direction: column; gap: 16px; background-color: var(--bg-color); background-size: cover; background-position: center; background-repeat: no-repeat; }
+  .chat-area { flex: 1; overflow-y: auto; padding: 16px 16px 140px 16px; display: flex; flex-direction: column; gap: 16px; background-color: var(--bg-color); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; }
   .chat-area::-webkit-scrollbar { width: 4px; }
   .chat-area::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 2px; }
 
-  .time-capsule { align-self: center; background: var(--time-bg); color: var(--time-text); font-size: 12px; padding: 4px 12px; border-radius: 12px; margin: 8px 0; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
-
-  .msg-row { display: flex; gap: 12px; max-width: 82%; animation: fadeInUp 0.3s ease; }
+  .msg-row { display: flex; gap: 10px; max-width: 82%; animation: fadeInUp 0.3s ease; }
   .msg-row.left { align-self: flex-start; }
   .msg-row.right { align-self: flex-end; flex-direction: row-reverse; }
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-  .avatar { width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: rgba(128,128,128,0.2); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text-color); overflow: hidden; border: 1px solid var(--border-color); backdrop-filter: blur(4px); }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: rgba(128,128,128,0.2); display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--text-color); overflow: hidden; border: 1px solid var(--border-color); }
   .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
   .bubble-wrapper { display: flex; flex-direction: column; max-width: 100%; }
   .msg-row.left .bubble-wrapper { align-items: flex-start; }
   .msg-row.right .bubble-wrapper { align-items: flex-end; }
 
-  .bubble { padding: 12px 16px; border-radius: 20px; position: relative; word-break: break-word; line-height: 1.5; font-size: 15px; width: fit-content; max-width: 100%; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-  .msg-row.left .bubble { background: rgba(var(--left-bubble-color), var(--bubble-alpha)); color: var(--text-color); border-top-left-radius: 6px; }
-  .msg-row.right .bubble { background: rgba(var(--right-bubble-color), var(--bubble-alpha)); color: #fff; border-top-right-radius: 6px; }
+  .bubble { padding: 10px 14px; border-radius: 18px; position: relative; word-break: break-word; line-height: 1.5; font-size: 15px; width: fit-content; max-width: 100%; backdrop-filter: blur(var(--bubble-blur)); -webkit-backdrop-filter: blur(var(--bubble-blur)); transition: backdrop-filter 0.3s, box-shadow 0.3s; }
+  .msg-row.left .bubble { background: rgba(var(--left-bubble-color), var(--bubble-alpha)); color: var(--text-color); border-top-left-radius: 4px; box-shadow: 0 0 var(--bubble-glow) rgba(var(--bubble-glow-color), 0.6), 0 1px 4px rgba(0,0,0,0.08); }
+  .msg-row.right .bubble { background: rgba(var(--right-bubble-color), var(--bubble-alpha)); color: #fff; border-top-right-radius: 4px; box-shadow: 0 0 var(--bubble-glow) rgba(var(--bubble-glow-color), 0.6), 0 1px 4px rgba(0,0,0,0.08); }
 
-  /* ---------- 底部栏 (快捷菜单 + 输入框) ---------- */
-  .footer { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, var(--bg-color) 75%, transparent 100%); z-index: 100; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  .time-tag { font-size: 11.5px; color: var(--text-dim); margin-top: 5px; padding: 0 4px; opacity: 0.85; }
+  .msg-row.left .time-tag { align-self: flex-start; }
+  .msg-row.right .time-tag { align-self: flex-end; }
 
-  /* 状态提示条 */
-  .status-bar { display: none; text-align: center; font-size: 12px; color: var(--accent); background: rgba(var(--right-bubble-color), 0.1); padding: 6px 12px; border-radius: 12px; margin: 0 auto 4px auto; width: fit-content; animation: pulse 1.5s infinite; backdrop-filter: blur(5px); }
+  .system-msg { text-align: center; font-size: 12px; color: var(--text-dim); background: rgba(128,128,128,0.1); padding: 6px 14px; border-radius: 12px; align-self: center; margin: 8px 0; }
+
+  /* ---------- 底部栏 ---------- */
+  .footer { display: flex; flex-direction: column; gap: 8px; padding: 10px 16px; position: absolute; bottom: 0; left: 0; right: 0; background: var(--header-bg); backdrop-filter: blur(var(--header-blur)); -webkit-backdrop-filter: blur(var(--header-blur)); border-top: 1px solid var(--border-color); z-index: 100; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+
+  .status-bar { display: none; text-align: center; font-size: 12px; color: var(--accent); background: rgba(212, 165, 116, 0.1); padding: 6px 12px; border-radius: 12px; margin: 0 auto 4px auto; width: fit-content; animation: pulse 1.5s infinite; }
   .status-bar.show { display: block; }
   @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-  /* 快捷按钮行 */
   .action-row { display: flex; gap: 8px; justify-content: space-between; }
-  .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; background: var(--input-bg); border: 0.5px solid var(--border-color); color: var(--text-color); padding: 8px 0; border-radius: 16px; font-size: 13px; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: background 0.2s; }
-  .action-btn:active { background: rgba(128,128,128,0.2); }
-  .action-btn.active { background: rgba(var(--right-bubble-color), 0.3); border-color: var(--accent); color: var(--accent); }
+  .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 0; border-radius: 14px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .action-btn:active { background: rgba(128,128,128,0.1); }
+  .action-btn.active { background: rgba(var(--right-bubble-color), 0.2); border-color: var(--accent); color: var(--accent); }
 
-  /* 输入框行 */
-  .input-row { display: flex; align-items: center; gap: 10px; }
-  .my-avatar-small { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: rgba(128,128,128,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-color); overflow: hidden; border: 1px solid var(--border-color); }
+  .input-row { display: flex; align-items: center; gap: 8px; }
+  .my-avatar-small { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: rgba(128,128,128,0.2); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--text-color); overflow: hidden; border: 1px solid var(--border-color); }
   .my-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
   
-  .input-box { flex: 1; display: flex; align-items: center; background: var(--input-bg); border: 0.5px solid var(--border-color); border-radius: 22px; padding: 4px 6px 4px 16px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: border-color 0.2s; }
+  .input-box { flex: 1; display: flex; align-items: center; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 4px 6px 4px 14px; backdrop-filter: blur(var(--input-blur)); -webkit-backdrop-filter: blur(var(--input-blur)); transition: border-color 0.2s, backdrop-filter 0.3s; }
   .input-box:focus-within { border-color: var(--accent); }
-  .input-box input { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 15px; outline: none; font-family: inherit; padding: 8px 0; }
+  .input-box input { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 15px; outline: none; font-family: inherit; padding: 6px 0; }
   .input-box input::placeholder { color: var(--text-dim); }
   
-  .send-btn { background: var(--accent); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
+  .send-btn { background: var(--accent); color: #fff; border: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
   .send-btn:active { transform: scale(0.9); }
 
   /* ---------- 设置弹窗 ---------- */
-  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 300; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.3s; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 300; opacity: 0; transition: opacity 0.3s; }
   .modal.show { display: flex; opacity: 1; }
   .modal-content { background: var(--modal-bg); color: var(--modal-text); width: 100%; max-width: 520px; max-height: 85dvh; overflow-y: auto; border-radius: 28px 28px 0 0; padding: 24px 20px; padding-bottom: max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
   .modal.show .modal-content { transform: translateY(0); }
-  .modal-content h2 { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--modal-text); }
+  .modal-content h2 { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; }
   .modal-content label { display: block; font-size: 13px; color: var(--modal-label); margin-bottom: 16px; font-weight: 500; }
-  .modal-content input[type="text"], .modal-content input[type="password"], .modal-content input[type="number"], .modal-content select, .modal-content textarea { width: 100%; background: var(--modal-input-bg); border: 0.5px solid var(--border-color); color: var(--modal-text); padding: 12px 16px; border-radius: 14px; font-size: 15px; margin-top: 8px; outline: none; font-family: inherit; transition: border-color 0.2s; }
+  .modal-content input[type="text"], .modal-content input[type="password"], .modal-content input[type="number"], .modal-content select, .modal-content textarea { width: 100%; background: var(--modal-input-bg); border: 1px solid var(--border-color); color: var(--modal-text); padding: 12px 16px; border-radius: 14px; font-size: 15px; margin-top: 8px; outline: none; font-family: inherit; transition: border-color 0.2s; }
   .modal-content input:focus, .modal-content textarea:focus { border-color: var(--accent); }
   .modal-content input[type="file"] { margin-top: 10px; color: var(--modal-label); font-size: 13px; }
   .modal-content textarea { line-height: 1.5; resize: vertical; }
   .row { display: flex; gap: 12px; }
   .row label { flex: 1; }
   
-  .theme-toggle { display: flex; align-items: center; justify-content: space-between; background: var(--modal-input-bg); padding: 12px 16px; border-radius: 14px; margin-bottom: 16px; border: 0.5px solid var(--border-color); }
-  .theme-toggle span { font-size: 14px; font-weight: 500; color: var(--modal-text); }
+  .theme-toggle { display: flex; align-items: center; justify-content: space-between; background: var(--modal-input-bg); padding: 12px 16px; border-radius: 14px; margin-bottom: 16px; border: 1px solid var(--border-color); }
+  .theme-toggle span { font-size: 14px; font-weight: 500; }
   .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
@@ -137,7 +145,7 @@
   input:checked + .slider:before { transform: translateX(20px); }
 
   .color-row { display: flex; gap: 12px; margin-bottom: 16px; }
-  .color-row label { flex: 1; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; background: var(--modal-input-bg); padding: 10px; border-radius: 14px; border: 0.5px solid var(--border-color); }
+  .color-row label { flex: 1; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; background: var(--modal-input-bg); padding: 10px; border-radius: 14px; border: 1px solid var(--border-color); }
   .color-row input[type="color"] { -webkit-appearance: none; border: none; width: 100%; height: 36px; border-radius: 10px; cursor: pointer; margin-top: 8px; background: transparent; }
   .color-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
   .color-row input[type="color"]::-webkit-color-swatch { border: none; border-radius: 10px; }
@@ -147,7 +155,7 @@
   .modal-actions button:active { transform: scale(0.96); }
   .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2); }
   .btn-secondary { background: var(--modal-input-bg); color: var(--modal-text); }
-  .btn-danger { width: 100%; padding: 14px; margin-top: 12px; background: transparent; color: #ff453a; border: 0.5px solid rgba(255, 69, 58, 0.3); border-radius: 16px; font-size: 14px; cursor: pointer; font-family: inherit; transition: all 0.2s;}
+  .btn-danger { width: 100%; padding: 14px; margin-top: 12px; background: transparent; color: #ff453a; border: 1px solid rgba(255, 69, 58, 0.3); border-radius: 16px; font-size: 14px; cursor: pointer; font-family: inherit; transition: all 0.2s;}
   .btn-danger:active { background: rgba(255, 69, 58, 0.1); }
   
   input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: var(--modal-input-bg); border-radius: 3px; outline: none; margin-top: 10px; }
@@ -167,18 +175,13 @@
 <main class="chat-area" id="chatArea"></main>
 
 <footer class="footer">
-  <!-- 思考状态提示 -->
   <div class="status-bar" id="statusBar">林言正在思考...</div>
-  
-  <!-- 快捷菜单按钮行 -->
   <div class="action-row">
     <button class="action-btn" id="toggleAutoBtn">▶ 自动</button>
     <button class="action-btn" id="nudgeBtn">💭 催促</button>
     <button class="action-btn" onclick="alert('待办功能开发中~')">☑️ 待办</button>
     <button class="action-btn" onclick="alert('筛选功能开发中~')">⚙️ 筛选</button>
   </div>
-  
-  <!-- 输入框行 -->
   <div class="input-row">
     <div class="my-avatar-small" id="myAvatarSmall">我</div>
     <div class="input-box">
@@ -200,12 +203,23 @@
     <label>我的头像<input type="file" id="myAvatarInput" accept="image/*"></label>
     <label>林言的头像<input type="file" id="linAvatarInput" accept="image/*"></label>
     <label>聊天背景图<input type="file" id="bgImageInput" accept="image/*"></label>
+    
+    <h3 style="font-size:14px;color:var(--text-dim);margin:20px 0 10px;">气泡特效</h3>
     <label>气泡透明度：<span id="alphaVal">0.85</span><input type="range" id="alphaInput" min="0" max="1" step="0.05" value="0.85"></label>
+    <label>气泡毛玻璃模糊：<span id="bubbleBlurVal">10px</span><input type="range" id="bubbleBlurInput" min="0" max="30" step="1" value="10"></label>
+    <label>气泡发光强度：<span id="bubbleGlowVal">0px</span><input type="range" id="bubbleGlowInput" min="0" max="40" step="1" value="0"></label>
+    
     <div class="color-row">
       <label>林言气泡<input type="color" id="leftBubbleColorInput" value="#2d2d30"></label>
       <label>我的气泡<input type="color" id="rightBubbleColorInput" value="#b87d4b"></label>
     </div>
     <label>主题色（按钮/高亮）<input type="color" id="accentColorInput" value="#d4a574"></label>
+    <label>气泡发光颜色<input type="color" id="bubbleGlowColorInput" value="#d4a574"></label>
+
+    <h3 style="font-size:14px;color:var(--text-dim);margin:20px 0 10px;">界面特效</h3>
+    <label>顶部/底栏毛玻璃模糊：<span id="headerBlurVal">0px</span><input type="range" id="headerBlurInput" min="0" max="30" step="1" value="0"></label>
+    <label>输入框毛玻璃模糊：<span id="inputBlurVal">0px</span><input type="range" id="inputBlurInput" min="0" max="30" step="1" value="0"></label>
+
     <div class="row">
       <label>最短间隔（分钟）<input type="number" id="thinkMinInput" min="1" max="180" value="2"></label>
       <label>最长间隔（分钟）<input type="number" id="thinkMaxInput" min="1" max="180" value="5"></label>
@@ -225,10 +239,16 @@
 const DEFAULT_CONFIG = {
   apiKey: 'proxy', apiUrl: '/api/chat', model: 'deepseek-chat',
   thinkMin: 2, thinkMax: 5, alpha: 0.85,
-  kaomojiEnabled: true, kaomojiFreq: 'low',
+  kaomojiEnabled: true, kaomojiFreq: 'medium',
   partnerName: '(♡,,• 3 •,,♡)', myName: '我',
   leftBubbleColor: '#2d2d30', rightBubbleColor: '#b87d4b', accentColor: '#d4a574',
   theme: 'dark',
+  // 特效默认值
+  bubbleBlur: 10,
+  bubbleGlow: 0,
+  bubbleGlowColor: '#d4a574',
+  headerBlur: 0,
+  inputBlur: 0,
 };
 
 const DEFAULT_PERSONA = `你是林言，一个在网络上陪伴芸熙的角色，以下是你的全部人设，永久固定。
@@ -250,7 +270,9 @@ const DEFAULT_PERSONA = `你是林言，一个在网络上陪伴芸熙的角色�
 - 不要每次都发颜文字。偶尔在情绪强烈的时候才加一个，保持自然。
 - 回复格式：说话用 [SAY]消息内容，可拆成2-3条；不说话回复 [PASS]。`;
 
-const KAOMOJI_LIST = [' (´• ω •`)', ' (◍＞◡＜◍)', ' (｡♥‿♥｡)', ' (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)', ' ✨', ' (￣▽￣)ノ', ' (◍•ᴗ•◍)', ' (๑˘︶˘๑)', ' (｡•̀ᴗ-)✧', ' (♡˙︶˙♡)', ' ૮₍˶ᵔᵕᵔ˶₎ა', ' (≧◡≦)', ' (⌒‿⌒)', ' (＾▽＾)', ' (・∀・)', ' (◔‿◔)', ' 🌸', ' 💕', ' 🍀', ' (つ≧▽≦)つ', ' (•̀ᴗ•́)و', ' (ง •̀_•́)ง', ' (｀へ′)╯', ' (╯°□°）╯', ' (´；ω；`)', ' (╥﹏╥)', ' (个_个)', ' (˘︹˘)', ' (¬‿¬)', ' ◝(⑅•ᴗ•⑅)◜..°♡', ' ( ´•.• ` )', ' 😏'];
+const CUTE_KAOMOJI = [
+  '՞˶⦁ ༝ ⦁˶՞', '⌯>𖥦<⌯ಣ', '＞𐋣＜', '˙₊Ი𐑼⋆★˖ᶻ 𝗓 𐰁', '⦁ ㅈ -', '˶ꔷ × ꔷ˶', '˶╸▵╺˶•͈ᴗ⁃͈ ✧', '^>⸝⸝⸝⸝<^', '⦁֊⦁꧞', 'ᗜ ᴗ ᗜ՞˶˃ ᵕ ˂˶՞', '⌯>ᴗ0⌯', '૮  ´͈ ᗜ `͈ ა', '•֊•́⦁ ༝ ⦁', '៸៸᳐⦁⩊⦁៸៸᳐', '՞⸝⸝\'ᜊ\'⸝⸝՞', '˶ᵒ ꇴ ˂˶𖦹ࡇ𖦹', '՞⩌⌯⩌՞', '♡ >𖥦<', '=⩌⩊⩌=⑉･ᴗ･⑉', '⁃⩊⁃', 'ʢᴗ.ᴗʡᶻ', '˵>ㅿ<˵⌯\'ᵕ\'⌯', '•︡ᯅ•︠', 'ᐡ•͈ ·̭ •͈ᐡ', '˶ᵒ ᵕ ˂˶૮ o̴̶̷᷄ ·̫ o̴̶̷̥᷅ ა', '• ₃ •͈ಣ', '•ᴗ•', '⁃⩊⁃́ᶻz ₍^_   ̫ _^₎', '՞˵＞𖥦＜˵՞🐾', '૮Ꮚ⑅˵ᴗ͈ . ᴗ͈꒱ა'
+];
 
 const STORAGE_KEY = 'linyan_wechat_state_v1';
 const state = { settings: { ...DEFAULT_CONFIG }, persona: DEFAULT_PERSONA, memory: [], running: false, busy: false, timer: null, myAvatar: '', linAvatar: '', bgImage: '' };
@@ -284,6 +306,17 @@ const statusBar = document.getElementById('statusBar');
 const toggleAutoBtn = document.getElementById('toggleAutoBtn');
 const nudgeBtn = document.getElementById('nudgeBtn');
 
+// 特效输入
+const bubbleBlurInput = document.getElementById('bubbleBlurInput');
+const bubbleBlurVal = document.getElementById('bubbleBlurVal');
+const bubbleGlowInput = document.getElementById('bubbleGlowInput');
+const bubbleGlowVal = document.getElementById('bubbleGlowVal');
+const bubbleGlowColorInput = document.getElementById('bubbleGlowColorInput');
+const headerBlurInput = document.getElementById('headerBlurInput');
+const headerBlurVal = document.getElementById('headerBlurVal');
+const inputBlurInput = document.getElementById('inputBlurInput');
+const inputBlurVal = document.getElementById('inputBlurVal');
+
 function hexToRgb(hex) { if (!hex || hex.length < 7) return '45, 45, 48'; const r = parseInt(hex.slice(1, 3), 16); const g = parseInt(hex.slice(3, 5), 16); const b = parseInt(hex.slice(5, 7), 16); return `${r}, ${g}, ${b}`; }
 function showToast(name, text, avatarUrl) { const toast = document.createElement('div'); toast.className = 'toast'; const img = avatarUrl ? `<img src="${avatarUrl}">` : ''; toast.innerHTML = `${img}<span class="toast-name">${name}</span><span class="toast-text">${text}</span>`; toastContainer.appendChild(toast); setTimeout(() => { toast.remove(); }, 4000); }
 function updateHeaderTitle() { document.getElementById('headerTitle').textContent = state.settings.partnerName || '(♡,,• 3 •,,♡)'; }
@@ -297,25 +330,38 @@ function applyCustomStyle() {
   document.documentElement.style.setProperty('--left-bubble-color', hexToRgb(state.settings.leftBubbleColor || '#2d2d30'));
   document.documentElement.style.setProperty('--right-bubble-color', hexToRgb(state.settings.rightBubbleColor || '#b87d4b'));
   document.documentElement.style.setProperty('--accent', state.settings.accentColor || '#d4a574');
+  
+  // 特效
+  document.documentElement.style.setProperty('--bubble-blur', (state.settings.bubbleBlur || 10) + 'px');
+  document.documentElement.style.setProperty('--bubble-glow', (state.settings.bubbleGlow || 0) + 'px');
+  document.documentElement.style.setProperty('--bubble-glow-color', hexToRgb(state.settings.bubbleGlowColor || '#d4a574'));
+  document.documentElement.style.setProperty('--header-blur', (state.settings.headerBlur || 0) + 'px');
+  document.documentElement.style.setProperty('--input-blur', (state.settings.inputBlur || 0) + 'px');
+  
   if (state.myAvatar) { myAvatarSmall.innerHTML = `<img src="${state.myAvatar}" alt="me">`; } else { myAvatarSmall.textContent = state.settings.myName || '我'; }
   applyTheme(); updateHeaderTitle();
 }
 
 function addMessageEl(role, content, time) {
-  if (time) { const timeDiv = document.createElement('div'); timeDiv.className = 'time-capsule'; timeDiv.textContent = time; chatArea.appendChild(timeDiv); }
   const row = document.createElement('div'); row.className = `msg-row ${role === 'assistant' ? 'left' : 'right'}`;
   const avatar = document.createElement('div'); avatar.className = 'avatar';
   const avatarUrl = role === 'assistant' ? state.linAvatar : state.myAvatar;
   if (avatarUrl) { avatar.innerHTML = `<img src="${avatarUrl}" alt="avatar">`; } else { avatar.textContent = role === 'assistant' ? '言' : (state.settings.myName || '我'); }
   const wrapper = document.createElement('div'); wrapper.className = 'bubble-wrapper';
   const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = content;
-  wrapper.appendChild(bubble); row.appendChild(avatar); row.appendChild(wrapper); chatArea.appendChild(row);
+  
+  const timeTag = document.createElement('div'); timeTag.className = 'time-tag';
+  timeTag.textContent = time || new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  
+  wrapper.appendChild(bubble); 
+  wrapper.appendChild(timeTag);
+  row.appendChild(avatar); row.appendChild(wrapper); chatArea.appendChild(row);
   requestAnimationFrame(() => { chatArea.scrollTop = chatArea.scrollHeight; });
 }
 
 function renderAllMessages() {
   chatArea.innerHTML = '';
-  if (!state.memory.length) { chatArea.innerHTML = '<div class="system-msg" style="text-align:center;font-size:13px;color:var(--text-dim);margin-top:20px;">还没有消息，直接发送消息或点击底部的“自动”开启模式</div>'; return; }
+  if (!state.memory.length) { chatArea.innerHTML = '<div class="system-msg">还没有消息，直接发送消息或点击底部的“自动”开启模式</div>'; return; }
   for (const msg of state.memory) { if (msg.role === 'system') continue; addMessageEl(msg.role, msg.content, msg.time); }
 }
 
@@ -334,14 +380,14 @@ function addMessage(role, content, isHistorical = false) {
 
 function addKaomoji(text) {
   if (!state.settings.kaomojiEnabled) return text;
-  const freqMap = { low: 0.15, medium: 0.4, high: 0.7 };
-  const chance = freqMap[state.settings.kaomojiFreq] ?? 0.15;
+  const freqMap = { low: 0.25, medium: 0.5, high: 0.75 };
+  const chance = freqMap[state.settings.kaomojiFreq] ?? 0.5;
   if (Math.random() > chance) return text;
-  const kao = KAOMOJI_LIST[Math.floor(Math.random() * KAOMOJI_LIST.length)];
+  const kao = CUTE_KAOMOJI[Math.floor(Math.random() * CUTE_KAOMOJI.length)];
   const r = Math.random();
-  if (r < 0.7) return text + kao;
+  if (r < 0.7) return text + ' ' + kao;
   if (r < 0.9) return kao + ' ' + text;
-  return text + ' ' + kao;
+  return text + '\n' + kao;
 }
 
 async function callApi(messages) {
@@ -369,8 +415,6 @@ async function think(mode = 'proactive') {
   if (state.busy) return;
   state.busy = true;
   sendBtn.disabled = true;
-  
-  // 显示思考中状态
   statusBar.classList.add('show');
   statusBar.textContent = '林言正在思考...';
 
@@ -387,10 +431,7 @@ async function think(mode = 'proactive') {
       for (let i = 0; i < msgs.length; i++) { const text = addKaomoji(msgs[i]); addMessage('assistant', text); if (i < msgs.length - 1) await new Promise(r => setTimeout(r, 3000 + Math.random() * 3000)); }
     }
   } catch (e) { console.error(e); addMessageEl('system', '发送失败：' + e.message, ''); } finally { 
-    state.busy = false; 
-    sendBtn.disabled = false; 
-    // 隐藏思考状态
-    statusBar.classList.remove('show'); 
+    state.busy = false; sendBtn.disabled = false; statusBar.classList.remove('show'); 
   }
 }
 
@@ -406,7 +447,6 @@ function scheduleNext() {
 function startAuto() { state.running = true; toggleAutoBtn.classList.add('active'); toggleAutoBtn.textContent = '⏸ 自动'; if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); scheduleNext(); }
 function stopAuto() { state.running = false; toggleAutoBtn.classList.remove('active'); toggleAutoBtn.textContent = '▶ 自动'; clearTimeout(state.timer); }
 
-// 绑定底部功能按钮
 toggleAutoBtn.addEventListener('click', () => {
   if (state.running) { stopAuto(); } else { 
     if (!state.settings.apiKey) { alert('请先点右上角···进入设置，填写 API Key'); return; } 
@@ -450,6 +490,14 @@ function openSettings() {
   leftBubbleColorInput.value = state.settings.leftBubbleColor || '#2d2d30';
   rightBubbleColorInput.value = state.settings.rightBubbleColor || '#b87d4b';
   accentColorInput.value = state.settings.accentColor || '#d4a574';
+  
+  // 特效
+  bubbleBlurInput.value = state.settings.bubbleBlur || 10; bubbleBlurVal.textContent = (state.settings.bubbleBlur || 10) + 'px';
+  bubbleGlowInput.value = state.settings.bubbleGlow || 0; bubbleGlowVal.textContent = (state.settings.bubbleGlow || 0) + 'px';
+  bubbleGlowColorInput.value = state.settings.bubbleGlowColor || '#d4a574';
+  headerBlurInput.value = state.settings.headerBlur || 0; headerBlurVal.textContent = (state.settings.headerBlur || 0) + 'px';
+  inputBlurInput.value = state.settings.inputBlur || 0; inputBlurVal.textContent = (state.settings.inputBlur || 0) + 'px';
+  
   themeToggle.checked = state.settings.theme === 'dark';
   settingsModal.classList.add('show');
 }
@@ -469,13 +517,28 @@ async function applySettings() {
   state.settings.rightBubbleColor = rightBubbleColorInput.value;
   state.settings.accentColor = accentColorInput.value;
   state.settings.theme = themeToggle.checked ? 'dark' : 'light';
+  
+  // 特效保存
+  state.settings.bubbleBlur = parseInt(bubbleBlurInput.value) || 10;
+  state.settings.bubbleGlow = parseInt(bubbleGlowInput.value) || 0;
+  state.settings.bubbleGlowColor = bubbleGlowColorInput.value;
+  state.settings.headerBlur = parseInt(headerBlurInput.value) || 0;
+  state.settings.inputBlur = parseInt(inputBlurInput.value) || 0;
+
   if (myAvatarInput.files.length) state.myAvatar = await readFileAsDataURL(myAvatarInput.files[0]);
   if (linAvatarInput.files.length) state.linAvatar = await readFileAsDataURL(linAvatarInput.files[0]);
   if (bgImageInput.files.length) state.bgImage = await readFileAsDataURL(bgImageInput.files[0]);
   saveState(); applyCustomStyle(); renderAllMessages(); closeSettings(); if (state.running) scheduleNext();
 }
 
+// 绑定实时预览事件
 alphaInput.addEventListener('input', () => { const val = parseFloat(alphaInput.value); alphaVal.textContent = val.toFixed(2); document.documentElement.style.setProperty('--bubble-alpha', val); });
+bubbleBlurInput.addEventListener('input', () => { const val = bubbleBlurInput.value + 'px'; bubbleBlurVal.textContent = val; document.documentElement.style.setProperty('--bubble-blur', val); });
+bubbleGlowInput.addEventListener('input', () => { const val = bubbleGlowInput.value + 'px'; bubbleGlowVal.textContent = val; document.documentElement.style.setProperty('--bubble-glow', val); });
+bubbleGlowColorInput.addEventListener('input', () => document.documentElement.style.setProperty('--bubble-glow-color', hexToRgb(bubbleGlowColorInput.value)));
+headerBlurInput.addEventListener('input', () => { const val = headerBlurInput.value + 'px'; headerBlurVal.textContent = val; document.documentElement.style.setProperty('--header-blur', val); });
+inputBlurInput.addEventListener('input', () => { const val = inputBlurInput.value + 'px'; inputBlurVal.textContent = val; document.documentElement.style.setProperty('--input-blur', val); });
+
 leftBubbleColorInput.addEventListener('input', () => document.documentElement.style.setProperty('--left-bubble-color', hexToRgb(leftBubbleColorInput.value)));
 rightBubbleColorInput.addEventListener('input', () => document.documentElement.style.setProperty('--right-bubble-color', hexToRgb(rightBubbleColorInput.value)));
 accentColorInput.addEventListener('input', () => document.documentElement.style.setProperty('--accent', accentColorInput.value));
@@ -486,7 +549,7 @@ document.getElementById('clearMemoryBtn').addEventListener('click', () => { if (
 settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
 
 loadState(); applyCustomStyle(); renderAllMessages();
-console.log('%c林言 · 控制面板已归位', 'color:#d4a574;font-weight:600;');
+console.log('%c林言 · 特效面板已加载', 'color:#d4a574;font-weight:600;');
 </script>
 </body>
 </html>
