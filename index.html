@@ -29,10 +29,14 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; background: var(--bg-color); }
   body { color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; font-size: var(--font-size-base); display: flex; flex-direction: column; }
+
+  /* 顶部栏 */
   .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; position: absolute; top: 0; left: 0; right: 0; z-index: 100; padding-top: max(16px, env(safe-area-inset-top)); background: rgba(var(--bg-color-rgb), var(--header-alpha)); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: background 0.3s; }
   .header-btn { background: transparent; border: none; color: var(--text-color); font-size: 22px; cursor: pointer; padding: 4px 8px; opacity: 0.8; transition: opacity 0.2s; }
   .header-btn:active { opacity: 0.4; }
   .header-title { font-size: 16px; font-weight: 600; flex: 1; text-align: center; pointer-events: none; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+  /* Toast */
   .toast-container { position: fixed; top: 80px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 200; pointer-events: none; }
   .toast { background: var(--toast-bg); color: var(--toast-text); padding: 10px 16px; border-radius: 24px; font-size: 14px; max-width: 80%; word-break: break-all; box-shadow: 0 10px 30px rgba(0,0,0,0.25); border: 0.5px solid var(--border-color); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.4s ease 3.6s forwards; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
   .toast img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
@@ -40,6 +44,8 @@
   .toast .toast-text { flex: 1; line-height: 1.4; }
   @keyframes slideDown { from { opacity: 0; transform: translateY(-30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
   @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-15px); } }
+
+  /* 聊天区 */
   .chat-area { flex: 1; overflow-y: auto; padding: 80px 16px 160px 16px; display: flex; flex-direction: column; gap: 16px; background-color: var(--bg-color); background-size: cover; background-position: center; background-repeat: no-repeat; }
   .chat-area::-webkit-scrollbar { width: 4px; }
   .chat-area::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 2px; }
@@ -58,6 +64,8 @@
   .bubble { padding: 12px 16px; border-radius: var(--bubble-radius); position: relative; word-break: break-word; line-height: 1.5; font-size: var(--font-size-base); width: fit-content; max-width: 100%; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
   .msg-row.left .bubble { background: rgba(var(--left-bubble-color), var(--bubble-alpha)); color: var(--text-color); border-top-left-radius: 6px; }
   .msg-row.right .bubble { background: rgba(var(--right-bubble-color), var(--bubble-alpha)); color: #fff; border-top-right-radius: 6px; }
+
+  /* 底部栏 */
   .footer { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; position: absolute; bottom: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(to top, rgba(var(--bg-color-rgb), var(--footer-alpha)) 0%, rgba(var(--bg-color-rgb), 0.7) 60%, transparent 100%); padding-bottom: max(16px, env(safe-area-inset-bottom)); pointer-events: none; }
   .footer > * { pointer-events: auto; }
   .status-bar { display: none; text-align: center; font-size: 12px; color: var(--accent); background: rgba(var(--right-bubble-color), 0.15); padding: 6px 14px; border-radius: 16px; margin: 0 auto 4px auto; width: fit-content; backdrop-filter: blur(5px); align-items: center; gap: 6px; }
@@ -80,6 +88,8 @@
   .input-box input::placeholder { color: var(--text-dim); }
   .send-btn { background: var(--accent); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
   .send-btn:active { transform: scale(0.9); }
+
+  /* 设置弹窗 */
   .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 300; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.3s; }
   .modal.show { display: flex; opacity: 1; }
   .modal-content { background: var(--modal-bg); color: var(--modal-text); width: 100%; max-width: 520px; max-height: 85dvh; overflow-y: auto; border-radius: 28px 28px 0 0; padding: 24px 20px; padding-bottom: max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
@@ -219,41 +229,79 @@ function showToast(name, text, avatarUrl) { const toast = document.createElement
 function updateHeaderTitle() { document.getElementById('headerTitle').textContent = state.settings.partnerName || '(♡,,• 3 •,,♡)'; }
 function applyTheme() { document.body.setAttribute('data-theme', state.settings.theme); document.getElementById('themeToggle').checked = state.settings.theme === 'dark'; }
 function applyCustomStyle() { const chatArea = document.getElementById('chatArea'); chatArea.style.backgroundImage = state.bgImage ? `url(${state.bgImage})` : 'none'; document.documentElement.style.setProperty('--bubble-alpha', state.settings.alpha || 0.85); document.documentElement.style.setProperty('--header-alpha', state.settings.headerAlpha || 0.3); document.documentElement.style.setProperty('--footer-alpha', state.settings.footerAlpha || 0.95); document.documentElement.style.setProperty('--bubble-radius', (state.settings.bubbleRadius || 20) + 'px'); document.documentElement.style.setProperty('--font-size-base', (state.settings.fontSize || 15) + 'px'); document.documentElement.style.setProperty('--left-bubble-color', hexToRgb(state.settings.leftBubbleColor || '#2d2d30')); document.documentElement.style.setProperty('--right-bubble-color', hexToRgb(state.settings.rightBubbleColor || '#b87d4b')); document.documentElement.style.setProperty('--accent', state.settings.accentColor || '#d4a574'); const myAvatarSmall = document.getElementById('myAvatarSmall'); if (state.myAvatar) { myAvatarSmall.innerHTML = `<img src="${state.myAvatar}" alt="me">`; } else { myAvatarSmall.textContent = state.settings.myName || '我'; } applyTheme(); updateHeaderTitle(); }
-function addMessageEl(role, content, time) { const chatArea = document.getElementById('chatArea'); if (time) { const timeDiv = document.createElement('div'); timeDiv.className = 'time-capsule'; timeDiv.textContent = time; chatArea.appendChild(timeDiv); } const row = document.createElement('div'); row.className = `msg-row ${role === 'assistant' ? 'left' : 'right'}`; const avatar = document.createElement('div'); avatar.className = 'avatar'; const avatarUrl = role === 'assistant' ? state.linAvatar : state.myAvatar; if (avatarUrl) { avatar.innerHTML = `<img src="${avatarUrl}" alt="avatar">`; } else { avatar.textContent = role === 'assistant' ? '言' : (state.settings.myName || '我'); } avatar.addEventListener('click', () => { if (role === 'assistant') { showToast('你', '戳了戳林言', state.myAvatar); setTimeout(() => { addMessage('user', '(´つヮ⊂︎)'); triggerAI(); }, 500); } else { showToast('你', '戳了戳自己', state.myAvatar); } }); const wrapper = document.createElement('div'); wrapper.className = 'bubble-wrapper'; const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = content; wrapper.appendChild(bubble); row.appendChild(avatar); row.appendChild(wrapper); chatArea.appendChild(row); requestAnimationFrame(() => { chatArea.scrollTop = chatArea.scrollHeight; }); }
+
+/* ==================== 时间戳逻辑：同一分钟不重复 ==================== */
+function addMessageEl(role, content, time) {
+  const chatArea = document.getElementById('chatArea');
+  const lastTimeEl = chatArea.querySelector('.time-capsule:last-of-type');
+  if (time && (!lastTimeEl || lastTimeEl.textContent !== time)) {
+    const timeDiv = document.createElement('div'); timeDiv.className = 'time-capsule'; timeDiv.textContent = time; chatArea.appendChild(timeDiv);
+  }
+  const row = document.createElement('div'); row.className = `msg-row ${role === 'assistant' ? 'left' : 'right'}`;
+  const avatar = document.createElement('div'); avatar.className = 'avatar';
+  const avatarUrl = role === 'assistant' ? state.linAvatar : state.myAvatar;
+  if (avatarUrl) { avatar.innerHTML = `<img src="${avatarUrl}" alt="avatar">`; } else { avatar.textContent = role === 'assistant' ? '言' : (state.settings.myName || '我'); }
+  avatar.addEventListener('click', () => { if (role === 'assistant') { showToast('你', '戳了戳林言', state.myAvatar); setTimeout(() => { addMessage('user', '(´つヮ⊂︎)'); triggerAI(); }, 500); } else { showToast('你', '戳了戳自己', state.myAvatar); } });
+  const wrapper = document.createElement('div'); wrapper.className = 'bubble-wrapper';
+  const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = content;
+  wrapper.appendChild(bubble); row.appendChild(avatar); row.appendChild(wrapper); chatArea.appendChild(row);
+  requestAnimationFrame(() => { chatArea.scrollTop = chatArea.scrollHeight; });
+}
 function renderAllMessages() { const chatArea = document.getElementById('chatArea'); chatArea.innerHTML = ''; if (!state.memory.length) { chatArea.innerHTML = '<div class="system-msg">还没有消息，直接发送消息或点击底部的“自动”开启模式</div>'; return; } for (const msg of state.memory) { if (msg.role === 'system') continue; addMessageEl(msg.role, msg.content, msg.time); } }
 function addMessage(role, content, isHistorical = false) { const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }); state.memory.push({ role, content, time }); if (state.memory.length > 200) state.memory = state.memory.slice(-200); saveState(); if (!isHistorical) addMessageEl(role, content, time); if (role === 'assistant') { const name = state.settings.partnerName || '(♡,,• 3 •,,♡)'; showToast(name, content, state.linAvatar); if ('Notification' in window && Notification.permission === 'granted') { try { new Notification(name, { body: content, tag: 'linyan', silent: false }); } catch (e) { console.warn('系统通知失败', e); } } } }
-function addKaomoji(text) { if (!state.settings.kaomojiEnabled) return text; const freqMap = { low: 0.15, medium: 0.4, high: 0.7 }; const chance = freqMap[state.settings.kaomojiFreq] ?? 0.15; if (Math.random() > chance) return text; const kao = KAOMOJI_LIST[Math.floor(Math.random() * KAOMOJI_LIST.length)]; const r = Math.random(); if (r < 0.7) return text + kao; if (r < 0.9) return kao + ' ' + text; return text + ' ' + kao; }
+
+/* ==================== 颜文字逻辑：严厉时绝不加 ==================== */
+function addKaomoji(text) {
+  if (!state.settings.kaomojiEnabled) return text;
+  // 降低频率
+  const freqMap = { low: 0.05, medium: 0.2, high: 0.5 };
+  const chance = freqMap[state.settings.kaomojiFreq] ?? 0.05;
+  if (Math.random() > chance) return text;
+  // 判断语气：如果是审问/吃醋/严厉的句子，不要加颜文字
+  const strictWords = ['谁', '干嘛', '干什么', '解释', '说清楚', '生气', '不行', '不许', '错', '过来', '问', '骗', '骗我', '瞒', '瞒我'];
+  const isStrict = strictWords.some(word => text.includes(word));
+  if (isStrict) return text;
+  const kao = KAOMOJI_LIST[Math.floor(Math.random() * KAOMOJI_LIST.length)];
+  return text + kao;
+}
 
 async function callApi(messages) { const { apiKey, apiUrl, model } = state.settings; if (!apiKey) throw new Error('未配置 API Key'); const headers = { 'Content-Type': 'application/json' }; if (apiKey !== 'proxy') { headers['Authorization'] = 'Bearer ' + apiKey; } const resp = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify({ model: model || 'deepseek-chat', messages, temperature: 0.9, max_tokens: 600 }) }); if (!resp.ok) { const text = await resp.text().catch(() => ''); throw new Error(`HTTP ${resp.status} ${text.slice(0, 100)}`); } const data = await resp.json(); return data?.choices?.[0]?.message?.content || null; }
-
 function buildPrompt(mode) { const now = new Date(); const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }); const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; const weekday = weekdays[now.getDay()]; const dateStr = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日`; if (mode === 'respond') { return `现在是${dateStr} ${timeStr}，${weekday}。\n\n芸熙刚刚对你说了话（见上一条 user 消息）。用林言的方式回应她。\n想管就管，想关心就关心，不想理也可以不理。\n发消息用 [SAY]你的话 格式，不说话只回复 [PASS]。`; } return `现在是${dateStr} ${timeStr}，${weekday}。\n\n回顾我们的对话，判断是否想主动对芸熙说话。\n记住：想管就管，想关心就关心，不想说话就沉默。\n发消息用 [SAY]你的话 格式，不说话只回复 [PASS]。`; }
-
 async function think(mode = 'proactive') { if (state.busy) return; state.busy = true; const sendBtn = document.getElementById('sendBtn'); const statusBar = document.getElementById('statusBar'); sendBtn.disabled = true; statusBar.classList.add('show'); try { const prompt = buildPrompt(mode); const messages = [{ role: 'system', content: state.persona }]; const recent = state.memory.slice(-10); for (const m of recent) { if (m.role === 'user' || m.role === 'assistant') messages.push({ role: m.role, content: m.content }); } messages.push({ role: 'user', content: prompt }); const reply = await callApi(messages); if (reply && reply.includes('[SAY]')) { const msgs = []; for (const line of reply.split('\n')) { if (line.includes('[SAY]')) { const m = line.split('[SAY]').pop().trim(); if (m) msgs.push(m); } } for (let i = 0; i < msgs.length; i++) { const text = addKaomoji(msgs[i]); addMessage('assistant', text); if (i < msgs.length - 1) await new Promise(r => setTimeout(r, 3000 + Math.random() * 3000)); } } } catch (e) { console.error(e); addMessageEl('system', '发送失败：' + e.message, ''); } finally { state.busy = false; sendBtn.disabled = false; statusBar.classList.remove('show'); } }
 async function triggerAI() { clearTimeout(state.timer); await think('respond'); scheduleNext(); }
 function scheduleNext() { clearTimeout(state.timer); if (!state.running) return; const minMs = Math.max(1, state.settings.thinkMin) * 60000; const maxMs = Math.max(state.settings.thinkMin, state.settings.thinkMax) * 60000; const delay = minMs + Math.random() * (maxMs - minMs); state.timer = setTimeout(async () => { await think('proactive'); scheduleNext(); }, delay); }
 function startAuto() { state.running = true; const btn = document.getElementById('toggleAutoBtn'); btn.classList.add('active'); btn.textContent = '⏸ 自动'; if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); scheduleNext(); }
 function stopAuto() { state.running = false; const btn = document.getElementById('toggleAutoBtn'); btn.classList.remove('active'); btn.textContent = '▶ 自动'; clearTimeout(state.timer); }
 
+/* ==================== 事件绑定 ==================== */
 document.getElementById('toggleAutoBtn').addEventListener('click', () => { if (state.running) { stopAuto(); } else { if (!state.settings.apiKey) { alert('请先点右上角···进入设置，填写 API Key'); return; } startAuto(); } });
 document.getElementById('pokeBtn').addEventListener('click', () => { showToast('你', '戳了戳林言', state.myAvatar); setTimeout(() => { addMessage('user', '(´つヮ⊂︎)'); triggerAI(); }, 500); });
-document.getElementById('coaxBtn').addEventListener('click', () => { addMessage('user', '˃ 𖥦 ˂唉'); triggerAI(); });
+
+/* ==================== 小游戏互动按钮 ==================== */
+document.getElementById('coaxBtn').addEventListener('click', () => {
+  const games = ['猜拳', '真心话大冒险', '掷骰子', '抽签'];
+  const choice = prompt('想玩点什么？\n\n1. 猜拳\n2. 真心话大冒险\n3. 掷骰子\n4. 抽签\n\n请输入数字：');
+  if (!choice) return;
+  let userMsg = '';
+  if (choice === '1') userMsg = '【系统提示：林言发起猜拳挑战，请用 [SAY] 回应她，比如“我出石头，你呢？”并等待她的回应】';
+  else if (choice === '2') userMsg = '【系统提示：林言发起真心话大冒险，请你随机问她一个问题，然后等她的答案】';
+  else if (choice === '3') userMsg = '【系统提示：林言发起掷骰子游戏，请你随机报一个1-6之间的数】';
+  else if (choice === '4') userMsg = '【系统提示：林言发起了抽签游戏，请你告诉她抽到了什么签】';
+  if (userMsg) { addMessage('user', '想和你玩小游戏~'); addMessage('user', userMsg); triggerAI(); }
+});
+
 document.getElementById('menuBtn').addEventListener('click', openSettings);
 document.getElementById('closeBtn').addEventListener('click', () => { if (confirm('要清空当前聊天记录吗？')) { state.memory = []; saveState(); renderAllMessages(); } });
-
 async function sendUserMessage() { const userInput = document.getElementById('userInput'); const text = userInput.value.trim(); if (!text || state.busy) return; if (!state.settings.apiKey) { alert('请先点右上角···进入设置，填写 API Key'); return; } userInput.value = ''; addMessage('user', text); triggerAI(); }
 document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
 document.getElementById('userInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendUserMessage(); } });
 
 function compressImage(file, maxW = 800, maxH = 800, quality = 0.8) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = (e) => { const img = new Image(); img.src = e.target.result; img.onload = () => { let w = img.width, h = img.height; if (w > h && w > maxW) { h = Math.round(h * maxW / w); w = maxW; } else if (h > w && h > maxH) { w = Math.round(w * maxH / h); h = maxH; } const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', quality)); }; img.onerror = reject; }; reader.onerror = reject; }); }
-
 function openSettings() { const set = state.settings; document.getElementById('myAvatarInput').value = ''; document.getElementById('linAvatarInput').value = ''; document.getElementById('bgImageInput').value = ''; document.getElementById('apiUrlInput').value = set.apiUrl; document.getElementById('apiKeyInput').value = set.apiKey; document.getElementById('thinkMinInput').value = set.thinkMin; document.getElementById('thinkMaxInput').value = set.thinkMax; document.getElementById('personaInput').value = state.persona; document.getElementById('partnerNameInput').value = set.partnerName || '(♡,,• 3 •,,♡)'; document.getElementById('myNameInput').value = set.myName || '我'; document.getElementById('alphaInput').value = set.alpha || 0.85; document.getElementById('alphaVal').textContent = (set.alpha || 0.85).toFixed(2); document.getElementById('headerAlphaInput').value = set.headerAlpha || 0.3; document.getElementById('headerAlphaVal').textContent = (set.headerAlpha || 0.3).toFixed(2); document.getElementById('footerAlphaInput').value = set.footerAlpha || 0.95; document.getElementById('footerAlphaVal').textContent = (set.footerAlpha || 0.95).toFixed(2); document.getElementById('bubbleRadiusInput').value = set.bubbleRadius || 20; document.getElementById('bubbleRadiusVal').textContent = set.bubbleRadius || 20; document.getElementById('fontSizeInput').value = set.fontSize || 15; document.getElementById('fontSizeVal').textContent = set.fontSize || 15; document.getElementById('leftBubbleColorInput').value = set.leftBubbleColor || '#2d2d30'; document.getElementById('rightBubbleColorInput').value = set.rightBubbleColor || '#b87d4b'; document.getElementById('accentColorInput').value = set.accentColor || '#d4a574'; document.getElementById('themeToggle').checked = set.theme === 'dark'; document.getElementById('settingsModal').classList.add('show'); }
 function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
-
 async function applySettings() { const set = state.settings; set.apiUrl = document.getElementById('apiUrlInput').value.trim() || '/api/chat'; set.apiKey = document.getElementById('apiKeyInput').value.trim(); set.thinkMin = Math.max(1, parseInt(document.getElementById('thinkMinInput').value) || 2); set.thinkMax = Math.max(set.thinkMin, parseInt(document.getElementById('thinkMaxInput').value) || 5); set.alpha = parseFloat(document.getElementById('alphaInput').value) || 0.85; set.headerAlpha = parseFloat(document.getElementById('headerAlphaInput').value) || 0.3; set.footerAlpha = parseFloat(document.getElementById('footerAlphaInput').value) || 0.95; set.bubbleRadius = parseInt(document.getElementById('bubbleRadiusInput').value) || 20; set.fontSize = parseInt(document.getElementById('fontSizeInput').value) || 15; set.partnerName = document.getElementById('partnerNameInput').value.trim() || '(♡,,• 3 •,,♡)'; set.myName = document.getElementById('myNameInput').value.trim() || '我'; state.persona = document.getElementById('personaInput').value || DEFAULT_PERSONA; set.leftBubbleColor = document.getElementById('leftBubbleColorInput').value; set.rightBubbleColor = document.getElementById('rightBubbleColorInput').value; set.accentColor = document.getElementById('accentColorInput').value; set.theme = document.getElementById('themeToggle').checked ? 'dark' : 'light'; const myAv = document.getElementById('myAvatarInput'), linAv = document.getElementById('linAvatarInput'), bgImg = document.getElementById('bgImageInput'); if (myAv.files.length) state.myAvatar = await compressImage(myAv.files[0]); if (linAv.files.length) state.linAvatar = await compressImage(linAv.files[0]); if (bgImg.files.length) state.bgImage = await compressImage(bgImg.files[0], 1200, 1200, 0.7); saveState(); applyCustomStyle(); renderAllMessages(); closeSettings(); if (state.running) scheduleNext(); }
-
 document.getElementById('exportBtn').addEventListener('click', () => { const data = localStorage.getItem(STORAGE_KEY); const blob = new Blob([data], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `linyan_backup_${new Date().getTime()}.json`; a.click(); URL.revokeObjectURL(url); });
 document.getElementById('importInput').addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { try { const data = JSON.parse(event.target.result); localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); alert('导入成功！页面即将刷新。'); location.reload(); } catch (err) { alert('导入失败，文件格式不正确。'); } }; reader.readAsText(file); });
-
 document.getElementById('alphaInput').addEventListener('input', () => { const val = parseFloat(document.getElementById('alphaInput').value); document.getElementById('alphaVal').textContent = val.toFixed(2); document.documentElement.style.setProperty('--bubble-alpha', val); });
 document.getElementById('headerAlphaInput').addEventListener('input', () => { const val = parseFloat(document.getElementById('headerAlphaInput').value); document.getElementById('headerAlphaVal').textContent = val.toFixed(2); document.documentElement.style.setProperty('--header-alpha', val); });
 document.getElementById('footerAlphaInput').addEventListener('input', () => { const val = parseFloat(document.getElementById('footerAlphaInput').value); document.getElementById('footerAlphaVal').textContent = val.toFixed(2); document.documentElement.style.setProperty('--footer-alpha', val); });
@@ -263,12 +311,10 @@ document.getElementById('leftBubbleColorInput').addEventListener('input', () => 
 document.getElementById('rightBubbleColorInput').addEventListener('input', () => document.documentElement.style.setProperty('--right-bubble-color', hexToRgb(document.getElementById('rightBubbleColorInput').value)));
 document.getElementById('accentColorInput').addEventListener('input', () => document.documentElement.style.setProperty('--accent', document.getElementById('accentColorInput').value));
 document.getElementById('themeToggle').addEventListener('change', () => { state.settings.theme = document.getElementById('themeToggle').checked ? 'dark' : 'light'; applyTheme(); saveState(); });
-
 document.getElementById('cancelSettings').addEventListener('click', () => { applyCustomStyle(); closeSettings(); });
 document.getElementById('saveSettings').addEventListener('click', applySettings);
 document.getElementById('settingsModal').addEventListener('click', e => { if (e.target === document.getElementById('settingsModal')) closeSettings(); });
 document.getElementById('clearMemoryBtn').addEventListener('click', () => { if (confirm('确定清空所有聊天记录吗？')) { state.memory = []; saveState(); renderAllMessages(); closeSettings(); } });
-
 if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').then(reg => console.log('PWA Service Worker 注册成功')).catch(err => console.warn('PWA 注册失败', err)); }); }
 loadState(); applyCustomStyle(); renderAllMessages();
 console.log('%c林言 · 最终版已加载', 'color:#d4a574;font-weight:600;');
