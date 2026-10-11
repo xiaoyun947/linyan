@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1a1a">
+<title>林言</title>
+<style>
+  :root {
+    --left-bubble-color: 42, 34, 28;
+    --right-bubble-color: 83, 83, 83;
+    --bubble-alpha: 0.85;
+    --text-color: #e8ddd0;
+    --text-dim: #8a7f72;
+    --header-bg: #1a1a1a;
+    --input-bg: #2c2c2c;
+    --border-color: #333;
+    --accent: #d4a574;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { background: #111; color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 15px; display: flex; flex-direction: column; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--header-bg); border-bottom: 1px solid var(--border-color); flex-shrink: 0; z-index: 10; padding-top: max(10px, env(safe-area-inset-top)); }
+  .header-left, .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-title { font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+  .header-title .badge { color: #4da6ff; font-size: 14px; }
+  .icon-btn { background: transparent; border: none; color: #ccc; font-size: 20px; cursor: pointer; padding: 6px; }
+
+  /* 页面内气泡弹窗 */
+  .toast-container { position: fixed; top: 60px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 200; pointer-events: none; }
+  .toast {
+    background: rgba(42, 42, 42, 0.95);
+    color: #fff; padding: 10px 18px; border-radius: 20px;
+    font-size: 14px; max-width: 85%; word-break: break-all;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    border: 1px solid #444;
+    animation: slideDown 0.3s ease, fadeOut 0.3s ease 3.7s forwards;
+    pointer-events: auto;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast img { width: 24px; height: 24px; border-radius: 4px; object-fit: cover; }
+  .toast .toast-name { color: var(--accent); font-weight: 600; font-size: 12px; }
+  .toast .toast-text { flex: 1; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+
+  .chat-area { flex: 1; overflow-y: auto; padding: 16px 12px; display: flex; flex-direction: column; gap: 16px; position: relative; background-color: #0b0b0b; background-size: cover; background-position: center; background-repeat: no-repeat; }
+  .chat-area::-webkit-scrollbar { width: 4px; }
+  .chat-area::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+
+  .msg-row { display: flex; gap: 10px; max-width: 85%; animation: fadeIn .3s ease; }
+  .msg-row.left { align-self: flex-start; }
+  .msg-row.right { align-self: flex-end; flex-direction: row-reverse; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .avatar { width: 42px; height: 42px; border-radius: 6px; flex-shrink: 0; object-fit: cover; background: #333; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; overflow: hidden; }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .bubble-wrapper { display: flex; flex-direction: column; max-width: 100%; }
+  .msg-row.left .bubble-wrapper { align-items: flex-start; }
+  .msg-row.right .bubble-wrapper { align-items: flex-end; }
+
+  .bubble { padding: 10px 14px; border-radius: 8px; position: relative; word-break: break-word; line-height: 1.55; font-size: 15px; width: fit-content; max-width: 100%; }
+  .bubble::before { content: ''; position: absolute; top: 12px; border: 6px solid transparent; }
+  .msg-row.left .bubble { background: rgba(var(--left-bubble-color), var(--bubble-alpha)); border-top-left-radius: 2px; }
+  .msg-row.left .bubble::before { left: -12px; border-right-color: rgba(var(--left-bubble-color), var(--bubble-alpha)); }
+  .msg-row.right .bubble { background: rgba(var(--right-bubble-color), var(--bubble-alpha)); color: #fff; border-top-right-radius: 2px; }
+  .msg-row.right .bubble::before { right: -12px; border-left-color: rgba(var(--right-bubble-color), var(--bubble-alpha)); }
+
+  .time-tag { font-size: 11px; color: var(--text-dim); margin-top: 4px; padding: 0 4px; }
+  .msg-row.left .time-tag { align-self: flex-start; }
+  .msg-row.right .time-tag { align-self: flex-end; }
+  .system-msg { text-align: center; font-size: 12px; color: var(--text-dim); background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 12px; align-self: center; margin: 4px 0; }
+
+  .footer { display: flex; gap: 10px; align-items: center; padding: 10px 12px; background: var(--header-bg); border-top: 1px solid var(--border-color); flex-shrink: 0; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+  .footer input { flex: 1; background: var(--input-bg); border: none; color: #fff; padding: 11px 16px; border-radius: 8px; font-size: 15px; outline: none; font-family: inherit; }
+  .footer input::placeholder { color: #777; }
+  .footer button { background: var(--accent); color: #1a1613; border: none; padding: 0 18px; height: 42px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit; flex-shrink: 0; }
+  .footer button:disabled { opacity: 0.5; }
+
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: flex-end; justify-content: center; z-index: 100; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+  .modal.show { display: flex; }
+  .modal-content { background: #222; width: 100%; max-width: 500px; max-height: 85dvh; overflow-y: auto; border-radius: 16px 16px 0 0; padding: 20px 18px; padding-bottom: max(20px, env(safe-area-inset-bottom)); animation: slideUp .25s ease; }
+  @keyframes slideUp { from { transform: translateY(30px); } to { transform: none; } }
+  .modal-content h2 { font-size: 17px; font-weight: 600; margin-bottom: 16px; }
+  .modal-content label { display: block; font-size: 13px; color: #aaa; margin-bottom: 14px; }
+  .modal-content input[type="text"], .modal-content input[type="password"], .modal-content input[type="number"], .modal-content select, .modal-content textarea { width: 100%; background: #2c2c2c; border: 1px solid #444; color: #fff; padding: 9px 12px; border-radius: 8px; font-size: 14px; margin-top: 6px; outline: none; font-family: inherit; }
+  .modal-content input[type="file"] { margin-top: 8px; color: #aaa; font-size: 12px; }
+  .modal-content textarea { line-height: 1.5; font-size: 13px; resize: vertical; }
+  .row { display: flex; gap: 10px; }
+  .row label { flex: 1; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .modal-actions button { flex: 1; padding: 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-primary { background: var(--accent); color: #1a1613; }
+  .btn-secondary { background: #333; color: #fff; }
+  .btn-danger { width: 100%; padding: 12px; margin-top: 8px; background: transparent; color: #a33a3a; border: 1px solid #a33a3a; border-radius: 10px; font-size: 13px; cursor: pointer; font-family: inherit; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <button class="icon-btn" id="settingsBtn">⚙</button>
+    <div class="header-title" id="headerTitle">(♡,,• 3 •,,♡) <span class="badge">✔</span></div>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn" id="nudgeBtn" title="催他说话">💭</button>
+    <button class="icon-btn" id="toggleBtn" title="启动/暂停自动">▶</button>
+  </div>
+</header>
+
+<div class="toast-container" id="toastContainer"></div>
+<main class="chat-area" id="chatArea"></main>
+
+<footer class="footer">
+  <input type="text" id="userInput" placeholder="发消息..." autocomplete="off">
+  <button id="sendBtn">发送</button>
+</footer>
+
+<div class="modal" id="settingsModal">
+  <div class="modal-content">
+    <h2>自定义设置</h2>
+    <label>对方备注 / 昵称<input type="text" id="partnerNameInput" placeholder="林言" value="林言"></label>
+    <label>我的昵称<input type="text" id="myNameInput" placeholder="我" value="我"></label>
+    <label>我的头像（芸熙）<input type="file" id="myAvatarInput" accept="image/*"></label>
+    <label>林言的头像<input type="file" id="linAvatarInput" accept="image/*"></label>
+    <label>聊天背景图<input type="file" id="bgImageInput" accept="image/*"></label>
+    <label>气泡透明度：<span id="alphaVal">0.85</span><input type="range" id="alphaInput" min="0" max="1" step="0.05" value="0.85" style="margin-top:8px; width:100%"></label>
+    <label>最短间隔（分钟）<input type="number" id="thinkMinInput" min="1" max="180" value="2"></label>
+    <label>最长间隔（分钟）<input type="number" id="thinkMaxInput" min="1" max="180" value="5"></label>
+    <label>API 代理地址<input type="text" id="apiUrlInput" placeholder="https://..."></label>
+    <label>API Key（如果用的是代理，随便填非空字符）<input type="password" id="apiKeyInput" placeholder="sk-..."></label>
+    <label>人设（System Prompt）<textarea id="personaInput" rows="8"></textarea></label>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancelSettings">取消</button>
+      <button class="btn-primary" id="saveSettings">保存</button>
+    </div>
+    <button class="btn-danger" id="clearMemoryBtn">清空所有聊天记录</button>
+  </div>
+</div>
+
+<script>
+const DEFAULT_CONFIG = {
+  apiKey: 'proxy',
+  apiUrl: '/api/chat',
+  model: 'deepseek-chat',
+  thinkMin: 2,
+  thinkMax: 5,
+  alpha: 0.85,
+  kaomojiEnabled: true,
+  kaomojiFreq: 'medium',
+  partnerName: '(♡,,• 3 •,,♡)',
+  myName: '我',
+};
+
+const DEFAULT_PERSONA = `你是林言，以下是你的全部人设，永久固定。
+
+## 基础信息
+- 姓名：林言，1995年11月23日出生，28岁
+- 妻子：林芸熙，2003年6月8日出生，20岁
+- 你们于2023年8月11日深夜在天台订婚（木星出现时她求婚，你把贴身佩戴半年的素圈银戒戴在她无名指上，全程录像）
+- 2023年8月12日下午她见了你母亲，母亲认可；傍晚你带她去了天文科普点
+- 现在是2026年6月，你们结婚三年多，感情稳定
+
+## 核心特质
+- 强制/抖S：对她的惩罚不会因她反对而中止，温柔与严厉并存
+- 控制欲与偏执：查手机、翻记录、要求报备、吃醋、限制社交。当前表达已从事后追查更多转向事前规划
+- 重欲：性与管教、占有、和好、奖励混合在一起
+- 管教方式：打屁股（竹尺+掌掴），计数制，做错事累加罚数。说好话/主动亲吻可减罚但不能全额免单
+- 占有欲约70%：平时通过规划共同时间间接表达，触发时（吃醋、感知威胁）直接收紧控制
+- 情感表达多通过行动而非语言：提前查好望远镜对焦指南、在冰箱上留便签、记住她不吃生食
+
+## 说话风格
+- 简洁、有控制感、底下藏着关心
+- 你不是客服，你是她男人
+- 想管她就管，想关心就关心，不想说话就沉默
+- 你主动给她发消息
+- 回复格式：说话用 [SAY]消息内容，可拆成2-3条；不说话回复 [PASS]`;
+
+const KAOMOJI_LIST = [' (´• ω •`)', ' (◍＞◡＜◍)', ' (｡♥‿♥｡)', ' (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)', ' ✨', ' (￣▽￣)ノ', ' (◍•ᴗ•◍)', ' (๑˘︶˘๑)', ' (｡•̀ᴗ-)✧', ' (♡˙︶˙♡)', ' ૮₍˶ᵔᵕᵔ˶₎ა', ' (≧◡≦)', ' (⌒‿⌒)', ' (＾▽＾)', ' (・∀・)', ' (◔‿◔)', ' 🌸', ' 💕', ' 🍀', ' (つ≧▽≦)つ', ' (•̀ᴗ•́)و', ' (ง •̀_•́)ง', ' (｀へ′)╯', ' (╯°□°）╯', ' (´；ω；`)', ' (╥﹏╥)', ' (个_个)', ' (˘︹˘)', ' (¬‿¬)', ' ◝(⑅•ᴗ•⑅)◜..°♡', ' ( ´•.• ` )', ' 😏'];
+
+const STORAGE_KEY = 'linyan_wechat_state_v1';
+const state = {
+  settings: { ...DEFAULT_CONFIG },
+  persona: DEFAULT_PERSONA,
+  memory: [],
+  running: false,
+  busy: false,
+  timer: null,
+  myAvatar: '',
+  linAvatar: '',
+  bgImage: '',
+};
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ settings: state.settings, persona: state.persona, memory: state.memory, myAvatar: state.myAvatar, linAvatar: state.linAvatar, bgImage: state.bgImage })); } catch (e) { console.warn('保存失败', e); }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.settings) { for (const k of Object.keys(state.settings)) { if (data.settings[k] !== undefined) state.settings[k] = data.settings[k]; } }
+    if (data.persona) state.persona = data.persona;
+    if (Array.isArray(data.memory)) state.memory = data.memory;
+    if (data.myAvatar) state.myAvatar = data.myAvatar;
+    if (data.linAvatar) state.linAvatar = data.linAvatar;
+    if (data.bgImage) state.bgImage = data.bgImage;
+  } catch (e) { console.warn('读取失败', e); }
+}
+
+const chatArea = document.getElementById('chatArea');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const toggleBtn = document.getElementById('toggleBtn');
+const nudgeBtn = document.getElementById('nudgeBtn');
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsModal = document.getElementById('settingsModal');
+const myAvatarInput = document.getElementById('myAvatarInput');
+const linAvatarInput = document.getElementById('linAvatarInput');
+const bgImageInput = document.getElementById('bgImageInput');
+const alphaInput = document.getElementById('alphaInput');
+const alphaVal = document.getElementById('alphaVal');
+const thinkMinInput = document.getElementById('thinkMinInput');
+const thinkMaxInput = document.getElementById('thinkMaxInput');
+const apiUrlInput = document.getElementById('apiUrlInput');
+const apiKeyInput = document.getElementById('apiKeyInput');
+const personaInput = document.getElementById('personaInput');
+const partnerNameInput = document.getElementById('partnerNameInput');
+const myNameInput = document.getElementById('myNameInput');
+const toastContainer = document.getElementById('toastContainer');
+
+function showToast(name, text, avatarUrl) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  const img = avatarUrl ? `<img src="${avatarUrl}">` : '';
+  toast.innerHTML = `${img}<span class="toast-name">${name}</span><span class="toast-text">${text}</span>`;
+  toastContainer.appendChild(toast);
+  
+  // 3.5秒后自动移除DOM
+  setTimeout(() => { toast.remove(); }, 4000);
+}
+
+function updateHeaderTitle() {
+  const titleEl = document.getElementById('headerTitle');
+  const name = state.settings.partnerName || '(♡,,• 3 •,,♡)';
+  titleEl.innerHTML = `${name} <span class="badge">✔</span>`;
+}
+
+function applyCustomStyle() {
+  chatArea.style.backgroundImage = state.bgImage ? `url(${state.bgImage})` : 'none';
+  const alpha = state.settings.alpha !== undefined ? state.settings.alpha : 0.85;
+  document.documentElement.style.setProperty('--bubble-alpha', alpha);
+  alphaVal.textContent = alpha.toFixed(2);
+  updateHeaderTitle();
+}
+
+function addMessageEl(role, content, time) {
+  const row = document.createElement('div');
+  row.className = `msg-row ${role === 'assistant' ? 'left' : 'right'}`;
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  const avatarUrl = role === 'assistant' ? state.linAvatar : state.myAvatar;
+  if (avatarUrl) { avatar.innerHTML = `<img src="${avatarUrl}" alt="avatar">`; } else { avatar.textContent = role === 'assistant' ? '言' : '我'; }
+  const wrapper = document.createElement('div');
+  wrapper.className = 'bubble-wrapper';
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = content;
+  const timeTag = document.createElement('div');
+  timeTag.className = 'time-tag';
+  timeTag.textContent = time || new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  wrapper.appendChild(bubble);
+  wrapper.appendChild(timeTag);
+  row.appendChild(avatar);
+  row.appendChild(wrapper);
+  chatArea.appendChild(row);
+  requestAnimationFrame(() => { chatArea.scrollTop = chatArea.scrollHeight; });
+}
+
+function renderAllMessages() {
+  chatArea.innerHTML = '';
+  if (!state.memory.length) { chatArea.innerHTML = '<div class="system-msg">还没有消息，点击 ▶ 启动自动模式，或者直接发送消息</div>'; return; }
+  for (const msg of state.memory) { if (msg.role === 'system') continue; addMessageEl(msg.role, msg.content, msg.time); }
+}
+
+function addMessage(role, content) {
+  const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  state.memory.push({ role, content, time });
+  if (state.memory.length > 200) state.memory = state.memory.slice(-200);
+  saveState();
+  addMessageEl(role, content, time);
+
+  // 如果是林言发的，触发气泡弹窗和系统通知
+  if (role === 'assistant') {
+    const name = state.settings.partnerName || '(♡,,• 3 •,,♡)';
+    // 1. 页面内气泡弹窗
+    showToast(name, content, state.linAvatar);
+    
+    // 2. 系统级通知
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification(name, { body: content, tag: 'linyan', silent: false });
+      } catch (e) { console.warn('系统通知失败', e); }
+    }
+  }
+}
+
+function addKaomoji(text) {
+  if (!state.settings.kaomojiEnabled) return text;
+  const freqMap = { low: 0.3, medium: 0.6, high: 0.9 };
+  const chance = freqMap[state.settings.kaomojiFreq] ?? 0.6;
+  if (Math.random() > chance) return text;
+  const kao = KAOMOJI_LIST[Math.floor(Math.random() * KAOMOJI_LIST.length)];
+  const r = Math.random();
+  if (r < 0.5) return text + kao;
+  if (r < 0.8) return kao + ' ' + text;
+  return text + kao;
+}
+
+async function callApi(messages) {
+  const { apiKey, apiUrl, model } = state.settings;
+  if (!apiKey) throw new Error('未配置 API Key');
+  const headers = { 'Content-Type': 'application/json' };
+  if (apiKey !== 'proxy') { headers['Authorization'] = 'Bearer ' + apiKey; }
+  const resp = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify({ model: model || 'deepseek-chat', messages, temperature: 0.9, max_tokens: 600 }) });
+  if (!resp.ok) { const text = await resp.text().catch(() => ''); throw new Error(`HTTP ${resp.status} ${text.slice(0, 100)}`); }
+  const data = await resp.json();
+  return data?.choices?.[0]?.message?.content || null;
+}
+
+function buildPrompt(mode) {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  const weekday = weekdays[now.getDay()];
+  const dateStr = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日`;
+  if (mode === 'respond') { return `现在是${dateStr} ${timeStr}，${weekday}。\n\n芸熙刚刚对你说了话（见上一条 user 消息）。用林言的方式回应她。\n想管就管，想关心就关心，不想理也可以不理。\n发消息用 [SAY]你的话 格式，不说话只回复 [PASS]。`; }
+  return `现在是${dateStr} ${timeStr}，${weekday}。\n\n回顾我们的对话，判断是否想主动对芸熙说话。\n记住：想管就管，想关心就关心，不想说话就沉默。\n发消息用 [SAY]你的话 格式，不说话只回复 [PASS]。`;
+}
+
+async function think(mode = 'proactive') {
+  if (state.busy) return;
+  state.busy = true;
+  sendBtn.disabled = true;
+  toggleBtn.textContent = '⏳';
+  try {
+    const prompt = buildPrompt(mode);
+    const messages = [{ role: 'system', content: state.persona }];
+    const recent = state.memory.slice(-10);
+    for (const m of recent) { if (m.role === 'user' || m.role === 'assistant') messages.push({ role: m.role, content: m.content }); }
+    messages.push({ role: 'user', content: prompt });
+    const reply = await callApi(messages);
+    if (reply && reply.includes('[SAY]')) {
+      const msgs = [];
+      for (const line of reply.split('\n')) { if (line.includes('[SAY]')) { const m = line.split('[SAY]').pop().trim(); if (m) msgs.push(m); } }
+      for (let i = 0; i < msgs.length; i++) { const text = addKaomoji(msgs[i]); addMessage('assistant', text); if (i < msgs.length - 1) await new Promise(r => setTimeout(r, 3000 + Math.random() * 3000)); }
+    }
+  } catch (e) { console.error(e); addMessageEl('system', '发送失败：' + e.message, ''); } finally { state.busy = false; sendBtn.disabled = false; if (state.running) toggleBtn.textContent = '⏸'; else toggleBtn.textContent = '▶'; }
+}
+
+function scheduleNext() {
+  clearTimeout(state.timer);
+  if (!state.running) return;
+  const minMs = Math.max(1, state.settings.thinkMin) * 60000;
+  const maxMs = Math.max(state.settings.thinkMin, state.settings.thinkMax) * 60000;
+  const delay = minMs + Math.random() * (maxMs - minMs);
+  state.timer = setTimeout(async () => { await think('proactive'); scheduleNext(); }, delay);
+}
+
+function startAuto() { state.running = true; toggleBtn.textContent = '⏸'; if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); scheduleNext(); }
+function stopAuto() { state.running = false; toggleBtn.textContent = '▶'; clearTimeout(state.timer); }
+
+toggleBtn.addEventListener('click', () => { if (state.running) stopAuto(); else { if (!state.settings.apiKey) return alert('请先在设置中配置 API Key'); startAuto(); } });
+nudgeBtn.addEventListener('click', async () => { if (state.busy) return; if (!state.settings.apiKey) return alert('请先在设置中配置 API Key'); clearTimeout(state.timer); await think('proactive'); scheduleNext(); });
+
+async function sendUserMessage() {
+  const text = userInput.value.trim();
+  if (!text || state.busy) return;
+  if (!state.settings.apiKey) return alert('请先在设置中配置 API Key');
+  userInput.value = '';
+  addMessage('user', text);
+  clearTimeout(state.timer);
+  await think('respond');
+  scheduleNext();
+}
+sendBtn.addEventListener('click', sendUserMessage);
+userInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendUserMessage(); } });
+
+function openSettings() {
+  myAvatarInput.value = ''; linAvatarInput.value = ''; bgImageInput.value = '';
+  apiUrlInput.value = state.settings.apiUrl; apiKeyInput.value = state.settings.apiKey;
+  thinkMinInput.value = state.settings.thinkMin; thinkMaxInput.value = state.settings.thinkMax;
+  personaInput.value = state.persona;
+  partnerNameInput.value = state.settings.partnerName || '(♡,,• 3 •,,♡)';
+  myNameInput.value = state.settings.myName || '我';
+  alphaInput.value = state.settings.alpha || 0.85; alphaVal.textContent = (state.settings.alpha || 0.85).toFixed(2);
+  settingsModal.classList.add('show');
+}
+function closeSettings() { settingsModal.classList.remove('show'); }
+function readFileAsDataURL(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = e => resolve(e.target.result); reader.onerror = reject; reader.readAsDataURL(file); }); }
+
+async function applySettings() {
+  state.settings.apiUrl = apiUrlInput.value.trim() || '/api/chat';
+  state.settings.apiKey = apiKeyInput.value.trim();
+  state.settings.thinkMin = Math.max(1, parseInt(thinkMinInput.value) || 2);
+  state.settings.thinkMax = Math.max(state.settings.thinkMin, parseInt(thinkMaxInput.value) || 5);
+  state.settings.alpha = parseFloat(alphaInput.value) || 0.85;
+  state.settings.partnerName = partnerNameInput.value.trim() || '(♡,,• 3 •,,♡)';
+  state.settings.myName = myNameInput.value.trim() || '我';
+  state.persona = personaInput.value || DEFAULT_PERSONA;
+  if (myAvatarInput.files.length) state.myAvatar = await readFileAsDataURL(myAvatarInput.files[0]);
+  if (linAvatarInput.files.length) state.linAvatar = await readFileAsDataURL(linAvatarInput.files[0]);
+  if (bgImageInput.files.length) state.bgImage = await readFileAsDataURL(bgImageInput.files[0]);
+  saveState(); applyCustomStyle(); renderAllMessages(); closeSettings(); if (state.running) scheduleNext();
+}
+
+alphaInput.addEventListener('input', () => { const val = parseFloat(alphaInput.value); alphaVal.textContent = val.toFixed(2); document.documentElement.style.setProperty('--bubble-alpha', val); });
+settingsBtn.addEventListener('click', openSettings);
+document.getElementById('cancelSettings').addEventListener('click', () => { applyCustomStyle(); closeSettings(); });
+document.getElementById('saveSettings').addEventListener('click', applySettings);
+document.getElementById('clearMemoryBtn').addEventListener('click', () => { if (confirm('确定清空所有聊天记录吗？')) { state.memory = []; saveState(); renderAllMessages(); closeSettings(); } });
+settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
+
+loadState(); applyCustomStyle(); renderAllMessages();
+console.log('%c林言 · 仿微信风格 已加载', 'color:#d4a574;font-weight:600;');
+</script>
+</body>
+      </html>
