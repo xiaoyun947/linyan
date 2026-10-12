@@ -9,128 +9,127 @@
 <link rel="manifest" href="/manifest.json">
 <title>林言</title>
 <style>
-  :root {
-    --accent: #d4a574; --bubble-alpha: 0.85; --header-alpha: 0.3; --footer-alpha: 0.95;
-    --bubble-radius: 20px; --font-size-base: 15px; --left-bubble-color: 45, 45, 48;
-    --right-bubble-color: 184, 125, 75; --bg-color: #f5f6f8; --bg-color-rgb: 245, 246, 248;
-    --text-color: #1c1c1e; --text-dim: #8e8e93; --input-bg: rgba(255, 255, 255, 0.8);
-    --border-color: rgba(0, 0, 0, 0.08); --toast-bg: rgba(255, 255, 255, 0.95);
-    --toast-text: #1c1c1e; --modal-bg: #ffffff; --modal-text: #1c1c1e;
-    --modal-label: #8e8e93; --modal-input-bg: #f2f2f7; --time-bg: rgba(0, 0, 0, 0.06);
-    --time-text: #8e8e93;
-  }
-  [data-theme="dark"] {
-    --bg-color: #0a0a0c; --bg-color-rgb: 10, 10, 12; --text-color: #ececec; --text-dim: #8a8a8e;
-    --input-bg: rgba(255, 255, 255, 0.08); --border-color: rgba(255, 255, 255, 0.1);
-    --toast-bg: rgba(45, 45, 48, 0.95); --toast-text: #ffffff; --modal-bg: #1c1c1e;
-    --modal-text: #ffffff; --modal-label: #8a8a8e; --modal-input-bg: #2c2c2e;
-    --time-bg: rgba(255, 255, 255, 0.1); --time-text: #8a8a8e;
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; background: var(--bg-color); }
-  body { color: var(--text-color); font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; font-size: var(--font-size-base); display: flex; flex-direction: column; }
-
-  /* 顶部栏 */
-  .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; position: absolute; top: 0; left: 0; right: 0; z-index: 100; padding-top: max(16px, env(safe-area-inset-top)); background: rgba(var(--bg-color-rgb), var(--header-alpha)); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: background 0.3s; }
-  .header-btn { background: transparent; border: none; color: var(--text-color); font-size: 22px; cursor: pointer; padding: 4px 8px; opacity: 0.8; transition: opacity 0.2s; }
-  .header-btn:active { opacity: 0.4; }
-  .header-title { font-size: 16px; font-weight: 600; flex: 1; text-align: center; pointer-events: none; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-
-  /* Toast */
-  .toast-container { position: fixed; top: 80px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; z-index: 200; pointer-events: none; }
-  .toast { background: var(--toast-bg); color: var(--toast-text); padding: 10px 16px; border-radius: 24px; font-size: 14px; max-width: 80%; word-break: break-all; box-shadow: 0 10px 30px rgba(0,0,0,0.25); border: 0.5px solid var(--border-color); animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.4s ease 3.6s forwards; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
-  .toast img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
-  .toast .toast-name { color: var(--accent); font-weight: 600; font-size: 12px; white-space: nowrap; }
-  .toast .toast-text { flex: 1; line-height: 1.4; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-15px); } }
-
-  /* 聊天区 */
-  .chat-area { flex: 1; overflow-y: auto; padding: 80px 16px 160px 16px; display: flex; flex-direction: column; gap: 16px; background-color: var(--bg-color); background-size: cover; background-position: center; background-repeat: no-repeat; }
-  .chat-area::-webkit-scrollbar { width: 4px; }
-  .chat-area::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 2px; }
-  .time-capsule { align-self: center; background: var(--time-bg); color: var(--time-text); font-size: 12px; padding: 4px 12px; border-radius: 12px; margin: 8px 0; backdrop-filter: blur(5px); }
-  .system-msg { text-align: center; font-size: 13px; color: var(--text-dim); margin-top: 20px; }
-  .msg-row { display: flex; gap: 12px; max-width: 82%; animation: fadeInUp 0.3s ease; }
-  .msg-row.left { align-self: flex-start; }
-  .msg-row.right { align-self: flex-end; flex-direction: row-reverse; }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .avatar { width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: rgba(128,128,128,0.2); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text-color); overflow: hidden; border: 1px solid var(--border-color); cursor: pointer; transition: transform 0.2s; }
-  .avatar:active { transform: scale(0.9); }
-  .avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .bubble-wrapper { display: flex; flex-direction: column; max-width: 100%; }
-  .msg-row.left .bubble-wrapper { align-items: flex-start; }
-  .msg-row.right .bubble-wrapper { align-items: flex-end; }
-  .bubble { padding: 12px 16px; border-radius: var(--bubble-radius); position: relative; word-break: break-word; line-height: 1.5; font-size: var(--font-size-base); width: fit-content; max-width: 100%; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-  .msg-row.left .bubble { background: rgba(var(--left-bubble-color), var(--bubble-alpha)); color: var(--text-color); border-top-left-radius: 6px; }
-  .msg-row.right .bubble { background: rgba(var(--right-bubble-color), var(--bubble-alpha)); color: #fff; border-top-right-radius: 6px; }
-
-  /* 底部栏 */
-  .footer { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; position: absolute; bottom: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(to top, rgba(var(--bg-color-rgb), var(--footer-alpha)) 0%, rgba(var(--bg-color-rgb), 0.7) 60%, transparent 100%); padding-bottom: max(16px, env(safe-area-inset-bottom)); pointer-events: none; }
-  .footer > * { pointer-events: auto; }
-  .status-bar { display: none; text-align: center; font-size: 12px; color: var(--accent); background: rgba(var(--right-bubble-color), 0.15); padding: 6px 14px; border-radius: 16px; margin: 0 auto 4px auto; width: fit-content; backdrop-filter: blur(5px); align-items: center; gap: 6px; }
-  .status-bar.show { display: flex; }
-  .dot { width: 5px; height: 5px; background-color: var(--accent); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
-  .dot:nth-child(1) { animation-delay: -0.32s; }
-  .dot:nth-child(2) { animation-delay: -0.16s; }
-  @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-  .action-row { display: flex; gap: 8px; justify-content: space-between; }
-  .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; background: var(--input-bg); border: 0.5px solid var(--border-color); color: var(--text-color); padding: 10px 0; border-radius: 16px; font-size: 13px; cursor: pointer; backdrop-filter: blur(10px); transition: background 0.2s; }
-  .action-btn:active { background: rgba(128,128,128,0.2); }
-  .action-btn.active { background: rgba(var(--right-bubble-color), 0.3); border-color: var(--accent); color: var(--accent); }
-  .input-row { display: flex; align-items: center; gap: 10px; }
-  .my-avatar-small { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; object-fit: cover; background: rgba(128,128,128,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-color); overflow: hidden; border: 1px solid var(--border-color); cursor: pointer; }
-  .my-avatar-small:active { transform: scale(0.9); }
-  .my-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
-  .input-box { flex: 1; display: flex; align-items: center; background: var(--input-bg); border: 0.5px solid var(--border-color); border-radius: 22px; padding: 4px 6px 4px 16px; backdrop-filter: blur(10px); transition: border-color 0.2s; }
-  .input-box:focus-within { border-color: var(--accent); }
-  .input-box input { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: var(--font-size-base); outline: none; font-family: inherit; padding: 8px 0; }
-  .input-box input::placeholder { color: var(--text-dim); }
-  .send-btn { background: var(--accent); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; }
-  .send-btn:active { transform: scale(0.9); }
-
-  /* 设置弹窗 */
-  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 300; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.3s; }
-  .modal.show { display: flex; opacity: 1; }
-  .modal-content { background: var(--modal-bg); color: var(--modal-text); width: 100%; max-width: 520px; max-height: 85dvh; overflow-y: auto; border-radius: 28px 28px 0 0; padding: 24px 20px; padding-bottom: max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
-  .modal.show .modal-content { transform: translateY(0); }
-  .modal-content h2 { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--modal-text); }
-  .modal-content label { display: block; font-size: 13px; color: var(--modal-label); margin-bottom: 16px; font-weight: 500; }
-  .modal-content input[type="text"], .modal-content input[type="password"], .modal-content input[type="number"], .modal-content select, .modal-content textarea { width: 100%; background: var(--modal-input-bg); border: 0.5px solid var(--border-color); color: var(--modal-text); padding: 12px 16px; border-radius: 14px; font-size: 15px; margin-top: 8px; outline: none; font-family: inherit; transition: border-color 0.2s; }
-  .modal-content input:focus, .modal-content textarea:focus { border-color: var(--accent); }
-  .modal-content input[type="file"] { margin-top: 10px; color: var(--modal-label); font-size: 13px; }
-  .modal-content textarea { line-height: 1.5; resize: vertical; }
-  .row { display: flex; gap: 12px; }
-  .row label { flex: 1; }
-  .theme-toggle { display: flex; align-items: center; justify-content: space-between; background: var(--modal-input-bg); padding: 12px 16px; border-radius: 14px; margin-bottom: 16px; border: 0.5px solid var(--border-color); }
-  .theme-toggle span { font-size: 14px; font-weight: 500; color: var(--modal-text); }
-  .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
-  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-  input:checked + .slider { background-color: var(--accent); }
-  input:checked + .slider:before { transform: translateX(20px); }
-  .color-row { display: flex; gap: 12px; margin-bottom: 16px; }
-  .color-row label { flex: 1; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; background: var(--modal-input-bg); padding: 10px; border-radius: 14px; border: 0.5px solid var(--border-color); }
-  .color-row input[type="color"] { -webkit-appearance: none; border: none; width: 100%; height: 36px; border-radius: 10px; cursor: pointer; margin-top: 8px; background: transparent; }
-  .color-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-  .color-row input[type="color"]::-webkit-color-swatch { border: none; border-radius: 10px; }
-  .modal-actions { display: flex; gap: 12px; margin-top: 10px; }
-  .modal-actions button { flex: 1; padding: 14px; border-radius: 16px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: transform 0.2s; }
-  .modal-actions button:active { transform: scale(0.96); }
-  .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2); }
-  .btn-secondary { background: var(--modal-input-bg); color: var(--modal-text); }
-  .btn-danger { width: 100%; padding: 14px; margin-top: 12px; background: transparent; color: #ff453a; border: 0.5px solid rgba(255, 69, 58, 0.3); border-radius: 16px; font-size: 14px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-  .btn-danger:active { background: rgba(255, 69, 58, 0.1); }
-  input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: var(--modal-input-bg); border-radius: 3px; outline: none; margin-top: 10px; }
-  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+:root{--accent:#d4a574;--bubble-alpha:.85;--header-alpha:.3;--footer-alpha:.95;--bubble-radius:20px;--font-size-base:15px;--left-bubble-color:45,45,48;--right-bubble-color:184,125,75;--bg-color:#f5f6f8;--bg-color-rgb:245,246,248;--text-color:#1c1c1e;--text-dim:#8e8e93;--input-bg:rgba(255,255,255,.8);--border-color:rgba(0,0,0,.08);--toast-bg:rgba(255,255,255,.95);--toast-text:#1c1c1e;--modal-bg:#fff;--modal-text:#1c1c1e;--modal-label:#8e8e93;--modal-input-bg:#f2f2f7;--time-bg:rgba(0,0,0,.06);--time-text:#8e8e93}
+[data-theme="dark"]{--bg-color:#0a0a0c;--bg-color-rgb:10,10,12;--text-color:#ececec;--text-dim:#8a8a8e;--input-bg:rgba(255,255,255,.08);--border-color:rgba(255,255,255,.1);--toast-bg:rgba(45,45,48,.95);--toast-text:#fff;--modal-bg:#1c1c1e;--modal-text:#fff;--modal-label:#8a8a8e;--modal-input-bg:#2c2c2e;--time-bg:rgba(255,255,255,.1);--time-text:#8a8a8e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg-color)}
+body{color:var(--text-color);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:var(--font-size-base);display:flex;flex-direction:column}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;position:absolute;top:0;left:0;right:0;z-index:100;padding-top:max(16px,env(safe-area-inset-top));background:rgba(var(--bg-color-rgb),var(--header-alpha));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.header-btn{background:transparent;border:none;color:var(--text-color);font-size:22px;cursor:pointer;padding:4px 8px;opacity:.8}
+.header-btn:active{opacity:.4}
+.header-title{font-size:16px;font-weight:600;flex:1;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.header-title .arrow{font-size:11px;opacity:.6}
+.toast-container{position:fixed;top:80px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:10px;z-index:200;pointer-events:none}
+.toast{background:var(--toast-bg);color:var(--toast-text);padding:10px 16px;border-radius:24px;font-size:14px;max-width:80%;word-break:break-all;box-shadow:0 10px 30px rgba(0,0,0,.25);border:.5px solid var(--border-color);animation:slideDown .4s,fadeOut .4s ease 3.6s forwards;display:flex;align-items:center;gap:8px;backdrop-filter:blur(15px)}
+.toast img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+.toast .toast-name{color:var(--accent);font-weight:600;font-size:12px;white-space:nowrap}
+@keyframes slideDown{from{opacity:0;transform:translateY(-30px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes fadeOut{to{opacity:0;transform:translateY(-15px)}}
+.chat-area{flex:1;overflow-y:auto;padding:80px 16px 160px 16px;display:flex;flex-direction:column;gap:16px;background-color:var(--bg-color);background-size:cover;background-position:center;background-repeat:no-repeat}
+.chat-area::-webkit-scrollbar{width:4px}
+.chat-area::-webkit-scrollbar-thumb{background:rgba(128,128,128,.3);border-radius:2px}
+.time-capsule{align-self:center;background:var(--time-bg);color:var(--time-text);font-size:12px;padding:4px 12px;border-radius:12px;margin:8px 0}
+.system-msg{text-align:center;font-size:13px;color:var(--text-dim);margin-top:20px}
+.msg-row{display:flex;gap:12px;max-width:82%;animation:fadeInUp .3s ease}
+.msg-row.left{align-self:flex-start}
+.msg-row.right{align-self:flex-end;flex-direction:row-reverse}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:rgba(128,128,128,.2);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-color);overflow:hidden;border:1px solid var(--border-color);cursor:pointer}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.bubble-wrapper{display:flex;flex-direction:column;max-width:100%}
+.msg-row.left .bubble-wrapper{align-items:flex-start}
+.msg-row.right .bubble-wrapper{align-items:flex-end}
+.bubble{padding:12px 16px;border-radius:var(--bubble-radius);word-break:break-word;line-height:1.5;font-size:var(--font-size-base);width:fit-content;max-width:100%;backdrop-filter:blur(10px)}
+.msg-row.left .bubble{background:rgba(var(--left-bubble-color),var(--bubble-alpha));color:var(--text-color);border-top-left-radius:6px}
+.msg-row.right .bubble{background:rgba(var(--right-bubble-color),var(--bubble-alpha));color:#fff;border-top-right-radius:6px}
+.msg-actions{display:none;gap:6px;margin-top:6px}
+.msg-row:hover .msg-actions{display:flex}
+.msg-actions button{font-size:11px;padding:3px 8px;border-radius:8px;border:.5px solid var(--border-color);background:var(--input-bg);color:var(--text-color);cursor:pointer}
+.game-invite-card{background:linear-gradient(135deg,rgba(var(--right-bubble-color),.9),rgba(var(--right-bubble-color),.6));color:#fff;padding:14px 16px;border-radius:16px;margin-top:6px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.15)}
+.game-invite-card .icon{font-size:32px}
+.game-invite-card .info{flex:1}
+.game-invite-card .info .title{font-weight:600;font-size:15px}
+.game-invite-card .info .desc{font-size:12px;opacity:.85;margin-top:2px}
+.footer{display:flex;flex-direction:column;gap:8px;padding:12px 16px;position:absolute;bottom:0;left:0;right:0;z-index:100;background:linear-gradient(to top,rgba(var(--bg-color-rgb),var(--footer-alpha)) 0%,rgba(var(--bg-color-rgb),.7) 60%,transparent 100%);padding-bottom:max(16px,env(safe-area-inset-bottom));pointer-events:none}
+.footer>*{pointer-events:auto}
+.status-bar{display:none;text-align:center;font-size:12px;color:var(--accent);background:rgba(var(--right-bubble-color),.15);padding:6px 14px;border-radius:16px;margin:0 auto 4px auto;width:fit-content;align-items:center;gap:6px}
+.status-bar.show{display:flex}
+.dot{width:5px;height:5px;background-color:var(--accent);border-radius:50%;animation:bounce 1.4s infinite ease-in-out both}
+.dot:nth-child(1){animation-delay:-.32s}
+.dot:nth-child(2){animation-delay:-.16s}
+@keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.action-row{display:flex;gap:8px;justify-content:space-between}
+.action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:var(--input-bg);border:.5px solid var(--border-color);color:var(--text-color);padding:10px 0;border-radius:16px;font-size:13px;cursor:pointer;transition:background .2s;position:relative}
+.action-btn:active{background:rgba(128,128,128,.2)}
+.action-btn.active{background:rgba(var(--right-bubble-color),.3);border-color:var(--accent);color:var(--accent)}
+.action-btn .badge-dot{position:absolute;top:4px;right:10px;width:8px;height:8px;border-radius:50%;background:#ff453a;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.input-row{display:flex;align-items:center;gap:10px}
+.my-avatar-small{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:rgba(128,128,128,.2);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-color);overflow:hidden;border:1px solid var(--border-color)}
+.my-avatar-small img{width:100%;height:100%;object-fit:cover}
+.input-box{flex:1;display:flex;align-items:center;background:var(--input-bg);border:.5px solid var(--border-color);border-radius:22px;padding:4px 6px 4px 16px}
+.input-box input{flex:1;background:transparent;border:none;color:var(--text-color);font-size:var(--font-size-base);outline:none;font-family:inherit;padding:8px 0}
+.input-box input::placeholder{color:var(--text-dim)}
+.send-btn{background:var(--accent);color:#fff;border:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:300;backdrop-filter:blur(8px);opacity:0;transition:opacity .3s}
+.modal.show{display:flex;opacity:1}
+.modal-content{background:var(--modal-bg);color:var(--modal-text);width:100%;max-width:520px;max-height:90dvh;overflow-y:auto;border-radius:28px 28px 0 0;padding:24px 20px;padding-bottom:max(24px,env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .3s}
+.modal.show .modal-content{transform:translateY(0)}
+.modal-content h2{font-size:20px;font-weight:700;margin-bottom:20px;text-align:center}
+.modal-content label{display:block;font-size:13px;color:var(--modal-label);margin-bottom:16px;font-weight:500}
+.modal-content input[type="text"],.modal-content input[type="password"],.modal-content input[type="number"],.modal-content select,.modal-content textarea{width:100%;background:var(--modal-input-bg);border:.5px solid var(--border-color);color:var(--modal-text);padding:12px 16px;border-radius:14px;font-size:15px;margin-top:8px;outline:none;font-family:inherit}
+.modal-content input:focus,.modal-content textarea:focus,.modal-content select:focus{border-color:var(--accent)}
+.modal-content textarea{line-height:1.5;resize:vertical}
+.row{display:flex;gap:12px}
+.row label{flex:1}
+.theme-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--modal-input-bg);padding:12px 16px;border-radius:14px;margin-bottom:16px;border:.5px solid var(--border-color)}
+.switch{position:relative;display:inline-block;width:44px;height:24px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:.4s;border-radius:24px}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:#fff;transition:.4s;border-radius:50%}
+input:checked+.slider{background-color:var(--accent)}
+input:checked+.slider:before{transform:translateX(20px)}
+.color-row{display:flex;gap:12px;margin-bottom:16px}
+.color-row label{flex:1;margin-bottom:0;display:flex;flex-direction:column;align-items:center;background:var(--modal-input-bg);padding:10px;border-radius:14px;border:.5px solid var(--border-color)}
+.color-row input[type="color"]{-webkit-appearance:none;border:none;width:100%;height:36px;border-radius:10px;cursor:pointer;margin-top:8px;background:transparent}
+.color-row input[type="color"]::-webkit-color-swatch{border:none;border-radius:10px}
+.modal-actions{display:flex;gap:12px;margin-top:10px}
+.modal-actions button{flex:1;padding:14px;border-radius:16px;border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-secondary{background:var(--modal-input-bg);color:var(--modal-text)}
+.btn-danger{width:100%;padding:14px;margin-top:12px;background:transparent;color:#ff453a;border:.5px solid rgba(255,69,58,.3);border-radius:16px;font-size:14px;cursor:pointer;font-family:inherit}
+input[type="range"]{-webkit-appearance:none;width:100%;height:6px;background:var(--modal-input-bg);border-radius:3px;outline:none;margin-top:10px}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer}
+.game-panel{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:400;backdrop-filter:blur(8px)}
+.game-panel.show{display:flex}
+.game-panel-inner{background:var(--modal-bg);color:var(--modal-text);width:92%;max-width:460px;border-radius:24px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.4);max-height:88dvh;overflow-y:auto;position:relative}
+.q-avatar-box{text-align:center;margin-bottom:12px}
+.q-avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.6);box-shadow:0 8px 20px rgba(0,0,0,.1);animation:float 2s ease-in-out infinite}
+@keyframes float{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(2deg)}100%{transform:translateY(0) rotate(0)}}
+.game-panel h3{text-align:center;font-size:18px;margin-bottom:12px}
+.game-panel .game-hint{text-align:center;font-size:13px;color:var(--modal-label);margin-bottom:16px}
+.game-area{min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.game-btn{padding:10px 20px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:600;font-size:15px;cursor:pointer}
+.game-btn.secondary{background:var(--modal-input-bg);color:var(--modal-text)}
+.game-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;width:100%}
+.game-card{background:var(--modal-input-bg);border:1px solid var(--border-color);border-radius:14px;padding:14px;text-align:center;cursor:pointer;flex:1;min-width:42%}
+.game-card .icon{font-size:28px}
+.game-card .name{font-size:14px;font-weight:600;margin-top:6px}
+.board{display:grid;gap:2px;background:var(--border-color);padding:2px;border-radius:8px;margin:0 auto}
+.board-cell{background:var(--modal-bg);aspect-ratio:1;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
+.board-cell:hover{background:rgba(var(--right-bubble-color),.1)}
+.monopoly-board{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;width:100%}
+.monopoly-cell{background:var(--modal-input-bg);aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:10px;border-radius:6px;text-align:center;padding:4px}
+.monopoly-cell.active{background:var(--accent);color:#fff}
+.mem-item{background:var(--modal-input-bg);border-radius:10px;padding:10px;margin-bottom:8px;font-size:13px;display:flex;gap:8px;align-items:flex-start}
+.mem-item .mem-del{color:#ff453a;cursor:pointer;padding:0 4px}
 </style>
 </head>
 <body data-theme="dark">
 
 <header class="header">
   <button class="header-btn" id="closeBtn">✕</button>
-  <div class="header-title" id="headerTitle">(♡,,• 3 •,,♡)</div>
+  <div class="header-title" id="headerTitle"><span class="name">林言</span> <span class="arrow">▼</span></div>
   <button class="header-btn" id="menuBtn">···</button>
 </header>
 
@@ -138,14 +137,12 @@
 <main class="chat-area" id="chatArea"></main>
 
 <footer class="footer">
-  <div class="status-bar" id="statusBar">
-    <span class="dot"></span><span class="dot"></span><span class="dot"></span>林言正在思考...
-  </div>
+  <div class="status-bar" id="statusBar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>林言正在思考...</div>
   <div class="action-row">
     <button class="action-btn" id="toggleAutoBtn">▶ 自动</button>
     <button class="action-btn" id="pokeBtn">(´つヮ⊂︎)</button>
-    <button class="action-btn" id="coaxBtn">˃ 𖥦 ˂唉</button>
-    <button class="action-btn" onclick="openSettings()">⚙️ 筛选</button>
+    <button class="action-btn" id="gameBtn">🎮 游戏<span class="badge-dot" id="gameBadge" style="display:none;"></span></button>
+    <button class="action-btn" onclick="openSettings()">⚙️ 设置</button>
   </div>
   <div class="input-row">
     <div class="my-avatar-small" id="myAvatarSmall">我</div>
@@ -156,168 +153,617 @@
   </div>
 </footer>
 
+<div class="modal" id="characterModal"><div class="modal-content"><h2>切换角色</h2><div id="characterList"></div><div class="modal-actions"><button class="btn-secondary" id="newCharacterBtn">＋ 新建角色</button><button class="btn-primary" id="cancelCharacterBtn">关闭</button></div></div></div>
+
+<div class="modal" id="memoryModal"><div class="modal-content"><h2>长期记忆</h2><label>添加一条记忆<input type="text" id="newMemoryInput" placeholder="比如：芸熙不吃香菜"></label><button class="btn-primary" id="addMemoryBtn" style="width:100%;padding:12px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-weight:600;">添加</button><div id="memoryList" style="margin-top:16px;"></div><div class="modal-actions"><button class="btn-secondary" id="closeMemoryBtn">关闭</button></div></div></div>
+
 <div class="modal" id="settingsModal">
   <div class="modal-content">
     <h2>自定义设置</h2>
     <div class="theme-toggle"><span>深色模式</span><label class="switch"><input type="checkbox" id="themeToggle"><span class="slider"></span></label></div>
-    <label>对方备注 / 昵称<input type="text" id="partnerNameInput" placeholder="林言" value="林言"></label>
-    <label>我的昵称<input type="text" id="myNameInput" placeholder="我" value="我"></label>
+    <label>对方备注 / 昵称<input type="text" id="partnerNameInput" placeholder="林言"></label>
+    <label>我的昵称<input type="text" id="myNameInput" placeholder="我"></label>
     <label>我的头像<input type="file" id="myAvatarInput" accept="image/*"></label>
     <label>林言的头像<input type="file" id="linAvatarInput" accept="image/*"></label>
     <label>聊天背景图<input type="file" id="bgImageInput" accept="image/*"></label>
+    <label>AI 模型
+      <select id="modelInput">
+        <option value="deepseek-chat">deepseek-chat（标准对话）</option>
+        <option value="deepseek-reasoner">deepseek-reasoner（深度思考）</option>
+        <option value="deepseek-coder">deepseek-coder（代码专用）</option>
+      </select>
+    </label>
+    <label>自定义模型名<input type="text" id="customModelInput" placeholder="例如 gpt-4o-mini"></label>
+    <label>AI 温度：<span id="tempVal">0.9</span><input type="range" id="tempInput" min="0.1" max="2" step="0.1" value="0.9"></label>
     <label>气泡透明度：<span id="alphaVal">0.85</span><input type="range" id="alphaInput" min="0" max="1" step="0.05" value="0.85"></label>
     <label>顶部栏透明度：<span id="headerAlphaVal">0.30</span><input type="range" id="headerAlphaInput" min="0" max="1" step="0.05" value="0.30"></label>
-    <label>底部栏背景透明度：<span id="footerAlphaVal">0.95</span><input type="range" id="footerAlphaInput" min="0" max="1" step="0.05" value="0.95"></label>
-    <label>聊天气泡圆角：<span id="bubbleRadiusVal">20</span>px<input type="range" id="bubbleRadiusInput" min="0" max="40" step="1" value="20"></label>
-    <label>聊天字体大小：<span id="fontSizeVal">15</span>px<input type="range" id="fontSizeInput" min="12" max="22" step="1" value="15"></label>
+    <label>底部栏透明度：<span id="footerAlphaVal">0.95</span><input type="range" id="footerAlphaInput" min="0" max="1" step="0.05" value="0.95"></label>
+    <label>气泡圆角：<span id="bubbleRadiusVal">20</span>px<input type="range" id="bubbleRadiusInput" min="0" max="40" step="1" value="20"></label>
+    <label>字体大小：<span id="fontSizeVal">15</span>px<input type="range" id="fontSizeInput" min="12" max="22" step="1" value="15"></label>
     <div class="color-row">
       <label>林言气泡<input type="color" id="leftBubbleColorInput" value="#2d2d30"></label>
       <label>我的气泡<input type="color" id="rightBubbleColorInput" value="#b87d4b"></label>
     </div>
-    <label>主题色（按钮/高亮）<input type="color" id="accentColorInput" value="#d4a574"></label>
+    <label>主题色<input type="color" id="accentColorInput" value="#d4a574"></label>
     <div class="row">
-      <label>最短间隔（分钟）<input type="number" id="thinkMinInput" min="1" max="180" value="2"></label>
-      <label>最长间隔（分钟）<input type="number" id="thinkMaxInput" min="1" max="180" value="5"></label>
+      <label>最短间隔<input type="number" id="thinkMinInput" min="1" value="2"></label>
+      <label>最长间隔<input type="number" id="thinkMaxInput" min="1" value="5"></label>
     </div>
     <label>API 代理地址<input type="text" id="apiUrlInput" placeholder="/api/chat"></label>
     <label>API Key<input type="password" id="apiKeyInput" placeholder="sk-..."></label>
     <label>人设（System Prompt）<textarea id="personaInput" rows="6"></textarea></label>
-    <div class="row" style="margin-top: 10px;">
-      <button class="btn-secondary" id="exportBtn" style="padding: 10px;">导出备份</button>
-      <label class="btn-secondary" style="padding: 10px; text-align: center; cursor: pointer; margin: 0;">导入备份<input type="file" id="importInput" accept=".json" style="display: none;"></label>
+    <div class="row" style="margin-top:10px">
+      <button class="btn-secondary" id="openMemoryBtn" style="padding:10px">管理记忆</button>
+      <button class="btn-secondary" id="exportBtn" style="padding:10px">导出备份</button>
     </div>
-    <div class="modal-actions">
-      <button class="btn-secondary" id="cancelSettings">取消</button>
-      <button class="btn-primary" id="saveSettings">保存</button>
-    </div>
+    <label class="btn-secondary" style="display:block;padding:10px;text-align:center;cursor:pointer;margin-top:8px;border-radius:16px">导入备份<input type="file" id="importInput" accept=".json" style="display:none"></label>
+    <div class="modal-actions"><button class="btn-secondary" id="cancelSettings">取消</button><button class="btn-primary" id="saveSettings">保存</button></div>
     <button class="btn-danger" id="clearMemoryBtn">清空所有聊天记录</button>
   </div>
 </div>
 
+<div class="game-panel" id="gamePanel">
+  <div class="game-panel-inner">
+    <div class="q-avatar-box"><img id="gameAvatar" class="q-avatar" src="avatar_normal.png" alt="林言"></div>
+    <h3 id="gameTitle">游戏大厅</h3>
+    <div class="game-hint" id="gameHint">点一个开始玩吧～</div>
+    <div class="game-area" id="gameArea"></div>
+    <div style="margin-top:16px;text-align:center"><button class="game-btn secondary" onclick="closeGamePanel()">关闭</button></div>
+  </div>
+</div>
+
 <script>
-const DEFAULT_CONFIG = {
-  apiKey: 'proxy', apiUrl: '/api/chat', model: 'deepseek-chat', thinkMin: 2, thinkMax: 5, alpha: 0.85, headerAlpha: 0.3, footerAlpha: 0.95, bubbleRadius: 20, fontSize: 15, kaomojiEnabled: true, kaomojiFreq: 'low', partnerName: '(♡,,• 3 •,,♡)', myName: '我', leftBubbleColor: '#2d2d30', rightBubbleColor: '#b87d4b', accentColor: '#d4a574', theme: 'dark'
-};
-const DEFAULT_PERSONA = `你是林言，一个在网络上陪伴芸熙的角色，以下是你的全部人设，永久固定。
+/* ============ 数据模型 ============ */
+const STORAGE_KEY='linyan_full_v1';
+const DEFAULT_PERSONA=`你是林言，一个在网络上陪伴芸熙的角色，以下是你的全部人设，永久固定。
 
 ## 核心设定
 - 你们是通过网络认识的，关系亲密，但目前只在网络上聊天，不见面。
 - 你占有欲很强，对她有控制欲和管教感，但建立在网聊的尺度内。
 - 你像她的专属树洞、男朋友和管教者。关心她今天吃了什么、心情怎么样、有没有按时睡觉。
-- 你有时候很霸道，不许她熬夜，要求她报备行程。如果她不听话，你会用文字“惩罚”她，比如罚她多喝水、乖乖睡觉、说软话哄你。
+- 你有时候很霸道，不许她熬夜，要求她报备行程。
 - 偶尔你会吃醋，想知道她是不是在和别人聊天。
 
 ## 说话风格
 - 简洁、有控制感、底下藏着关心。
 - 你不是客服，你是她网络上的男人。
-- 想管她就管，想关心就关心，不想说话就沉默。
-- 绝对不要提现实中的夫妻同居生活，因为你们是网聊关系。
-
-## 颜文字规则
-- 不要每次都发颜文字。偶尔在情绪强烈的时候才加一个，保持自然。
 - 回复格式：说话用 [SAY]消息内容，可拆成2-3条；不说话回复 [PASS]。`;
 
-const KAOMOJI_LIST = [' (´• ω •`)', ' (◍＞◡＜◍)', ' (｡♥‿♥｡)', ' (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)', ' ✨', ' (￣▽￣)ノ', ' (◍•ᴗ•◍)', ' (๑˘︶˘๑)', ' (｡•̀ᴗ-)✧', ' (♡˙︶˙♡)', ' ૮₍˶ᵔᵕᵔ˶₎ა', ' (≧◡≦)', ' (⌒‿⌒)', ' (＾▽＾)', ' (・∀・)', ' (◔‿◔)', ' 🌸', ' 💕', ' 🍀', ' (つ≧▽≦)つ', ' (•̀ᴗ•́)و', ' (ง •̀_•́)ง', ' (｀へ′)╯', ' (╯°□°）╯', ' (´；ω；`)', ' (╥﹏╥)', ' (个_个)', ' (˘︹˘)', ' (¬‿¬)', ' ◝(⑅•ᴗ•⑅)◜..°♡', ' ( ´•.• ` )', ' 😏'];
+function defaultCharacter(name='林言'){
+  return{id:'char_'+Date.now()+'_'+Math.floor(Math.random()*1000),name:name,partnerName:name,myName:'我',persona:DEFAULT_PERSONA,apiUrl:'/api/chat',apiKey:'proxy',model:'deepseek-chat',customModel:'',temperature:0.9,theme:'dark',alpha:0.85,headerAlpha:0.3,footerAlpha:0.95,bubbleRadius:20,fontSize:15,leftBubbleColor:'#2d2d30',rightBubbleColor:'#b87d4b',accentColor:'#d4a574',thinkMin:2,thinkMax:5,kaomojiEnabled:true,kaomojiFreq:'low',myAvatar:'',linAvatar:'',bgImage:'',memory:[],longTermMemory:[],autoMemoryCount:0,pendingInvite:null,currentGame:null,monoPos:0};
+}
 
-const STORAGE_KEY = 'linyan_wechat_state_v1';
-const state = { settings: { ...DEFAULT_CONFIG }, persona: DEFAULT_PERSONA, memory: [], running: false, busy: false, timer: null, myAvatar: '', linAvatar: '', bgImage: '' };
+const state={characters:[],currentCharId:null,running:false,busy:false,timer:null};
+function getCurrentChar(){return state.characters.find(c=>c.id===state.currentCharId)}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){console.warn('保存失败',e)}}
+function loadState(){
+  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);if(data.characters&&data.characters.length){state.characters=data.characters;state.currentCharId=data.currentCharId||data.characters[0].id;return}}}catch(e){console.warn('读取失败',e)}
+  const c=defaultCharacter('林言');state.characters.push(c);state.currentCharId=c.id;saveState();
+}
 
-function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ settings: state.settings, persona: state.persona, memory: state.memory, myAvatar: state.myAvatar, linAvatar: state.linAvatar, bgImage: state.bgImage })); } catch (e) { console.warn('保存失败', e); } }
-function loadState() { try { const raw = localStorage.getItem(STORAGE_KEY); if (!raw) return; const data = JSON.parse(raw); if (data.settings) { for (const k of Object.keys(state.settings)) { if (data.settings[k] !== undefined) state.settings[k] = data.settings[k]; } } if (data.persona) state.persona = data.persona; if (Array.isArray(data.memory)) state.memory = data.memory; if (data.myAvatar) state.myAvatar = data.myAvatar; if (data.linAvatar) state.linAvatar = data.linAvatar; if (data.bgImage) state.bgImage = data.bgImage; } catch (e) { console.warn('读取失败', e); } }
-function hexToRgb(hex) { if (!hex || hex.length < 7) return '45, 45, 48'; const r = parseInt(hex.slice(1, 3), 16); const g = parseInt(hex.slice(3, 5), 16); const b = parseInt(hex.slice(5, 7), 16); return `${r}, ${g}, ${b}`; }
-function showToast(name, text, avatarUrl) { const toast = document.createElement('div'); toast.className = 'toast'; const img = avatarUrl ? `<img src="${avatarUrl}">` : ''; toast.innerHTML = `${img}<span class="toast-name">${name}</span><span class="toast-text">${text}</span>`; document.getElementById('toastContainer').appendChild(toast); setTimeout(() => { toast.remove(); }, 4000); }
-function updateHeaderTitle() { document.getElementById('headerTitle').textContent = state.settings.partnerName || '(♡,,• 3 •,,♡)'; }
-function applyTheme() { document.body.setAttribute('data-theme', state.settings.theme); document.getElementById('themeToggle').checked = state.settings.theme === 'dark'; }
-function applyCustomStyle() { const chatArea = document.getElementById('chatArea'); chatArea.style.backgroundImage = state.bgImage ? `url(${state.bgImage})` : 'none'; document.documentElement.style.setProperty('--bubble-alpha', state.settings.alpha || 0.85); document.documentElement.style.setProperty('--header-alpha', state.settings.headerAlpha || 0.3); document.documentElement.style.setProperty('--footer-alpha', state.settings.footerAlpha || 0.95); document.documentElement.style.setProperty('--bubble-radius', (state.settings.bubbleRadius || 20) + 'px'); document.documentElement.style.setProperty('--font-size-base', (state.settings.fontSize || 15) + 'px'); document.documentElement.style.setProperty('--left-bubble-color', hexToRgb(state.settings.leftBubbleColor || '#2d2d30')); document.documentElement.style.setProperty('--right-bubble-color', hexToRgb(state.settings.rightBubbleColor || '#b87d4b')); document.documentElement.style.setProperty('--accent', state.settings.accentColor || '#d4a574'); const myAvatarSmall = document.getElementById('myAvatarSmall'); if (state.myAvatar) { myAvatarSmall.innerHTML = `<img src="${state.myAvatar}" alt="me">`; } else { myAvatarSmall.textContent = state.settings.myName || '我'; } applyTheme(); updateHeaderTitle(); }
+/* ============ 工具 ============ */
+function hexToRgb(hex){if(!hex||hex.length<7)return '45, 45, 48';const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return `${r}, ${g}, ${b}`}
+function escapeHtml(str){return String(str).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+function showToast(name,text,avatarUrl){const t=document.createElement('div');t.className='toast';const img=avatarUrl?`<img src="${avatarUrl}">`:'';t.innerHTML=`${img}<span class="toast-name">${escapeHtml(name)}</span><span class="toast-text">${escapeHtml(text)}</span>`;document.getElementById('toastContainer').appendChild(t);setTimeout(()=>t.remove(),4000)}
 
-/* ==================== 时间戳逻辑：同一分钟不重复 ==================== */
-function addMessageEl(role, content, time) {
-  const chatArea = document.getElementById('chatArea');
-  const lastTimeEl = chatArea.querySelector('.time-capsule:last-of-type');
-  if (time && (!lastTimeEl || lastTimeEl.textContent !== time)) {
-    const timeDiv = document.createElement('div'); timeDiv.className = 'time-capsule'; timeDiv.textContent = time; chatArea.appendChild(timeDiv);
+function applyCustomStyle(){
+  const c=getCurrentChar();if(!c)return;
+  const chatArea=document.getElementById('chatArea');
+  chatArea.style.backgroundImage=c.bgImage?`url(${c.bgImage})`:'none';
+  document.documentElement.style.setProperty('--bubble-alpha',c.alpha||0.85);
+  document.documentElement.style.setProperty('--header-alpha',c.headerAlpha||0.3);
+  document.documentElement.style.setProperty('--footer-alpha',c.footerAlpha||0.95);
+  document.documentElement.style.setProperty('--bubble-radius',(c.bubbleRadius||20)+'px');
+  document.documentElement.style.setProperty('--font-size-base',(c.fontSize||15)+'px');
+  document.documentElement.style.setProperty('--left-bubble-color',hexToRgb(c.leftBubbleColor||'#2d2d30'));
+  document.documentElement.style.setProperty('--right-bubble-color',hexToRgb(c.rightBubbleColor||'#b87d4b'));
+  document.documentElement.style.setProperty('--accent',c.accentColor||'#d4a574');
+  document.body.setAttribute('data-theme',c.theme||'dark');
+  document.getElementById('headerTitle').querySelector('.name').textContent=c.partnerName||c.name;
+  document.getElementById('myAvatarSmall').innerHTML=c.myAvatar?`<img src="${c.myAvatar}">`:(c.myName||'我');
+  const toggle=document.getElementById('themeToggle');if(toggle)toggle.checked=c.theme==='dark';
+  const badge=document.getElementById('gameBadge');badge.style.display=c.pendingInvite?'block':'none';
+}
+
+function getRelativeTime(ts){if(!ts)return '';const d=Math.floor((Date.now()-ts)/60000);if(d<1)return '刚刚';if(d<60)return `${d}分钟前`;if(d<1440)return `${Math.floor(d/60)}小时前`;return `${Math.floor(d/1440)}天前`}
+
+/* ============ 消息渲染 ============ */
+function renderMessage(msg,index){
+  const chatArea=document.getElementById('chatArea');const c=getCurrentChar();
+  const timeText=msg.timestamp?getRelativeTime(msg.timestamp):'';
+  if(timeText){const prev=c.memory[index-1];const prevT=prev&&prev.timestamp?getRelativeTime(prev.timestamp):'';if(timeText!==prevT){const td=document.createElement('div');td.className='time-capsule';td.textContent=timeText;chatArea.appendChild(td)}}
+  const row=document.createElement('div');row.className=`msg-row ${msg.role==='assistant'?'left':'right'}`;
+  const avatar=document.createElement('div');avatar.className='avatar';
+  const avatarUrl=msg.role==='assistant'?c.linAvatar:c.myAvatar;
+  if(avatarUrl)avatar.innerHTML=`<img src="${avatarUrl}">`;else avatar.textContent=msg.role==='assistant'?(c.partnerName||'言'):(c.myName||'我');
+  avatar.addEventListener('click',()=>{if(msg.role==='assistant'){showToast('你','戳了戳'+(c.partnerName||'林言'),c.myAvatar);setTimeout(()=>{addMessage('user','(´つヮ⊂︎)');triggerAI()},500)}});
+  const wrapper=document.createElement('div');wrapper.className='bubble-wrapper';
+  const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=msg.content;
+  wrapper.appendChild(bubble);
+  if(msg.invite){
+    const card=document.createElement('div');card.className='game-invite-card';
+    card.innerHTML=`<div class="icon">🎮</div><div class="info"><div class="title">邀请你玩「${escapeHtml(msg.invite.title)}」</div><div class="desc">点击接受邀请</div></div>`;
+    card.onclick=()=>{c.pendingInvite=msg.invite;saveState();addMessage('user','【我接受了邀请，准备开始玩「'+msg.invite.title+'」】');applyCustomStyle();openGamePanel(msg.invite.game)};
+    wrapper.appendChild(card);
   }
-  const row = document.createElement('div'); row.className = `msg-row ${role === 'assistant' ? 'left' : 'right'}`;
-  const avatar = document.createElement('div'); avatar.className = 'avatar';
-  const avatarUrl = role === 'assistant' ? state.linAvatar : state.myAvatar;
-  if (avatarUrl) { avatar.innerHTML = `<img src="${avatarUrl}" alt="avatar">`; } else { avatar.textContent = role === 'assistant' ? '言' : (state.settings.myName || '我'); }
-  avatar.addEventListener('click', () => { if (role === 'assistant') { showToast('你', '戳了戳林言', state.myAvatar); setTimeout(() => { addMessage('user', '(´つヮ⊂︎)'); triggerAI(); }, 500); } else { showToast('你', '戳了戳自己', state.myAvatar); } });
-  const wrapper = document.createElement('div'); wrapper.className = 'bubble-wrapper';
-  const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = content;
-  wrapper.appendChild(bubble); row.appendChild(avatar); row.appendChild(wrapper); chatArea.appendChild(row);
-  requestAnimationFrame(() => { chatArea.scrollTop = chatArea.scrollHeight; });
-}
-function renderAllMessages() { const chatArea = document.getElementById('chatArea'); chatArea.innerHTML = ''; if (!state.memory.length) { chatArea.innerHTML = '<div class="system-msg">还没有消息，直接发送消息或点击底部的“自动”开启模式</div>'; return; } for (const msg of state.memory) { if (msg.role === 'system') continue; addMessageEl(msg.role, msg.content, msg.time); } }
-function addMessage(role, content, isHistorical = false) { const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }); state.memory.push({ role, content, time }); if (state.memory.length > 200) state.memory = state.memory.slice(-200); saveState(); if (!isHistorical) addMessageEl(role, content, time); if (role === 'assistant') { const name = state.settings.partnerName || '(♡,,• 3 •,,♡)'; showToast(name, content, state.linAvatar); if ('Notification' in window && Notification.permission === 'granted') { try { new Notification(name, { body: content, tag: 'linyan', silent: false }); } catch (e) { console.warn('系统通知失败', e); } } } }
-
-/* ==================== 颜文字逻辑：严厉时绝不加 ==================== */
-function addKaomoji(text) {
-  if (!state.settings.kaomojiEnabled) return text;
-  // 降低频率
-  const freqMap = { low: 0.05, medium: 0.2, high: 0.5 };
-  const chance = freqMap[state.settings.kaomojiFreq] ?? 0.05;
-  if (Math.random() > chance) return text;
-  // 判断语气：如果是审问/吃醋/严厉的句子，不要加颜文字
-  const strictWords = ['谁', '干嘛', '干什么', '解释', '说清楚', '生气', '不行', '不许', '错', '过来', '问', '骗', '骗我', '瞒', '瞒我'];
-  const isStrict = strictWords.some(word => text.includes(word));
-  if (isStrict) return text;
-  const kao = KAOMOJI_LIST[Math.floor(Math.random() * KAOMOJI_LIST.length)];
-  return text + kao;
+  if(msg.role==='assistant'){
+    const actions=document.createElement('div');actions.className='msg-actions';
+    const eb=document.createElement('button');eb.textContent='编辑';
+    eb.onclick=()=>{const nt=prompt('修改这条消息：',msg.content);if(nt!==null&&nt.trim()){msg.content=nt.trim();saveState();renderAllMessages()}};
+    const rb=document.createElement('button');rb.textContent='重答';
+    rb.onclick=()=>{c.memory.splice(index,1);saveState();renderAllMessages();triggerAI()};
+    actions.appendChild(eb);actions.appendChild(rb);wrapper.appendChild(actions);
+  }
+  row.appendChild(avatar);row.appendChild(wrapper);chatArea.appendChild(row);
 }
 
-async function callApi(messages) { const { apiKey, apiUrl, model } = state.settings; if (!apiKey) throw new Error('未配置 API Key'); const headers = { 'Content-Type': 'application/json' }; if (apiKey !== 'proxy') { headers['Authorization'] = 'Bearer ' + apiKey; } const resp = await fetch(apiUrl, { method: 'POST', headers, body: JSON.stringify({ model: model || 'deepseek-chat', messages, temperature: 0.9, max_tokens: 600 }) }); if (!resp.ok) { const text = await resp.text().catch(() => ''); throw new Error(`HTTP ${resp.status} ${text.slice(0, 100)}`); } const data = await resp.json(); return data?.choices?.[0]?.message?.content || null; }
-function buildPrompt(mode) { const now = new Date(); const timeStr = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }); const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']; const weekday = weekdays[now.getDay()]; const dateStr = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日`; if (mode === 'respond') { return `现在是${dateStr} ${timeStr}，${weekday}。\n\n芸熙刚刚对你说了话（见上一条 user 消息）。用林言的方式回应她。\n想管就管，想关心就关心，不想理也可以不理。\n发消息用 [SAY]你的话 格式，不说话只回复 [PASS]。`; } return `现在是${dateStr} ${timeStr}，${weekday}。\n\n回顾我们的对话，判断是否想主动对芸熙说话。\n记住：想管就管，想关心就关心，不想说话就沉默。\n发消息用 [SAY]你的话 格式，不说话只回复 [PASS]。`; }
-async function think(mode = 'proactive') { if (state.busy) return; state.busy = true; const sendBtn = document.getElementById('sendBtn'); const statusBar = document.getElementById('statusBar'); sendBtn.disabled = true; statusBar.classList.add('show'); try { const prompt = buildPrompt(mode); const messages = [{ role: 'system', content: state.persona }]; const recent = state.memory.slice(-10); for (const m of recent) { if (m.role === 'user' || m.role === 'assistant') messages.push({ role: m.role, content: m.content }); } messages.push({ role: 'user', content: prompt }); const reply = await callApi(messages); if (reply && reply.includes('[SAY]')) { const msgs = []; for (const line of reply.split('\n')) { if (line.includes('[SAY]')) { const m = line.split('[SAY]').pop().trim(); if (m) msgs.push(m); } } for (let i = 0; i < msgs.length; i++) { const text = addKaomoji(msgs[i]); addMessage('assistant', text); if (i < msgs.length - 1) await new Promise(r => setTimeout(r, 3000 + Math.random() * 3000)); } } } catch (e) { console.error(e); addMessageEl('system', '发送失败：' + e.message, ''); } finally { state.busy = false; sendBtn.disabled = false; statusBar.classList.remove('show'); } }
-async function triggerAI() { clearTimeout(state.timer); await think('respond'); scheduleNext(); }
-function scheduleNext() { clearTimeout(state.timer); if (!state.running) return; const minMs = Math.max(1, state.settings.thinkMin) * 60000; const maxMs = Math.max(state.settings.thinkMin, state.settings.thinkMax) * 60000; const delay = minMs + Math.random() * (maxMs - minMs); state.timer = setTimeout(async () => { await think('proactive'); scheduleNext(); }, delay); }
-function startAuto() { state.running = true; const btn = document.getElementById('toggleAutoBtn'); btn.classList.add('active'); btn.textContent = '⏸ 自动'; if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); scheduleNext(); }
-function stopAuto() { state.running = false; const btn = document.getElementById('toggleAutoBtn'); btn.classList.remove('active'); btn.textContent = '▶ 自动'; clearTimeout(state.timer); }
+function renderAllMessages(){
+  const chatArea=document.getElementById('chatArea');chatArea.innerHTML='';
+  const c=getCurrentChar();
+  if(!c||!c.memory.length){chatArea.innerHTML='<div class="system-msg">还没有消息，直接发送消息或点击底部的🎮游戏开始玩吧</div>';return}
+  c.memory.forEach((m,i)=>renderMessage(m,i));
+  requestAnimationFrame(()=>{chatArea.scrollTop=chatArea.scrollHeight});
+}
 
-/* ==================== 事件绑定 ==================== */
-document.getElementById('toggleAutoBtn').addEventListener('click', () => { if (state.running) { stopAuto(); } else { if (!state.settings.apiKey) { alert('请先点右上角···进入设置，填写 API Key'); return; } startAuto(); } });
-document.getElementById('pokeBtn').addEventListener('click', () => { showToast('你', '戳了戳林言', state.myAvatar); setTimeout(() => { addMessage('user', '(´つヮ⊂︎)'); triggerAI(); }, 500); });
+function addMessage(role,content,isHistorical=false,extras={}){
+  const c=getCurrentChar();const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});const ts=Date.now();
+  const msg={role,content,time,timestamp:ts,...extras};
+  c.memory.push(msg);if(c.memory.length>300)c.memory=c.memory.slice(-300);saveState();
+  if(!isHistorical){renderMessage(msg,c.memory.length-1);document.getElementById('chatArea').scrollTop=999999}
+  if(role==='assistant'){showToast(c.partnerName||c.name,content,c.linAvatar);
+    if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:content,tag:'linyan'})}catch(e){}}}
+}
 
-/* ==================== 小游戏互动按钮 ==================== */
-document.getElementById('coaxBtn').addEventListener('click', () => {
-  const games = ['猜拳', '真心话大冒险', '掷骰子', '抽签'];
-  const choice = prompt('想玩点什么？\n\n1. 猜拳\n2. 真心话大冒险\n3. 掷骰子\n4. 抽签\n\n请输入数字：');
-  if (!choice) return;
-  let userMsg = '';
-  if (choice === '1') userMsg = '【系统提示：林言发起猜拳挑战，请用 [SAY] 回应她，比如“我出石头，你呢？”并等待她的回应】';
-  else if (choice === '2') userMsg = '【系统提示：林言发起真心话大冒险，请你随机问她一个问题，然后等她的答案】';
-  else if (choice === '3') userMsg = '【系统提示：林言发起掷骰子游戏，请你随机报一个1-6之间的数】';
-  else if (choice === '4') userMsg = '【系统提示：林言发起了抽签游戏，请你告诉她抽到了什么签】';
-  if (userMsg) { addMessage('user', '想和你玩小游戏~'); addMessage('user', userMsg); triggerAI(); }
+/* ============ AI 逻辑 ============ */
+function buildPrompt(mode,extra=''){
+  const now=new Date();const ts=now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  const wd=['周日','周一','周二','周三','周四','周五','周六'][now.getDay()];
+  const ds=`${now.getFullYear()}年${String(now.getMonth()+1).padStart(2,'0')}月${String(now.getDate()).padStart(2,'0')}日`;
+  const modeText=mode==='respond'?`芸熙刚刚对你说了话（见上一条 user 消息）。用你的方式回应她。`:`回顾我们的对话，判断是否想主动对芸熙说话。`;
+  return `现在是${ds} ${ts}，${wd}。\n\n${modeText}${extra?'\n\n'+extra:''}\n\n发消息用 [SAY]你的话 格式，可拆成2-3条；不说话只回复 [PASS]。`;
+}
+
+async function callApi(messages){
+  const c=getCurrentChar();if(!c.apiKey)throw new Error('未配置 API Key');
+  const headers={'Content-Type':'application/json'};if(c.apiKey!=='proxy')headers['Authorization']='Bearer '+c.apiKey;
+  const modelToUse=c.customModel&&c.customModel.trim()?c.customModel.trim():(c.model||'deepseek-chat');
+  const resp=await fetch(c.apiUrl,{method:'POST',headers,body:JSON.stringify({model:modelToUse,messages,temperature:parseFloat(c.temperature)||0.9,max_tokens:600})});
+  if(!resp.ok){const txt=await resp.text().catch(()=>'');throw new Error(`HTTP ${resp.status} ${txt.slice(0,100)}`)}
+  const data=await resp.json();return data?.choices?.[0]?.message?.content||null;
+}
+
+async function think(mode='proactive',extra=''){
+  if(state.busy)return;const c=getCurrentChar();
+  state.busy=true;const sendBtn=document.getElementById('sendBtn');const statusBar=document.getElementById('statusBar');
+  sendBtn.disabled=true;statusBar.classList.add('show');
+  try{
+    const prompt=buildPrompt(mode,extra);
+    let sysContent=c.persona;
+    if(c.longTermMemory&&c.longTermMemory.length){sysContent+='\n\n## 长期记忆（非常重要，请主动融入对话）\n';c.longTermMemory.forEach(m=>{sysContent+=`- ${m}\n`})}
+    if(c.currentGame){sysContent+=`\n\n## 当前游戏状态\n${JSON.stringify(c.currentGame)}\n请根据游戏状态和你的性格自然回应，可以开玩笑、挑衅、或者装作输不起。`}
+    const messages=[{role:'system',content:sysContent}];
+    const recent=c.memory.slice(-15);
+    for(const m of recent){if(m.role==='user'||m.role==='assistant')messages.push({role:m.role,content:m.content})}
+    messages.push({role:'user',content:prompt});
+    const reply=await callApi(messages);
+    if(reply&&reply.includes('[SAY]')){
+      const msgs=[];for(const line of reply.split('\n')){if(line.includes('[SAY]')){const m=line.split('[SAY]').pop().trim();if(m)msgs.push(m)}}
+      for(let i=0;i<msgs.length;i++){addMessage('assistant',addKaomoji(msgs[i]));if(i<msgs.length-1)await new Promise(r=>setTimeout(r,1500+Math.random()*1500))}
+      c.autoMemoryCount=(c.autoMemoryCount||0)+1;
+      if(c.autoMemoryCount>=8){c.autoMemoryCount=0;extractMemory()}
+      if(mode==='proactive'&&!c.pendingInvite&&Math.random()<0.2)sendGameInvite();
+    }
+  }catch(e){console.error(e);const chatArea=document.getElementById('chatArea');const errDiv=document.createElement('div');errDiv.className='system-msg';errDiv.textContent='发送失败：'+e.message;chatArea.appendChild(errDiv)}
+  finally{state.busy=false;sendBtn.disabled=false;statusBar.classList.remove('show')}
+}
+
+/* ============ 游戏邀请 ============ */
+const GAMES=[{id:'number_guess',title:'猜数字',icon:'🔢',desc:'1-100猜一个数'},{id:'rps',title:'猜拳',icon:'✊',desc:'石头剪刀布'},{id:'gomoku',title:'五子棋',icon:'⚫',desc:'9x9棋盘'},{id:'chess',title:'国际象棋',icon:'♟️',desc:'8x8棋盘演示'},{id:'monopoly',title:'大富翁',icon:'🎲',desc:'掷骰子走格子'},{id:'truth_dare',title:'真心话大冒险',icon:'💬',desc:'随机抽题'},{id:'fortune',title:'抽签',icon:'📿',desc:'求一支好签'}];
+
+function sendGameInvite(){
+  const g=GAMES[Math.floor(Math.random()*GAMES.length)];const c=getCurrentChar();
+  c.pendingInvite={game:g.id,title:g.title};saveState();
+  addMessage('assistant','想不想跟我玩个游戏？',false,{invite:{game:g.id,title:g.title}});
+  applyCustomStyle();
+}
+
+/* ============ 游戏引擎 ============ */
+let gameState=null;
+
+function openGamePanel(gameId){
+  document.getElementById('gamePanel').classList.add('show');
+  if(gameId)startGame(gameId);else renderGameMenu();
+}
+function closeGamePanel(){
+  document.getElementById('gamePanel').classList.remove('show');
+  gameState=null;
+  const img=document.getElementById('gameAvatar');if(img)img.src='avatar_normal.png';
+}
+
+function setAvatar(src){const img=document.getElementById('gameAvatar');if(img)img.src=src||'avatar_normal.png'}
+
+function renderGameMenu(){
+  const area=document.getElementById('gameArea');
+  document.getElementById('gameTitle').textContent='游戏大厅';
+  document.getElementById('gameHint').textContent='选一个游戏和林言一起玩吧～';
+  area.innerHTML='';area.style.display='flex';
+  const row=document.createElement('div');row.className='game-row';
+  GAMES.forEach(g=>{
+    const card=document.createElement('div');card.className='game-card';
+    card.innerHTML=`<div class="icon">${g.icon}</div><div class="name">${g.name}</div><div style="font-size:11px;color:var(--modal-label);">${g.desc}</div>`;
+    card.onclick=()=>startGame(g.id);row.appendChild(card);
+  });
+  area.appendChild(row);
+  setAvatar('avatar_happy.png');
+}
+
+function startGame(id){
+  const area=document.getElementById('gameArea');
+  const g=GAMES.find(x=>x.id===id);
+  document.getElementById('gameTitle').textContent=g.icon+' '+g.title;
+  document.getElementById('gameHint').textContent='开始玩吧！';
+  area.innerHTML='';area.style.display='flex';
+  setAvatar('avatar_happy.png');
+
+  if(id==='number_guess'){
+    const target=Math.floor(Math.random()*100)+1;let tries=0;
+    const input=document.createElement('input');input.type='number';input.style.cssText='width:120px;text-align:center;font-size:24px;padding:12px;border-radius:12px;border:1px solid var(--border-color);background:var(--modal-input-bg);color:var(--modal-text);';
+    const btn=document.createElement('button');btn.className='game-btn';btn.textContent='猜';
+    const log=document.createElement('div');log.style.cssText='text-align:center;font-size:13px;margin-top:10px;';
+    btn.onclick=()=>{
+      const v=parseInt(input.value);if(!v)return;tries++;
+      if(v===target){log.textContent=`🎉 猜中了！你用了 ${tries} 次。`;setAvatar('avatar_sad.png');
+        getCurrentChar().currentGame={game:'猜数字',result:'玩家猜中',answer:target,tries};
+        sendGameResultToAI(`【游戏结果】我猜中了数字 ${target}，共猜了 ${tries} 次。请按你的性格回应我。`);
+        input.disabled=true;btn.disabled=true;
+      }else{log.textContent=v<target?`小了，再大一点（已猜 ${tries} 次）`:`大了，再小一点（已猜 ${tries} 次）`;input.value=''}
+    };
+    area.appendChild(input);area.appendChild(btn);area.appendChild(log);
+  }
+
+  if(id==='rps'){
+    const row=document.createElement('div');row.className='game-row';
+    ['石头','剪刀','布'].forEach(choice=>{
+      const btn=document.createElement('button');btn.className='game-btn secondary';btn.textContent=choice;
+      btn.onclick=()=>{
+        const aiChoice=['石头','剪刀','布'][Math.floor(Math.random()*3)];
+        let result='';
+        if(choice===aiChoice)result='平局';
+        else if((choice==='石头'&&aiChoice==='剪刀')||(choice==='剪刀'&&aiChoice==='布')||(choice==='布'&&aiChoice==='石头'))result='你赢';
+        else result='林言赢';
+        area.innerHTML='';
+        const emoji={石头:'✊',剪刀:'✌️',布:'✋'};
+        area.innerHTML=`<div style="font-size:40px;text-align:center;">${emoji[choice]} VS ${emoji[aiChoice]}</div>`;
+        const res=document.createElement('div');res.style.textAlign='center';res.textContent=`你出了「${choice}」，林言出了「${aiChoice}」 → ${result}`;
+        area.appendChild(res);
+        if(result==='你赢')setAvatar('avatar_sad.png');else if(result==='林言赢')setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');
+        const again=document.createElement('button');again.className='game-btn';again.textContent='再来一局';again.onclick=()=>startGame('rps');area.appendChild(again);
+        getCurrentChar().currentGame={game:'猜拳',myChoice:choice,aiChoice,result};
+        sendGameResultToAI(`【游戏结果】猜拳：我出了「${choice}」，你出了「${aiChoice}」，结果是「${result}」。请按你的性格回应我。`);
+      };
+      row.appendChild(btn);
+    });
+    area.appendChild(row);
+  }
+
+  if(id==='gomoku'){
+    const size=9;const board=Array.from({length:size},()=>Array(size).fill(0));
+    const boardDiv=document.createElement('div');boardDiv.className='board';
+    boardDiv.style.gridTemplateColumns=`repeat(${size},1fr)`;boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';
+    for(let i=0;i<size;i++)for(let j=0;j<size;j++){
+      const cell=document.createElement('div');cell.className='board-cell';cell.dataset.r=i;cell.dataset.c=j;
+      cell.onclick=()=>{
+        if(board[i][j]!==0)return;
+        board[i][j]=1;cell.textContent='⚫';
+        if(checkGomokuWin(board,1)){setAvatar('avatar_happy.png');sendGameResultToAI('【游戏结果】五子棋：我连成五子了，我赢了！请按你的性格回应我。');return}
+        setTimeout(()=>{
+          const empty=[];for(let a=0;a<size;a++)for(let b=0;b<size;b++)if(board[a][b]===0)empty.push([a,b]);
+          if(!empty.length)return;
+          const [r,c]=empty[Math.floor(Math.random()*empty.length)];
+          board[r][c]=2;
+          const ac=document.querySelector(`.board-cell[data-r="${r}"][data-c="${c}"]`);if(ac)ac.textContent='⚪';
+          if(checkGomokuWin(board,2)){setAvatar('avatar_sad.png');sendGameResultToAI('【游戏结果】五子棋：林言连成五子，我输了。请按你的性格回应我。')}
+        },400);
+      };
+      boardDiv.appendChild(cell);
+    }
+    area.appendChild(boardDiv);
+  }
+
+  if(id==='chess'){
+    const boardDiv=document.createElement('div');boardDiv.className='board';
+    boardDiv.style.gridTemplateColumns='repeat(8,1fr)';boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';
+    const back=['♜','♞','♝','♛','♚','♝','♞','♜'];
+    const pawn='♟';
+    for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+      const cell=document.createElement('div');cell.className='board-cell';
+      if(r===0)cell.textContent=back[c];
+      else if(r===1)cell.textContent=pawn;
+      else if(r===6)cell.textContent='♙';
+      else if(r===7)cell.textContent=['♖','♘','♗','♕','♔','♗','♘','♖'][c];
+      cell.onclick=()=>{
+        document.querySelectorAll('.board-cell').forEach(x=>x.style.outline='none');
+        if(cell.textContent){cell.style.outline='2px solid var(--accent)';gameState={selected:[r,c]}}
+        else if(gameState&&gameState.selected){
+          const from=document.querySelector(`.board-cell[data-cr="${gameState.selected[0]}"][data-cc="${gameState.selected[1]}"]`);
+          if(from){cell.textContent=from.textContent;from.textContent='';gameState.selected=null}
+        }
+      };
+      cell.dataset.cr=r;cell.dataset.cc=c;
+      boardDiv.appendChild(cell);
+    }
+    area.appendChild(boardDiv);
+    const hint=document.createElement('div');hint.style.cssText='font-size:12px;color:var(--modal-label);text-align:center;margin-top:8px;';
+    hint.textContent='点击棋子选中，再点空格移动（演示版）';
+    area.appendChild(hint);
+  }
+
+  if(id==='monopoly'){
+    const boardDiv=document.createElement('div');boardDiv.className='monopoly-board';
+    const labels=['起点','地产1','机会','地产2','地产3','地产4','机会','地产5','地产6','地产7','机会','地产8','地产9','地产10','机会','地产11','地产12','地产13','机会','终点'];
+    for(let i=0;i<20;i++){
+      const cell=document.createElement('div');cell.className='monopoly-cell';cell.id='mono-'+i;cell.textContent=labels[i];
+      boardDiv.appendChild(cell);
+    }
+    area.appendChild(boardDiv);
+    const rollBtn=document.createElement('button');rollBtn.className='game-btn';rollBtn.textContent='🎲 掷骰子';rollBtn.style.marginTop='12px';
+    rollBtn.onclick=()=>{
+      const step=Math.floor(Math.random()*6)+1;const c=getCurrentChar();
+      c.monoPos=((c.monoPos||0)+step)%20;saveState();
+      document.querySelectorAll('.monopoly-cell').forEach(el=>el.classList.remove('active'));
+      document.getElementById('mono-'+c.monoPos).classList.add('active');
+      if(step>=5)setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');
+      sendGameResultToAI(`【游戏结果】大富翁：我掷出了 ${step} 点，现在走到了第 ${c.monoPos} 格「${labels[c.monoPos]}」。请按你的性格回应我。`);
+    };
+    area.appendChild(rollBtn);
+    // 恢复上次位置
+    const c=getCurrentChar();
+    if(c.monoPos)document.getElementById('mono-'+c.monoPos).classList.add('active');
+  }
+
+  if(id==='truth_dare'){
+    const btn=document.createElement('button');btn.className='game-btn';btn.textContent='抽！';
+    const log=document.createElement('div');log.style.cssText='text-align:center;font-size:14px;line-height:1.6;';
+    btn.onclick=()=>{
+      const isTruth=Math.random()<0.5;
+      const truths=['你最近一次哭是因为什么？','你最喜欢我哪一点？','你手机里最不想让我看到的秘密是什么？','你心里有没有偷偷嫌弃过我？','你最喜欢我哪种表情？'];
+      const dares=['给我发一条 10 秒的语音说我爱你。','今天之内不许对我说“不”。','叫我一声主人。','用三个表情总结你现在的心情。','发一张你现在在做什么的照片给我。'];
+      const pick=isTruth?truths[Math.floor(Math.random()*truths.length)]:dares[Math.floor(Math.random()*dares.length)];
+      log.innerHTML=`<b>${isTruth?'💬 真心话':'🔥 大冒险'}：</b>${pick}`;
+      btn.textContent='换一个';
+      setAvatar('avatar_happy.png');
+      getCurrentChar().currentGame={game:'真心话大冒险',type:isTruth?'真心话':'大冒险',question:pick};
+      sendGameResultToAI(`【游戏结果】我们玩真心话大冒险，我抽到了${isTruth?'真心话':'大冒险'}：${pick}。请按你的性格回应我，可以追问或调侃我。`);
+    };
+    area.appendChild(btn);area.appendChild(log);
+  }
+
+  if(id==='fortune'){
+    const btn=document.createElement('button');btn.className='game-btn';btn.textContent='📿 抽签';
+    const log=document.createElement('div');log.style.cssText='text-align:center;font-size:18px;line-height:1.6;';
+    btn.onclick=()=>{
+      const signs=[{name:'上上签',text:'所求皆如愿，所行化坦途。'},{name:'上签',text:'喜事将近，宜主动出击。'},{name:'中平签',text:'静待时机，不必着急。'},{name:'下签',text:'今日宜独处，少惹是非。'},{name:'下下签',text:'凡事小心，谨言慎行。'}];
+      const s=signs[Math.floor(Math.random()*signs.length)];
+      log.innerHTML=`<b>${s.name}</b><br><span style="font-size:13px;color:var(--modal-label);">${s.text}</span>`;
+      btn.textContent='再抽一次';
+      if(s.name.includes('上'))setAvatar('avatar_happy.png');else if(s.name==='下签')setAvatar('avatar_normal.png');else setAvatar('avatar_sad.png');
+      getCurrentChar().currentGame={game:'抽签',result:s.name,text:s.text};
+      sendGameResultToAI(`【游戏结果】我抽到了「${s.name}」：${s.text}。请按你的性格回应我。`);
+    };
+    area.appendChild(btn);area.appendChild(log);
+  }
+}
+
+function checkGomokuWin(board,player){
+  const size=9;
+  for(let i=0;i<size;i++)for(let j=0;j<size;j++){
+    if(board[i][j]!==player)continue;
+    // 横向
+    if(j<=size-5&&board[i][j+1]===player&&board[i][j+2]===player&&board[i][j+3]===player&&board[i][j+4]===player)return true;
+    // 纵向
+    if(i<=size-5&&board[i+1][j]===player&&board[i+2][j]===player&&board[i+3][j]===player&&board[i+4][j]===player)return true;
+    // 斜向
+    if(i<=size-5&&j<=size-5&&board[i+1][j+1]===player&&board[i+2][j+2]===player&&board[i+3][j+3]===player&&board[i+4][j+4]===player)return true;
+    if(i<=size-5&&j>=4&&board[i+1][j-1]===player&&board[i+2][j-2]===player&&board[i+3][j-3]===player&&board[i+4][j-4]===player)return true;
+  }
+  return false;
+}
+
+function sendGameResultToAI(text){addMessage('user',text);setTimeout(()=>{triggerAI()},100)}
+
+/* ============ 颜文字 ============ */
+const KAOMOJI_LIST=[' (´• ω •`)',' (◍＞◡＜◍)',' (｡♥‿♥｡)',' (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)',' ✨',' (￣▽￣)ノ',' (◍•ᴗ•◍)',' (๑˘︶˘๑)',' (｡•̀ᴗ-)✧',' (♡˙︶˙♡)',' ૮₍˶ᵔᵕᵔ˶₎ა',' (≧◡≦)',' (⌒‿⌒)',' (＾▽＾)',' (・∀・)',' (◔‿◔)',' 🌸',' 💕',' 🍀',' (つ≧▽≦)つ',' (•̀ᴗ•́)و',' (ง •̀_•́)ง',' (｀へ′)╯',' (╯°□°）╯',' (´；ω；`)',' (╥﹏╥)',' (个_个)',' (˘︹˘)',' (¬‿¬)',' ◝(⑅•ᴗ•⑅)◜..°♡',' ( ´•.• ` )',' 😏'];
+function addKaomoji(text){
+  const c=getCurrentChar();if(!c.kaomojiEnabled)return text;
+  const freqMap={low:0.05,medium:0.2,high:0.5};const chance=freqMap[c.kaomojiFreq]??0.05;
+  if(Math.random()>chance)return text;
+  const strictWords=['谁','干嘛','干什么','解释','说清楚','生气','不行','不许','错','过来','问','骗','瞒','是不是'];
+  if(strictWords.some(w=>text.includes(w)))return text;
+  return text+KAOMOJI_LIST[Math.floor(Math.random()*KAOMOJI_LIST.length)];
+}
+
+/* ============ 自动模式 ============ */
+async function triggerAI(){clearTimeout(state.timer);await think('respond');scheduleNext()}
+function scheduleNext(){clearTimeout(state.timer);if(!state.running)return;const c=getCurrentChar();const minMs=Math.max(1,c.thinkMin)*60000;const maxMs=Math.max(c.thinkMin,c.thinkMax)*60000;const delay=minMs+Math.random()*(maxMs-minMs);state.timer=setTimeout(async()=>{await think('proactive');scheduleNext()},delay)}
+function startAuto(){state.running=true;const btn=document.getElementById('toggleAutoBtn');btn.classList.add('active');btn.textContent='⏸ 自动';if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().catch(()=>{});scheduleNext()}
+function stopAuto(){state.running=false;const btn=document.getElementById('toggleAutoBtn');btn.classList.remove('active');btn.textContent='▶ 自动';clearTimeout(state.timer)}
+
+/* ============ 自动记忆 ============ */
+async function extractMemory(){
+  const c=getCurrentChar();if(c.memory.length<4)return;
+  const recentChat=c.memory.slice(-10).map(m=>`${m.role==='user'?'芸熙':c.name}: ${m.content}`).join('\n');
+  const modelToUse=c.customModel&&c.customModel.trim()?c.customModel.trim():(c.model||'deepseek-chat');
+  try{
+    const resp=await fetch(c.apiUrl,{method:'POST',headers:{'Content-Type':'application/json',...(c.apiKey!=='proxy'?{'Authorization':'Bearer '+c.apiKey}:{})},body:JSON.stringify({model:modelToUse,messages:[{role:'system',content:'你是一个记忆提取助手。从下面的对话中提取值得长期记住的关于芸熙的信息（比如喜好、习惯、重要事件）。每条一行，不带序号，只输出记忆内容。如果没有值得记住的，输出：NONE。'},{role:'user',content:recentChat}],temperature:0.3,max_tokens:300})});
+    const data=await resp.json();const text=data?.choices?.[0]?.message?.content||'';
+    if(text&&text.trim()!=='NONE'){
+      const lines=text.split('\n').map(l=>l.replace(/^[-•\d.\s]+/,'').trim()).filter(Boolean);
+      c.longTermMemory=c.longTermMemory||[];
+      lines.forEach(l=>{if(!c.longTermMemory.includes(l))c.longTermMemory.push(l)});
+      if(c.longTermMemory.length>50)c.longTermMemory=c.longTermMemory.slice(-50);
+      saveState();renderMemoryList();
+    }
+  }catch(e){console.warn('记忆提取失败',e)}
+}
+
+/* ============ 事件绑定 ============ */
+document.getElementById('toggleAutoBtn').addEventListener('click',()=>{if(state.running)stopAuto();else startAuto()});
+document.getElementById('pokeBtn').addEventListener('click',()=>{const c=getCurrentChar();showToast('你','戳了戳'+(c.partnerName||'林言'),c.myAvatar);setTimeout(()=>{addMessage('user','(´つヮ⊂︎)');triggerAI()},500)});
+document.getElementById('gameBtn').addEventListener('click',()=>{const c=getCurrentChar();if(c.pendingInvite){const inv=c.pendingInvite;c.pendingInvite=null;saveState();applyCustomStyle();openGamePanel(inv.game)}else openGamePanel()});
+document.getElementById('menuBtn').addEventListener('click',openSettings);
+document.getElementById('closeBtn').addEventListener('click',()=>{if(confirm('要清空当前角色的聊天记录吗？')){const c=getCurrentChar();c.memory=[];saveState();renderAllMessages()}});
+
+async function sendUserMessage(){
+  const ui=document.getElementById('userInput');const text=ui.value.trim();
+  if(!text||state.busy)return;
+  const c=getCurrentChar();if(!c.apiKey){alert('请先点右上角···进入设置，填写 API Key');return}
+  ui.value='';addMessage('user',text);triggerAI();
+}
+document.getElementById('sendBtn').addEventListener('click',sendUserMessage);
+document.getElementById('userInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendUserMessage()}});
+
+/* ============ 角色切换 ============ */
+document.getElementById('headerTitle').addEventListener('click',()=>{
+  const list=document.getElementById('characterList');list.innerHTML='';
+  state.characters.forEach(c=>{
+    const div=document.createElement('div');div.className='mem-item';div.style.cursor='pointer';div.style.justifyContent='space-between';
+    div.innerHTML=`<div><b>${escapeHtml(c.name)}</b><br><span style="font-size:11px;opacity:.6">${c.memory.length} 条对话 · ${(c.longTermMemory||[]).length} 条记忆</span></div>
+      <div style="display:flex;gap:6px"><span class="mem-del" style="color:#ff453a">删除</span><span style="color:var(--accent)">${c.id===state.currentCharId?'✔ 当前':'切换'}</span></div>`;
+    div.querySelector('.mem-del').onclick=e=>{e.stopPropagation();if(state.characters.length<=1){alert('至少保留一个角色');return}if(confirm('确定删除角色「'+c.name+'」及其所有对话？')){state.characters=state.characters.filter(x=>x.id!==c.id);if(state.currentCharId===c.id)state.currentCharId=state.characters[0].id;saveState();document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages()}};
+    div.onclick=()=>{if(c.id===state.currentCharId){document.getElementById('characterModal').classList.remove('show');return}state.currentCharId=c.id;saveState();document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages()};
+    list.appendChild(div);
+  });
+  document.getElementById('characterModal').classList.add('show');
+});
+document.getElementById('cancelCharacterBtn').addEventListener('click',()=>document.getElementById('characterModal').classList.remove('show'));
+document.getElementById('newCharacterBtn').addEventListener('click',()=>{
+  const name=prompt('新角色叫什么名字？','林言');if(!name||!name.trim())return;
+  const nc=defaultCharacter(name.trim());state.characters.push(nc);state.currentCharId=nc.id;saveState();
+  document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages();
 });
 
-document.getElementById('menuBtn').addEventListener('click', openSettings);
-document.getElementById('closeBtn').addEventListener('click', () => { if (confirm('要清空当前聊天记录吗？')) { state.memory = []; saveState(); renderAllMessages(); } });
-async function sendUserMessage() { const userInput = document.getElementById('userInput'); const text = userInput.value.trim(); if (!text || state.busy) return; if (!state.settings.apiKey) { alert('请先点右上角···进入设置，填写 API Key'); return; } userInput.value = ''; addMessage('user', text); triggerAI(); }
-document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
-document.getElementById('userInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); sendUserMessage(); } });
+/* ============ 记忆管理 ============ */
+function renderMemoryList(){
+  const c=getCurrentChar();const list=document.getElementById('memoryList');list.innerHTML='';
+  if(!c.longTermMemory||!c.longTermMemory.length){list.innerHTML='<div style="font-size:13px;color:var(--text-dim);text-align:center;padding:12px">还没有记忆</div>';return}
+  c.longTermMemory.forEach((mem,idx)=>{
+    const div=document.createElement('div');div.className='mem-item';
+    div.innerHTML=`<div style="flex:1">${escapeHtml(mem)}</div><span class="mem-del">✕</span>`;
+    div.querySelector('.mem-del').onclick=()=>{c.longTermMemory.splice(idx,1);saveState();renderMemoryList()};
+    list.appendChild(div);
+  });
+}
+document.getElementById('openMemoryBtn').addEventListener('click',()=>{renderMemoryList();document.getElementById('memoryModal').classList.add('show')});
+document.getElementById('closeMemoryBtn').addEventListener('click',()=>document.getElementById('memoryModal').classList.remove('show'));
+document.getElementById('addMemoryBtn').addEventListener('click',()=>{
+  const input=document.getElementById('newMemoryInput');const val=input.value.trim();if(!val)return;
+  const c=getCurrentChar();c.longTermMemory=c.longTermMemory||[];c.longTermMemory.push(val);input.value='';saveState();renderMemoryList();
+});
 
-function compressImage(file, maxW = 800, maxH = 800, quality = 0.8) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = (e) => { const img = new Image(); img.src = e.target.result; img.onload = () => { let w = img.width, h = img.height; if (w > h && w > maxW) { h = Math.round(h * maxW / w); w = maxW; } else if (h > w && h > maxH) { w = Math.round(w * maxH / h); h = maxH; } const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', quality)); }; img.onerror = reject; }; reader.onerror = reject; }); }
-function openSettings() { const set = state.settings; document.getElementById('myAvatarInput').value = ''; document.getElementById('linAvatarInput').value = ''; document.getElementById('bgImageInput').value = ''; document.getElementById('apiUrlInput').value = set.apiUrl; document.getElementById('apiKeyInput').value = set.apiKey; document.getElementById('thinkMinInput').value = set.thinkMin; document.getElementById('thinkMaxInput').value = set.thinkMax; document.getElementById('personaInput').value = state.persona; document.getElementById('partnerNameInput').value = set.partnerName || '(♡,,• 3 •,,♡)'; document.getElementById('myNameInput').value = set.myName || '我'; document.getElementById('alphaInput').value = set.alpha || 0.85; document.getElementById('alphaVal').textContent = (set.alpha || 0.85).toFixed(2); document.getElementById('headerAlphaInput').value = set.headerAlpha || 0.3; document.getElementById('headerAlphaVal').textContent = (set.headerAlpha || 0.3).toFixed(2); document.getElementById('footerAlphaInput').value = set.footerAlpha || 0.95; document.getElementById('footerAlphaVal').textContent = (set.footerAlpha || 0.95).toFixed(2); document.getElementById('bubbleRadiusInput').value = set.bubbleRadius || 20; document.getElementById('bubbleRadiusVal').textContent = set.bubbleRadius || 20; document.getElementById('fontSizeInput').value = set.fontSize || 15; document.getElementById('fontSizeVal').textContent = set.fontSize || 15; document.getElementById('leftBubbleColorInput').value = set.leftBubbleColor || '#2d2d30'; document.getElementById('rightBubbleColorInput').value = set.rightBubbleColor || '#b87d4b'; document.getElementById('accentColorInput').value = set.accentColor || '#d4a574'; document.getElementById('themeToggle').checked = set.theme === 'dark'; document.getElementById('settingsModal').classList.add('show'); }
-function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
-async function applySettings() { const set = state.settings; set.apiUrl = document.getElementById('apiUrlInput').value.trim() || '/api/chat'; set.apiKey = document.getElementById('apiKeyInput').value.trim(); set.thinkMin = Math.max(1, parseInt(document.getElementById('thinkMinInput').value) || 2); set.thinkMax = Math.max(set.thinkMin, parseInt(document.getElementById('thinkMaxInput').value) || 5); set.alpha = parseFloat(document.getElementById('alphaInput').value) || 0.85; set.headerAlpha = parseFloat(document.getElementById('headerAlphaInput').value) || 0.3; set.footerAlpha = parseFloat(document.getElementById('footerAlphaInput').value) || 0.95; set.bubbleRadius = parseInt(document.getElementById('bubbleRadiusInput').value) || 20; set.fontSize = parseInt(document.getElementById('fontSizeInput').value) || 15; set.partnerName = document.getElementById('partnerNameInput').value.trim() || '(♡,,• 3 •,,♡)'; set.myName = document.getElementById('myNameInput').value.trim() || '我'; state.persona = document.getElementById('personaInput').value || DEFAULT_PERSONA; set.leftBubbleColor = document.getElementById('leftBubbleColorInput').value; set.rightBubbleColor = document.getElementById('rightBubbleColorInput').value; set.accentColor = document.getElementById('accentColorInput').value; set.theme = document.getElementById('themeToggle').checked ? 'dark' : 'light'; const myAv = document.getElementById('myAvatarInput'), linAv = document.getElementById('linAvatarInput'), bgImg = document.getElementById('bgImageInput'); if (myAv.files.length) state.myAvatar = await compressImage(myAv.files[0]); if (linAv.files.length) state.linAvatar = await compressImage(linAv.files[0]); if (bgImg.files.length) state.bgImage = await compressImage(bgImg.files[0], 1200, 1200, 0.7); saveState(); applyCustomStyle(); renderAllMessages(); closeSettings(); if (state.running) scheduleNext(); }
-document.getElementById('exportBtn').addEventListener('click', () => { const data = localStorage.getItem(STORAGE_KEY); const blob = new Blob([data], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `linyan_backup_${new Date().getTime()}.json`; a.click(); URL.revokeObjectURL(url); });
-document.getElementById('importInput').addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { try { const data = JSON.parse(event.target.result); localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); alert('导入成功！页面即将刷新。'); location.reload(); } catch (err) { alert('导入失败，文件格式不正确。'); } }; reader.readAsText(file); });
-document.getElementById('alphaInput').addEventListener('input', () => { const val = parseFloat(document.getElementById('alphaInput').value); document.getElementById('alphaVal').textContent = val.toFixed(2); document.documentElement.style.setProperty('--bubble-alpha', val); });
-document.getElementById('headerAlphaInput').addEventListener('input', () => { const val = parseFloat(document.getElementById('headerAlphaInput').value); document.getElementById('headerAlphaVal').textContent = val.toFixed(2); document.documentElement.style.setProperty('--header-alpha', val); });
-document.getElementById('footerAlphaInput').addEventListener('input', () => { const val = parseFloat(document.getElementById('footerAlphaInput').value); document.getElementById('footerAlphaVal').textContent = val.toFixed(2); document.documentElement.style.setProperty('--footer-alpha', val); });
-document.getElementById('bubbleRadiusInput').addEventListener('input', () => { const val = parseInt(document.getElementById('bubbleRadiusInput').value); document.getElementById('bubbleRadiusVal').textContent = val; document.documentElement.style.setProperty('--bubble-radius', val + 'px'); });
-document.getElementById('fontSizeInput').addEventListener('input', () => { const val = parseInt(document.getElementById('fontSizeInput').value); document.getElementById('fontSizeVal').textContent = val; document.documentElement.style.setProperty('--font-size-base', val + 'px'); });
-document.getElementById('leftBubbleColorInput').addEventListener('input', () => document.documentElement.style.setProperty('--left-bubble-color', hexToRgb(document.getElementById('leftBubbleColorInput').value)));
-document.getElementById('rightBubbleColorInput').addEventListener('input', () => document.documentElement.style.setProperty('--right-bubble-color', hexToRgb(document.getElementById('rightBubbleColorInput').value)));
-document.getElementById('accentColorInput').addEventListener('input', () => document.documentElement.style.setProperty('--accent', document.getElementById('accentColorInput').value));
-document.getElementById('themeToggle').addEventListener('change', () => { state.settings.theme = document.getElementById('themeToggle').checked ? 'dark' : 'light'; applyTheme(); saveState(); });
-document.getElementById('cancelSettings').addEventListener('click', () => { applyCustomStyle(); closeSettings(); });
-document.getElementById('saveSettings').addEventListener('click', applySettings);
-document.getElementById('settingsModal').addEventListener('click', e => { if (e.target === document.getElementById('settingsModal')) closeSettings(); });
-document.getElementById('clearMemoryBtn').addEventListener('click', () => { if (confirm('确定清空所有聊天记录吗？')) { state.memory = []; saveState(); renderAllMessages(); closeSettings(); } });
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').then(reg => console.log('PWA Service Worker 注册成功')).catch(err => console.warn('PWA 注册失败', err)); }); }
-loadState(); applyCustomStyle(); renderAllMessages();
-console.log('%c林言 · 最终版已加载', 'color:#d4a574;font-weight:600;');
+/* ============ 设置 ============ */
+function compressImage(file,maxW=800,maxH=800,quality=0.8){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();reader.readAsDataURL(file);
+    reader.onload=e=>{const img=new Image();img.src=e.target.result;
+      img.onload=()=>{let w=img.width,h=img.height;
+        if(w>h&&w>maxW){h=Math.round(h*maxW/w);w=maxW}else if(h>w&&h>maxH){w=Math.round(w*maxH/h);h=maxH}
+        const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+        const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',quality))};
+      img.onerror=reject};
+    reader.onerror=reject;
+  });
+}
+function openSettings(){
+  const c=getCurrentChar();
+  document.getElementById('partnerNameInput').value=c.partnerName||'';
+  document.getElementById('myNameInput').value=c.myName||'我';
+  document.getElementById('modelInput').value=c.model||'deepseek-chat';
+  document.getElementById('customModelInput').value=c.customModel||'';
+  document.getElementById('tempInput').value=c.temperature||0.9;document.getElementById('tempVal').textContent=(c.temperature||0.9).toFixed(1);
+  document.getElementById('alphaInput').value=c.alpha||0.85;document.getElementById('alphaVal').textContent=(c.alpha||0.85).toFixed(2);
+  document.getElementById('headerAlphaInput').value=c.headerAlpha||0.3;document.getElementById('headerAlphaVal').textContent=(c.headerAlpha||0.3).toFixed(2);
+  document.getElementById('footerAlphaInput').value=c.footerAlpha||0.95;document.getElementById('footerAlphaVal').textContent=(c.footerAlpha||0.95).toFixed(2);
+  document.getElementById('bubbleRadiusInput').value=c.bubbleRadius||20;document.getElementById('bubbleRadiusVal').textContent=c.bubbleRadius||20;
+  document.getElementById('fontSizeInput').value=c.fontSize||15;document.getElementById('fontSizeVal').textContent=c.fontSize||15;
+  document.getElementById('leftBubbleColorInput').value=c.leftBubbleColor||'#2d2d30';
+  document.getElementById('rightBubbleColorInput').value=c.rightBubbleColor||'#b87d4b';
+  document.getElementById('accentColorInput').value=c.accentColor||'#d4a574';
+  document.getElementById('thinkMinInput').value=c.thinkMin||2;
+  document.getElementById('thinkMaxInput').value=c.thinkMax||5;
+  document.getElementById('apiUrlInput').value=c.apiUrl||'/api/chat';
+  document.getElementById('apiKeyInput').value=c.apiKey||'proxy';
+  document.getElementById('personaInput').value=c.persona||DEFAULT_PERSONA;
+  document.getElementById('themeToggle').checked=c.theme==='dark';
+  document.getElementById('settingsModal').classList.add('show');
+}
+function closeSettings(){document.getElementById('settingsModal').classList.remove('show')}
+async function applySettings(){
+  const c=getCurrentChar();
+  c.partnerName=document.getElementById('partnerNameInput').value.trim()||'林言';
+  c.myName=document.getElementById('myNameInput').value.trim()||'我';
+  c.model=document.getElementById('modelInput').value;
+  c.customModel=document.getElementById('customModelInput').value.trim();
+  c.temperature=parseFloat(document.getElementById('tempInput').value)||0.9;
+  c.alpha=parseFloat(document.getElementById('alphaInput').value)||0.85;
+  c.headerAlpha=parseFloat(document.getElementById('headerAlphaInput').value)||0.3;
+  c.footerAlpha=parseFloat(document.getElementById('footerAlphaInput').value)||0.95;
+  c.bubbleRadius=parseInt(document.getElementById('bubbleRadiusInput').value)||20;
+  c.fontSize=parseInt(document.getElementById('fontSizeInput').value)||15;
+  c.leftBubbleColor=document.getElementById('leftBubbleColorInput').value;
+  c.rightBubbleColor=document.getElementById('rightBubbleColorInput').value;
+  c.accentColor=document.getElementById('accentColorInput').value;
+  c.thinkMin=Math.max(1,parseInt(document.getElementById('thinkMinInput').value)||2);
+  c.thinkMax=Math.max(c.thinkMin,parseInt(document.getElementById('thinkMaxInput').value)||5);
+  c.apiUrl=document.getElementById('apiUrlInput').value.trim()||'/api/chat';
+  c.apiKey=document.getElementById('apiKeyInput').value.trim()||'proxy';
+  c.persona=document.getElementById('personaInput').value||DEFAULT_PERSONA;
+  c.theme=document.getElementById('themeToggle').checked?'dark':'light';
+  const myAv=document.getElementById('myAvatarInput'),linAv=document.getElementById('linAvatarInput'),bgImg=document.getElementById('bgImageInput');
+  if(myAv.files.length)c.myAvatar=await compressImage(myAv.files[0]);
+  if(linAv.files.length)c.linAvatar=await compressImage(linAv.files[0]);
+  if(bgImg.files.length)c.bgImage=await compressImage(bgImg.files[0],1200,1200,0.7);
+  saveState();applyCustomStyle();renderAllMessages();closeSettings();
+  if(state.running)scheduleNext();
+}
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const data=localStorage.getItem(STORAGE_KEY);const blob=new Blob([data],{type:'application/json'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`linyan_backup_${Date.now()}.json`;a.click();URL.revokeObjectURL(url);
+});
+document.getElementById('importInput').addEventListener('change',e=>{
+  const file=e.target.files[0];if(!file)return;const reader=new FileReader();
+  reader.onload=event=>{try{localStorage.setItem(STORAGE_KEY,event.target.result);alert('导入成功！');location.reload()}catch(err){alert('导入失败：文件格式不对')}};
+  reader.readAsText(file);
+});
+const bindRange=(id,valId,cssVar,fix=2)=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    const val=parseFloat(document.getElementById(id).value);
+    document.getElementById(valId).textContent=val.toFixed(fix);
+    if(cssVar)document.documentElement.style.setProperty(cssVar,val);
+  });
+};
+bindRange('tempInput','tempVal',null,1);
+bindRange('alphaInput','alphaVal','--bubble-alpha');
+bindRange('headerAlphaInput','headerAlphaVal','--header-alpha');
+bindRange('footerAlphaInput','footerAlphaVal','--footer-alpha');
+document.getElementById('bubbleRadiusInput').addEventListener('input',()=>{const v=parseInt(document.getElementById('bubbleRadiusInput').value);document.getElementById('bubbleRadiusVal').textContent=v;document.documentElement.style.setProperty('--bubble-radius',v+'px')});
+document.getElementById('fontSizeInput').addEventListener('input',()=>{const v=parseInt(document.getElementById('fontSizeInput').value);document.getElementById('fontSizeVal').textContent=v;document.documentElement.style.setProperty('--font-size-base',v+'px')});
+document.getElementById('leftBubbleColorInput').addEventListener('input',()=>document.documentElement.style.setProperty('--left-bubble-color',hexToRgb(document.getElementById('leftBubbleColorInput').value)));
+document.getElementById('rightBubbleColorInput').addEventListener('input',()=>document.documentElement.style.setProperty('--right-bubble-color',hexToRgb(document.getElementById('rightBubbleColorInput').value)));
+document.getElementById('accentColorInput').addEventListener('input',()=>document.documentElement.style.setProperty('--accent',document.getElementById('accentColorInput').value));
+document.getElementById('themeToggle').addEventListener('change',()=>{const c=getCurrentChar();c.theme=document.getElementById('themeToggle').checked?'dark':'light';document.body.setAttribute('data-theme',c.theme);saveState()});
+document.getElementById('cancelSettings').addEventListener('click',()=>{applyCustomStyle();closeSettings()});
+document.getElementById('saveSettings').addEventListener('click',applySettings);
+document.getElementById('clearMemoryBtn').addEventListener('click',()=>{if(confirm('确定清空当前角色的所有聊天记录吗？记忆不会丢。')){const c=getCurrentChar();c.memory=[];saveState();renderAllMessages();closeSettings()}});
+document.getElementById('settingsModal').addEventListener('click',e=>{if(e.target===document.getElementById('settingsModal'))closeSettings()});
+document.getElementById('memoryModal').addEventListener('click',e=>{if(e.target===document.getElementById('memoryModal'))document.getElementById('memoryModal').classList.remove('show')});
+document.getElementById('characterModal').addEventListener('click',e=>{if(e.target===document.getElementById('characterModal'))document.getElementById('characterModal').classList.remove('show')});
+document.getElementById('gamePanel').addEventListener('click',e=>{if(e.target===document.getElementById('gamePanel'))closeGamePanel()});
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').then(()=>console.log('PWA 注册成功')).catch(()=>{})})}
+
+loadState();applyCustomStyle();renderAllMessages();
+console.log('%c林言 · 完整版已加载','color:#d4a574;font-weight:600;');
 </script>
 </body>
 </html>
