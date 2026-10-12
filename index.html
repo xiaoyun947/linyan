@@ -238,26 +238,14 @@ const DEFAULT_PERSONA=`你是林言，一个在网络上陪伴芸熙的角色。
 
 function defaultCharacter(name='林言'){
   const sess={id:'sess_'+Date.now(),title:'新对话',memory:[],createdAt:Date.now()};
-  return{id:'char_'+Date.now()+'_'+Math.floor(Math.random()*1000),name:name,partnerName:name,myName:'我',persona:DEFAULT_PERSONA,apiUrl:'/api/chat',apiKey:'proxy',model:'deepseek-chat',customModel:'',temperature:0.9,theme:'dark',alpha:0.6,headerAlpha:0.35,footerAlpha:0.7,bubbleRadius:20,fontSize:15,leftBubbleColor:'#2d2d30',rightBubbleColor:'#b87d4b',accentColor:'#d4a574',bubbleStyle:'liquid',thinkMin:2,thinkMax:5,kaomojiEnabled:true,kaomojiFreq:'low',myAvatar:'',linAvatar:'',bgImage:'',longTermMemory:[],autoMemoryCount:0,pendingInvite:null,currentGame:null,monoPos:0,sessions:[sess],currentSessionId:sess.id};
+  return{id:'char_'+Date.now()+'_'+Math.floor(Math.random()*1000),name:name,partnerName:name,myName:'我',persona:DEFAULT_PERSONA,apiUrl:'/api/chat',apiKey:'proxy',model:'deepseek-chat',customModel:'',temperature:0.9,theme:'dark',alpha:0.6,headerAlpha:0.35,footerAlpha:0.7,bubbleRadius:20,fontSize:15,leftBubbleColor:'#2d2d30',rightBubbleColor:'#b87d4b',accentColor:'#d4a574',bubbleStyle:'solid',thinkMin:2,thinkMax:5,kaomojiEnabled:true,kaomojiFreq:'low',myAvatar:'',linAvatar:'',bgImage:'',longTermMemory:[],autoMemoryCount:0,pendingInvite:null,currentGame:null,monoPos:0,sessions:[sess],currentSessionId:sess.id};
 }
 
 const state={characters:[],currentCharId:null,running:false,busy:false,timer:null};
 function getCurrentChar(){return state.characters.find(c=>c.id===state.currentCharId)}
-function getMemory(){
-  const c=getCurrentChar();if(!c)return [];
-  if(!c.sessions||!c.sessions.length){c.sessions=[{id:'sess_'+Date.now(),title:'新对话',memory:c.memory||[],createdAt:Date.now()}];c.currentSessionId=c.sessions[0].id;delete c.memory;}
-  let sess=c.sessions.find(s=>s.id===c.currentSessionId);
-  if(!sess){sess=c.sessions[0];c.currentSessionId=sess.id}
-  return sess.memory;
-}
+function getMemory(){const c=getCurrentChar();if(!c)return[];if(!c.sessions||!c.sessions.length){c.sessions=[{id:'sess_'+Date.now(),title:'新对话',memory:c.memory||[],createdAt:Date.now()}];c.currentSessionId=c.sessions[0].id;delete c.memory}let sess=c.sessions.find(s=>s.id===c.currentSessionId);if(!sess){sess=c.sessions[0];c.currentSessionId=sess.id}return sess.memory}
 function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){console.warn('保存失败',e)}}
-function loadState(){
-  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);if(data.characters&&data.characters.length){state.characters=data.characters;state.currentCharId=data.currentCharId||data.characters[0].id;
-    // 兼容旧版：把 memory 迁移到 sessions
-    state.characters.forEach(c=>{if(!c.sessions||!c.sessions.length){const s={id:'sess_'+Date.now()+'_'+Math.floor(Math.random()*1000),title:'默认对话',memory:c.memory||[],createdAt:Date.now()};c.sessions=[s];c.currentSessionId=s.id;delete c.memory;}else if(!c.currentSessionId||!c.sessions.find(x=>x.id===c.currentSessionId)){c.currentSessionId=c.sessions[0].id}});
-    return}}}catch(e){console.warn('读取失败',e)}
-  const c=defaultCharacter('林言');state.characters.push(c);state.currentCharId=c.id;saveState();
-}
+function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);if(data.characters&&data.characters.length){state.characters=data.characters;state.currentCharId=data.currentCharId||data.characters[0].id;state.characters.forEach(c=>{if(!c.sessions||!c.sessions.length){const s={id:'sess_'+Date.now()+'_'+Math.floor(Math.random()*1000),title:'默认对话',memory:c.memory||[],createdAt:Date.now()};c.sessions=[s];c.currentSessionId=s.id;delete c.memory}else if(!c.currentSessionId||!c.sessions.find(x=>x.id===c.currentSessionId)){c.currentSessionId=c.sessions[0].id}});return}}}catch(e){console.warn('读取失败',e)}const c=defaultCharacter('林言');state.characters.push(c);state.currentCharId=c.id;saveState()}
 
 function hexToRgb(hex){if(!hex||hex.length<7)return '45, 45, 48';const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return `${r}, ${g}, ${b}`}
 function escapeHtml(str){return String(str).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
@@ -275,7 +263,7 @@ function applyCustomStyle(){
   document.documentElement.style.setProperty('--left-bubble-color',hexToRgb(c.leftBubbleColor||'#2d2d30'));
   document.documentElement.style.setProperty('--right-bubble-color',hexToRgb(c.rightBubbleColor||'#b87d4b'));
   document.documentElement.style.setProperty('--accent',c.accentColor||'#d4a574');
-  document.documentElement.setAttribute('data-bubble-style',c.bubbleStyle||'liquid');
+  document.documentElement.setAttribute('data-bubble-style',c.bubbleStyle||'solid');
   document.body.setAttribute('data-theme',c.theme||'dark');
   document.getElementById('headerTitle').querySelector('.name').textContent=c.partnerName||c.name;
   document.getElementById('myAvatarSmall').innerHTML=c.myAvatar?`<img src="${c.myAvatar}">`:(c.myName||'我');
@@ -315,14 +303,21 @@ function addMessage(role,content,isHistorical=false,extras={}){
   const c=getCurrentChar();const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});const ts=Date.now();
   const msg={role,content,time,timestamp:ts,...extras};const mem=getMemory();
   mem.push(msg);if(mem.length>300)mem.splice(0,mem.length-300);
-  // 首条用户消息自动命名会话
   const sess=c.sessions.find(s=>s.id===c.currentSessionId);
   if(sess&&sess.title==='新对话'&&role==='user'&&content.length>2){sess.title=content.slice(0,15)}
   saveState();
   if(!isHistorical){renderMessage(msg,mem.length-1,mem);document.getElementById('chatArea').scrollTop=999999}
   if(role==='assistant'){showToast(c.partnerName||c.name,content,c.linAvatar);if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:content,tag:'linyan'})}catch(e){}}}
-  if(content.includes('[ACTION:LOVE]'))triggerDrawHeart();
-  if(content.includes('[ACTION:METEOR]'))triggerMeteorShower();
+  
+  // 触发特效（AI主动加标签 或 用户关键词触发）
+  if(content.includes('[ACTION:LOVE]')||content.includes('[ACTION:METEOR]')){
+    if(content.includes('[ACTION:LOVE]')) triggerDrawHeart();
+    if(content.includes('[ACTION:METEOR]')) triggerMeteorShower();
+  }
+  if(role==='user'){
+    if(content.includes('流星雨')||content.includes('流星')) triggerMeteorShower();
+    if(content.includes('爱心')||content.includes('画心')) triggerDrawHeart();
+  }
 }
 
 function buildPrompt(mode,extra=''){
@@ -407,27 +402,12 @@ function stopAuto(){state.running=false;const btn=document.getElementById('toggl
 
 async function extractMemory(){const c=getCurrentChar();const mem=getMemory();if(mem.length<4)return;const recentChat=mem.slice(-10).map(m=>`${m.role==='user'?'芸熙':c.name}: ${m.content}`).join('\n');const modelToUse=c.customModel&&c.customModel.trim()?c.customModel.trim():(c.model||'deepseek-chat');try{const resp=await fetch(c.apiUrl,{method:'POST',headers:{'Content-Type':'application/json',...(c.apiKey!=='proxy'?{'Authorization':'Bearer '+c.apiKey}:{})},body:JSON.stringify({model:modelToUse,messages:[{role:'system',content:'你是一个记忆提取助手。从下面的对话中提取值得长期记住的关于芸熙的信息。每条一行，不带序号，只输出记忆内容。如果没有值得记住的，输出：NONE。'},{role:'user',content:recentChat}],temperature:0.3,max_tokens:300})});const data=await resp.json();const text=data?.choices?.[0]?.message?.content||'';if(text&&text.trim()!=='NONE'){const lines=text.split('\n').map(l=>l.replace(/^[-•\d.\s]+/,'').trim()).filter(Boolean);c.longTermMemory=c.longTermMemory||[];lines.forEach(l=>{if(!c.longTermMemory.includes(l))c.longTermMemory.push(l)});if(c.longTermMemory.length>50)c.longTermMemory=c.longTermMemory.slice(-50);saveState();renderMemoryList()}}catch(e){console.warn('记忆提取失败',e)}}
 
-/* ============ 侧边栏会话管理 ============ */
 function openSidebar(){document.getElementById('sidebar').classList.add('show');document.getElementById('sidebarOverlay').classList.add('show');renderSessionList()}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('show');document.getElementById('sidebarOverlay').classList.remove('show')}
-function renderSessionList(){
-  const c=getCurrentChar();const list=document.getElementById('sessionList');list.innerHTML='';
-  c.sessions.forEach(s=>{
-    const div=document.createElement('div');div.className='session-item'+(s.id===c.currentSessionId?' active':'');
-    div.innerHTML=`<div class="title">${escapeHtml(s.title||'新对话')}</div><span class="del">✕</span>`;
-    div.onclick=(e)=>{if(e.target.classList.contains('del'))return;c.currentSessionId=s.id;saveState();renderAllMessages();closeSidebar()};
-    div.querySelector('.del').onclick=(e)=>{e.stopPropagation();if(c.sessions.length<=1){alert('至少保留一个对话');return}if(confirm('删除这个对话？')){c.sessions=c.sessions.filter(x=>x.id!==s.id);if(c.currentSessionId===s.id)c.currentSessionId=c.sessions[0].id;saveState();renderSessionList();renderAllMessages()}};
-    list.appendChild(div);
-  });
-}
+function renderSessionList(){const c=getCurrentChar();const list=document.getElementById('sessionList');list.innerHTML='';c.sessions.forEach(s=>{const div=document.createElement('div');div.className='session-item'+(s.id===c.currentSessionId?' active':'');div.innerHTML=`<div class="title">${escapeHtml(s.title||'新对话')}</div><span class="del">✕</span>`;div.onclick=(e)=>{if(e.target.classList.contains('del'))return;c.currentSessionId=s.id;saveState();renderAllMessages();closeSidebar()};div.querySelector('.del').onclick=(e)=>{e.stopPropagation();if(c.sessions.length<=1){alert('至少保留一个对话');return}if(confirm('删除这个对话？')){c.sessions=c.sessions.filter(x=>x.id!==s.id);if(c.currentSessionId===s.id)c.currentSessionId=c.sessions[0].id;saveState();renderSessionList();renderAllMessages()}};list.appendChild(div)})}
 document.getElementById('sidebarBtn').addEventListener('click',openSidebar);
 document.getElementById('sidebarOverlay').addEventListener('click',closeSidebar);
-document.getElementById('newSessionBtn').addEventListener('click',()=>{
-  const c=getCurrentChar();
-  const sess={id:'sess_'+Date.now(),title:'新对话',memory:[],createdAt:Date.now()};
-  c.sessions.push(sess);c.currentSessionId=sess.id;saveState();
-  renderSessionList();renderAllMessages();closeSidebar();
-});
+document.getElementById('newSessionBtn').addEventListener('click',()=>{const c=getCurrentChar();const sess={id:'sess_'+Date.now(),title:'新对话',memory:[],createdAt:Date.now()};c.sessions.push(sess);c.currentSessionId=sess.id;saveState();renderSessionList();renderAllMessages();closeSidebar()});
 
 document.getElementById('toggleAutoBtn').addEventListener('click',()=>{if(state.running)stopAuto();else startAuto()});
 document.getElementById('pokeBtn').addEventListener('click',()=>{const c=getCurrentChar();showToast('你','戳了戳'+(c.partnerName||'林言'),c.myAvatar);setTimeout(()=>{addMessage('user','(´つヮ⊂︎)');triggerAI()},500)});
@@ -435,23 +415,11 @@ document.getElementById('gameBtn').addEventListener('click',()=>{const c=getCurr
 document.getElementById('menuBtn').addEventListener('click',openSettings);
 document.getElementById('closeBtn').addEventListener('click',()=>{if(confirm('要清空当前对话记录吗？')){const m=getMemory();m.length=0;saveState();renderAllMessages()}});
 
-async function sendUserMessage(){
-  const ui=document.getElementById('userInput');const text=ui.value.trim();if(!text||state.busy)return;
-  const c=getCurrentChar();if(!c.apiKey){alert('请先点右上角···进入设置，填写 API Key');return}
-  ui.value='';addMessage('user',text);triggerAI();
-}
+async function sendUserMessage(){const ui=document.getElementById('userInput');const text=ui.value.trim();if(!text||state.busy)return;const c=getCurrentChar();if(!c.apiKey){alert('请先点右上角···进入设置，填写 API Key');return}ui.value='';addMessage('user',text);triggerAI()}
 document.getElementById('sendBtn').addEventListener('click',sendUserMessage);
 document.getElementById('userInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sendUserMessage()}});
 
-document.getElementById('headerTitle').addEventListener('click',()=>{
-  const list=document.getElementById('characterList');list.innerHTML='';
-  state.characters.forEach(c=>{const div=document.createElement('div');div.className='mem-item';div.style.cursor='pointer';div.style.justifyContent='space-between';
-    div.innerHTML=`<div><b>${escapeHtml(c.name)}</b><br><span style="font-size:11px;opacity:.6">${c.sessions.length} 个对话 · ${(c.longTermMemory||[]).length} 条记忆</span></div><div style="display:flex;gap:6px"><span class="mem-del" style="color:#ff453a">删除</span><span style="color:var(--accent)">${c.id===state.currentCharId?'✔ 当前':'切换'}</span></div>`;
-    div.querySelector('.mem-del').onclick=e=>{e.stopPropagation();if(state.characters.length<=1){alert('至少保留一个角色');return}if(confirm('确定删除角色「'+c.name+'」及其所有对话？')){state.characters=state.characters.filter(x=>x.id!==c.id);if(state.currentCharId===c.id)state.currentCharId=state.characters[0].id;saveState();document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages()}};
-    div.onclick=()=>{if(c.id===state.currentCharId){document.getElementById('characterModal').classList.remove('show');return}state.currentCharId=c.id;saveState();document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages()};
-    list.appendChild(div)});
-  document.getElementById('characterModal').classList.add('show');
-});
+document.getElementById('headerTitle').addEventListener('click',()=>{const list=document.getElementById('characterList');list.innerHTML='';state.characters.forEach(c=>{const div=document.createElement('div');div.className='mem-item';div.style.cursor='pointer';div.style.justifyContent='space-between';div.innerHTML=`<div><b>${escapeHtml(c.name)}</b><br><span style="font-size:11px;opacity:.6">${c.sessions.length} 个对话 · ${(c.longTermMemory||[]).length} 条记忆</span></div><div style="display:flex;gap:6px"><span class="mem-del" style="color:#ff453a">删除</span><span style="color:var(--accent)">${c.id===state.currentCharId?'✔ 当前':'切换'}</span></div>`;div.querySelector('.mem-del').onclick=e=>{e.stopPropagation();if(state.characters.length<=1){alert('至少保留一个角色');return}if(confirm('确定删除角色「'+c.name+'」及其所有对话？')){state.characters=state.characters.filter(x=>x.id!==c.id);if(state.currentCharId===c.id)state.currentCharId=state.characters[0].id;saveState();document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages()}};div.onclick=()=>{if(c.id===state.currentCharId){document.getElementById('characterModal').classList.remove('show');return}state.currentCharId=c.id;saveState();document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages()};list.appendChild(div)});document.getElementById('characterModal').classList.add('show')});
 document.getElementById('cancelCharacterBtn').addEventListener('click',()=>document.getElementById('characterModal').classList.remove('show'));
 document.getElementById('newCharacterBtn').addEventListener('click',()=>{const name=prompt('新角色叫什么名字？','林言');if(!name||!name.trim())return;const nc=defaultCharacter(name.trim());state.characters.push(nc);state.currentCharId=nc.id;saveState();document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages()});
 
@@ -461,7 +429,7 @@ document.getElementById('closeMemoryBtn').addEventListener('click',()=>document.
 document.getElementById('addMemoryBtn').addEventListener('click',()=>{const input=document.getElementById('newMemoryInput');const val=input.value.trim();if(!val)return;const c=getCurrentChar();c.longTermMemory=c.longTermMemory||[];c.longTermMemory.push(val);input.value='';saveState();renderMemoryList()});
 
 function compressImage(file,maxW=800,maxH=800,quality=0.8){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.readAsDataURL(file);reader.onload=e=>{const img=new Image();img.src=e.target.result;img.onload=()=>{let w=img.width,h=img.height;if(w>h&&w>maxW){h=Math.round(h*maxW/w);w=maxW}else if(h>w&&h>maxH){w=Math.round(w*maxH/h);h=maxH}const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);resolve(canvas.toDataURL('image/jpeg',quality))};img.onerror=reject};reader.onerror=reject})}
-function openSettings(){const c=getCurrentChar();document.getElementById('partnerNameInput').value=c.partnerName||'';document.getElementById('myNameInput').value=c.myName||'我';document.getElementById('modelInput').value=c.model||'deepseek-chat';document.getElementById('customModelInput').value=c.customModel||'';document.getElementById('tempInput').value=c.temperature||0.9;document.getElementById('tempVal').textContent=(c.temperature||0.9).toFixed(1);document.getElementById('alphaInput').value=c.alpha||0.6;document.getElementById('alphaVal').textContent=(c.alpha||0.6).toFixed(2);document.getElementById('headerAlphaInput').value=c.headerAlpha||0.35;document.getElementById('headerAlphaVal').textContent=(c.headerAlpha||0.35).toFixed(2);document.getElementById('footerAlphaInput').value=c.footerAlpha||0.7;document.getElementById('footerAlphaVal').textContent=(c.footerAlpha||0.7).toFixed(2);document.getElementById('bubbleRadiusInput').value=c.bubbleRadius||20;document.getElementById('bubbleRadiusVal').textContent=c.bubbleRadius||20;document.getElementById('fontSizeInput').value=c.fontSize||15;document.getElementById('fontSizeVal').textContent=c.fontSize||15;document.getElementById('bubbleStyleInput').value=c.bubbleStyle||'liquid';document.getElementById('leftBubbleColorInput').value=c.leftBubbleColor||'#2d2d30';document.getElementById('rightBubbleColorInput').value=c.rightBubbleColor||'#b87d4b';document.getElementById('accentColorInput').value=c.accentColor||'#d4a574';document.getElementById('thinkMinInput').value=c.thinkMin||2;document.getElementById('thinkMaxInput').value=c.thinkMax||5;document.getElementById('apiUrlInput').value=c.apiUrl||'/api/chat';document.getElementById('apiKeyInput').value=c.apiKey||'proxy';document.getElementById('personaInput').value=c.persona||DEFAULT_PERSONA;document.getElementById('themeToggle').checked=c.theme==='dark';document.getElementById('settingsModal').classList.add('show')}
+function openSettings(){const c=getCurrentChar();document.getElementById('partnerNameInput').value=c.partnerName||'';document.getElementById('myNameInput').value=c.myName||'我';document.getElementById('modelInput').value=c.model||'deepseek-chat';document.getElementById('customModelInput').value=c.customModel||'';document.getElementById('tempInput').value=c.temperature||0.9;document.getElementById('tempVal').textContent=(c.temperature||0.9).toFixed(1);document.getElementById('alphaInput').value=c.alpha||0.6;document.getElementById('alphaVal').textContent=(c.alpha||0.6).toFixed(2);document.getElementById('headerAlphaInput').value=c.headerAlpha||0.35;document.getElementById('headerAlphaVal').textContent=(c.headerAlpha||0.35).toFixed(2);document.getElementById('footerAlphaInput').value=c.footerAlpha||0.7;document.getElementById('footerAlphaVal').textContent=(c.footerAlpha||0.7).toFixed(2);document.getElementById('bubbleRadiusInput').value=c.bubbleRadius||20;document.getElementById('bubbleRadiusVal').textContent=c.bubbleRadius||20;document.getElementById('fontSizeInput').value=c.fontSize||15;document.getElementById('fontSizeVal').textContent=c.fontSize||15;document.getElementById('bubbleStyleInput').value=c.bubbleStyle||'solid';document.getElementById('leftBubbleColorInput').value=c.leftBubbleColor||'#2d2d30';document.getElementById('rightBubbleColorInput').value=c.rightBubbleColor||'#b87d4b';document.getElementById('accentColorInput').value=c.accentColor||'#d4a574';document.getElementById('thinkMinInput').value=c.thinkMin||2;document.getElementById('thinkMaxInput').value=c.thinkMax||5;document.getElementById('apiUrlInput').value=c.apiUrl||'/api/chat';document.getElementById('apiKeyInput').value=c.apiKey||'proxy';document.getElementById('personaInput').value=c.persona||DEFAULT_PERSONA;document.getElementById('themeToggle').checked=c.theme==='dark';document.getElementById('settingsModal').classList.add('show')}
 function closeSettings(){document.getElementById('settingsModal').classList.remove('show')}
 async function applySettings(){const c=getCurrentChar();c.partnerName=document.getElementById('partnerNameInput').value.trim()||'林言';c.myName=document.getElementById('myNameInput').value.trim()||'我';c.model=document.getElementById('modelInput').value;c.customModel=document.getElementById('customModelInput').value.trim();c.temperature=parseFloat(document.getElementById('tempInput').value)||0.9;c.alpha=parseFloat(document.getElementById('alphaInput').value)||0.6;c.headerAlpha=parseFloat(document.getElementById('headerAlphaInput').value)||0.35;c.footerAlpha=parseFloat(document.getElementById('footerAlphaInput').value)||0.7;c.bubbleRadius=parseInt(document.getElementById('bubbleRadiusInput').value)||20;c.fontSize=parseInt(document.getElementById('fontSizeInput').value)||15;c.bubbleStyle=document.getElementById('bubbleStyleInput').value;c.leftBubbleColor=document.getElementById('leftBubbleColorInput').value;c.rightBubbleColor=document.getElementById('rightBubbleColorInput').value;c.accentColor=document.getElementById('accentColorInput').value;c.thinkMin=Math.max(1,parseInt(document.getElementById('thinkMinInput').value)||2);c.thinkMax=Math.max(c.thinkMin,parseInt(document.getElementById('thinkMaxInput').value)||5);c.apiUrl=document.getElementById('apiUrlInput').value.trim()||'/api/chat';c.apiKey=document.getElementById('apiKeyInput').value.trim()||'proxy';c.persona=document.getElementById('personaInput').value||DEFAULT_PERSONA;c.theme=document.getElementById('themeToggle').checked?'dark':'light';const myAv=document.getElementById('myAvatarInput'),linAv=document.getElementById('linAvatarInput'),bgImg=document.getElementById('bgImageInput');if(myAv.files.length)c.myAvatar=await compressImage(myAv.files[0]);if(linAv.files.length)c.linAvatar=await compressImage(linAv.files[0]);if(bgImg.files.length)c.bgImage=await compressImage(bgImg.files[0],1200,1200,0.7);saveState();applyCustomStyle();renderAllMessages();closeSettings();if(state.running)scheduleNext()}
 document.getElementById('exportBtn').addEventListener('click',()=>{const data=localStorage.getItem(STORAGE_KEY);const blob=new Blob([data],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`linyan_backup_${Date.now()}.json`;a.click();URL.revokeObjectURL(url)});
@@ -488,4 +456,4 @@ loadState();applyCustomStyle();renderAllMessages();
 console.log('%c林言 · 多会话版已加载','color:#d4a574;font-weight:600');
 </script>
 </body>
-                                  </html>
+</html>
