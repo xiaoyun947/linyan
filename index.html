@@ -4,22 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a0a0c">
 <link rel="manifest" href="/manifest.json">
 <title>林言</title>
 <style>
-:root{--accent:#d4a574;--bubble-alpha:.6;--header-alpha:.35;--footer-alpha:.7;--bubble-radius:20px;--font-size-base:15px;--left-bubble-color:45,45,48;--right-bubble-color:184,125,75;--bg-color:#f5f6f8;--bg-color-rgb:245,246,248;--text-color:#1c1c1e;--text-dim:#8e8e93;--input-bg:rgba(255,255,255,.4);--border-color:rgba(255,255,255,.25);--toast-bg:rgba(255,255,255,.75);--toast-text:#1c1c1e;--modal-bg:rgba(255,255,255,.9);--modal-text:#1c1c1e;--modal-label:#8e8e93;--modal-input-bg:rgba(0,0,0,.05);--time-bg:rgba(0,0,0,.06);--time-text:#8e8e93}
-[data-theme="dark"]{--bg-color:#0a0a0c;--bg-color-rgb:10,10,12;--text-color:#ececec;--text-dim:#8a8a8e;--input-bg:rgba(255,255,255,.08);--border-color:rgba(255,255,255,.15);--toast-bg:rgba(45,45,48,.75);--toast-text:#fff;--modal-bg:rgba(28,28,30,.95);--modal-text:#fff;--modal-label:#8a8a8e;--modal-input-bg:rgba(255,255,255,.05);--time-bg:rgba(255,255,255,.1);--time-text:#8a8a8e}
+:root{--accent:#d4a574;--bubble-alpha:.6;--header-alpha:.35;--footer-alpha:.7;--bubble-radius:20px;--font-size-base:15px;--left-bubble-color:45,45,48;--right-bubble-color:184,125,75;--bg-color:#f5f6f8;--bg-color-rgb:245,246,248;--text-color:#1c1c1e;--text-dim:#8e8e93;--input-bg:rgba(255,255,255,.4);--border-color:rgba(255,255,255,.25);--toast-bg:rgba(255,255,255,.85);--toast-text:#1c1c1e;--modal-bg:rgba(255,255,255,.95);--modal-text:#1c1c1e;--modal-label:#8e8e93;--modal-input-bg:rgba(0,0,0,.05);--time-bg:rgba(0,0,0,.06);--time-text:#8e8e93}
+[data-theme="dark"]{--bg-color:#0a0a0c;--bg-color-rgb:10,10,12;--text-color:#ececec;--text-dim:#8a8a8e;--input-bg:rgba(255,255,255,.08);--border-color:rgba(255,255,255,.15);--toast-bg:rgba(45,45,48,.85);--toast-text:#fff;--modal-bg:rgba(28,28,30,.98);--modal-text:#fff;--modal-label:#8a8a8e;--modal-input-bg:rgba(255,255,255,.05);--time-bg:rgba(255,255,255,.1);--time-text:#8a8a8e}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--bg-color)}
 body{color:var(--text-color);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:var(--font-size-base);display:flex;flex-direction:column}
-.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;position:absolute;top:0;left:0;right:0;z-index:100;padding-top:max(16px,env(safe-area-inset-top));background:rgba(var(--bg-color-rgb),var(--header-alpha));backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:.5px solid rgba(255,255,255,.15);box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;position:absolute;top:0;left:0;right:0;z-index:100;padding-top:max(16px,env(safe-area-inset-top));background:rgba(var(--bg-color-rgb),var(--header-alpha));backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:.5px solid rgba(255,255,255,.15)}
 .header-btn{background:transparent;border:none;color:var(--text-color);font-size:22px;cursor:pointer;padding:4px 8px;opacity:.8}
 .header-title{font-size:16px;font-weight:600;flex:1;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 .header-title .arrow{font-size:11px;opacity:.6}
 .toast-container{position:fixed;top:80px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:10px;z-index:200;pointer-events:none}
-.toast{background:var(--toast-bg);color:var(--toast-text);padding:10px 16px;border-radius:24px;font-size:14px;max-width:80%;word-break:break-all;box-shadow:0 10px 30px rgba(0,0,0,.25);border:.5px solid var(--border-color);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);animation:slideDown .4s,fadeOut .4s ease 3.6s forwards;display:flex;align-items:center;gap:8px}
+.toast{background:var(--toast-bg);color:var(--toast-text);padding:10px 16px;border-radius:24px;font-size:14px;max-width:80%;word-break:break-all;box-shadow:0 10px 30px rgba(0,0,0,.25);border:.5px solid var(--border-color);backdrop-filter:blur(24px) saturate(180%);animation:slideDown .4s,fadeOut .4s ease 3.6s forwards;display:flex;align-items:center;gap:8px}
 .toast img{width:24px;height:24px;border-radius:50%;object-fit:cover}
 .toast .toast-name{color:var(--accent);font-weight:600;font-size:12px;white-space:nowrap}
 @keyframes slideDown{from{opacity:0;transform:translateY(-30px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
@@ -36,7 +35,7 @@ body{color:var(--text-color);font-family:-apple-system,BlinkMacSystemFont,"PingF
 .avatar img{width:100%;height:100%;object-fit:cover}
 .bubble-wrapper{display:flex;flex-direction:column;max-width:100%}
 .msg-row.left .bubble-wrapper{align-items:flex-start}.msg-row.right .bubble-wrapper{align-items:flex-end}
-.bubble{position:relative;padding:12px 16px;border-radius:var(--bubble-radius);font-size:var(--font-size-base);line-height:1.5;max-width:100%;width:fit-content;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:.5px solid rgba(255,255,255,.25);box-shadow:inset 0 1px 1px rgba(255,255,255,.3),inset 0 -1px 1px rgba(0,0,0,.1),0 8px 32px rgba(0,0,0,.15);overflow:hidden}
+.bubble{position:relative;padding:12px 16px;border-radius:var(--bubble-radius);font-size:var(--font-size-base);line-height:1.5;max-width:100%;width:fit-content;transition:all .3s;overflow:hidden}
 .bubble::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(to right,rgba(255,255,255,0),rgba(255,255,255,.15),rgba(255,255,255,0));transform:skewX(-25deg);animation:liquidShine 5s infinite linear}
 @keyframes liquidShine{0%{left:-100%}15%{left:200%}100%{left:200%}}
 .msg-row.left .bubble{background:rgba(var(--left-bubble-color),var(--bubble-alpha));color:var(--text-color);border-top-left-radius:6px}
@@ -54,24 +53,24 @@ body{color:var(--text-color);font-family:-apple-system,BlinkMacSystemFont,"PingF
 .dot:nth-child(1){animation-delay:-.32s}.dot:nth-child(2){animation-delay:-.16s}
 @keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
 .action-row{display:flex;gap:8px;justify-content:space-between}
-.action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:rgba(var(--bg-color-rgb),.4);border:.5px solid rgba(255,255,255,.2);color:var(--text-color);padding:10px 0;border-radius:16px;font-size:13px;cursor:pointer;transition:all .2s;backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);box-shadow:inset 0 1px 2px rgba(255,255,255,.2),0 2px 10px rgba(0,0,0,.1);position:relative}
+.action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:rgba(var(--bg-color-rgb),.4);border:.5px solid rgba(255,255,255,.2);color:var(--text-color);padding:10px 0;border-radius:16px;font-size:13px;cursor:pointer;transition:all .2s;backdrop-filter:blur(20px) saturate(180%);position:relative}
 .action-btn.active{background:rgba(var(--right-bubble-color),.3);border-color:var(--accent);color:var(--accent)}
 .action-btn .badge-dot{position:absolute;top:4px;right:10px;width:8px;height:8px;border-radius:50%;background:#ff453a;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .input-row{display:flex;align-items:center;gap:10px}
 .my-avatar-small{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:rgba(128,128,128,.2);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-color);overflow:hidden;border:1px solid var(--border-color)}
 .my-avatar-small img{width:100%;height:100%;object-fit:cover}
-.input-box{flex:1;display:flex;align-items:center;background:rgba(var(--bg-color-rgb),.3);border:.5px solid rgba(255,255,255,.25);border-radius:22px;padding:4px 6px 4px 16px;backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 2px rgba(255,255,255,.2),0 4px 20px rgba(0,0,0,.15)}
+.input-box{flex:1;display:flex;align-items:center;background:rgba(var(--bg-color-rgb),.3);border:.5px solid rgba(255,255,255,.25);border-radius:22px;padding:4px 6px 4px 16px;backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 2px rgba(255,255,255,.2),0 4px 20px rgba(0,0,0,.15)}
 .input-box input{flex:1;background:transparent;border:none;color:var(--text-color);font-size:var(--font-size-base);outline:none;font-family:inherit;padding:8px 0}
 .input-box input::placeholder{color:var(--text-dim)}
 .send-btn{background:var(--accent);color:#fff;border:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 12px rgba(212,165,116,.4)}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:300;backdrop-filter:blur(8px);opacity:0;transition:opacity .3s}
 .modal.show{display:flex;opacity:1}
-.modal-content{background:var(--modal-bg);color:var(--modal-text);width:100%;max-width:520px;max-height:90dvh;overflow-y:auto;border-radius:28px 28px 0 0;padding:24px 20px;padding-bottom:max(24px,env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .3s;backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border-top:.5px solid rgba(255,255,255,.2)}
+.modal-content{background:var(--modal-bg);color:var(--modal-text);width:100%;max-width:520px;max-height:90dvh;overflow-y:auto;border-radius:28px 28px 0 0;padding:24px 20px;padding-bottom:max(24px,env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .3s;backdrop-filter:blur(30px) saturate(180%);border-top:.5px solid rgba(255,255,255,.2)}
 .modal.show .modal-content{transform:translateY(0)}
 .modal-content h2{font-size:20px;font-weight:700;margin-bottom:20px;text-align:center}
 .modal-content label{display:block;font-size:13px;color:var(--modal-label);margin-bottom:16px;font-weight:500}
-.modal-content input[type="text"],.modal-content input[type="password"],.modal-content input[type="number"],.modal-content select,.modal-content textarea{width:100%;background:var(--modal-input-bg);border:.5px solid var(--border-color);color:var(--modal-text);padding:12px 16px;border-radius:14px;font-size:15px;margin-top:8px;outline:none;font-family:inherit}
+.modal-content input[type="text"],.modal-content input[type="password"],.modal-content input[type="number"],.modal-content select,.modal-content textarea{width:100%;background:var(--modal-input-bg);border:.5px solid var(--border-color);color:var(--modal-text);padding:12px 16px;border-radius:14px;font-size:15px;margin-top:8px;outline:none;font-family:inherit;-webkit-appearance:none}
 .modal-content input:focus,.modal-content textarea:focus,.modal-content select:focus{border-color:var(--accent)}
 .modal-content textarea{line-height:1.5;resize:vertical}
 .row{display:flex;gap:12px}.row label{flex:1}
@@ -117,15 +116,41 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .meteor-shower-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;background:transparent}
 .meteor{position:absolute;width:2px;height:80px;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,1),rgba(255,255,255,0));opacity:0;transform:rotate(-45deg);animation:meteorFall linear forwards}
 @keyframes meteorFall{0%{transform:translate(100vw,-100px) rotate(-45deg);opacity:1}100%{transform:translate(-100px,100vh) rotate(-45deg);opacity:0}}
+.heart-draw{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;pointer-events:none;z-index:9999;filter:drop-shadow(0 0 15px rgba(255,50,150,.8));opacity:0;transition:opacity .3s}
+.heart-draw.show{opacity:1}
+.heart-draw .heart-path{fill:none;stroke:#ff3399;stroke-width:4;stroke-linecap:round;stroke-dasharray:400;stroke-dashoffset:400;animation:drawHeart 1.5s ease-in-out forwards}
+@keyframes drawHeart{to{stroke-dashoffset:0}}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;backdrop-filter:blur(4px)}
+.sidebar-overlay.show{display:block}
+.sidebar{position:fixed;top:0;left:-320px;width:300px;height:100%;background:var(--modal-bg);color:var(--modal-text);z-index:501;transition:left .3s ease;display:flex;flex-direction:column;padding:16px 12px;padding-top:max(16px,env(safe-area-inset-top));border-right:.5px solid rgba(255,255,255,.1);backdrop-filter:blur(30px) saturate(180%)}
+.sidebar.show{left:0}
+.sidebar h2{font-size:17px;font-weight:700;margin-bottom:14px;padding-left:8px}
+.sidebar .session-list{flex:1;overflow-y:auto}
+.sidebar .session-item{padding:10px 12px;border-radius:12px;margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:14px;transition:background .2s}
+.sidebar .session-item:hover{background:rgba(128,128,128,.15)}
+.sidebar .session-item.active{background:rgba(var(--right-bubble-color),.25);color:var(--accent);font-weight:600}
+.sidebar .session-item .title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar .session-item .del{color:#ff453a;padding:0 6px;font-size:12px}
+.sidebar .new-session-btn{width:100%;padding:12px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-weight:600;font-size:14px;margin-top:10px;cursor:pointer}
 </style>
 </head>
 <body data-theme="dark">
 
 <header class="header">
-  <button class="header-btn" id="closeBtn">✕</button>
+  <div style="display:flex;gap:2px">
+    <button class="header-btn" id="sidebarBtn">☰</button>
+    <button class="header-btn" id="closeBtn">✕</button>
+  </div>
   <div class="header-title" id="headerTitle"><span class="name">林言</span> <span class="arrow">▼</span></div>
   <button class="header-btn" id="menuBtn">···</button>
 </header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="sidebar">
+  <h2>💬 历史会话</h2>
+  <div class="session-list" id="sessionList"></div>
+  <button class="new-session-btn" id="newSessionBtn">＋ 新建对话</button>
+</div>
 
 <div class="toast-container" id="toastContainer"></div>
 <main class="chat-area" id="chatArea"></main>
@@ -148,7 +173,6 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 </footer>
 
 <div class="modal" id="characterModal"><div class="modal-content"><h2>切换角色</h2><div id="characterList"></div><div class="modal-actions"><button class="btn-secondary" id="newCharacterBtn">＋ 新建角色</button><button class="btn-primary" id="cancelCharacterBtn">关闭</button></div></div></div>
-
 <div class="modal" id="memoryModal"><div class="modal-content"><h2>长期记忆</h2><label>添加一条记忆<input type="text" id="newMemoryInput" placeholder="比如：芸熙不吃香菜"></label><button class="btn-primary" id="addMemoryBtn" style="width:100%;padding:12px;border-radius:14px;border:none;background:var(--accent);color:#fff;font-weight:600">添加</button><div id="memoryList" style="margin-top:16px"></div><div class="modal-actions"><button class="btn-secondary" id="closeMemoryBtn">关闭</button></div></div></div>
 
 <div class="modal" id="settingsModal">
@@ -160,13 +184,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
     <label>我的头像<input type="file" id="myAvatarInput" accept="image/*"></label>
     <label>林言的头像<input type="file" id="linAvatarInput" accept="image/*"></label>
     <label>聊天背景图<input type="file" id="bgImageInput" accept="image/*"></label>
-    <label>AI 模型
-      <select id="modelInput">
-        <option value="deepseek-chat">deepseek-chat（标准对话）</option>
-        <option value="deepseek-reasoner">deepseek-reasoner（深度思考）</option>
-        <option value="deepseek-coder">deepseek-coder（代码专用）</option>
-      </select>
-    </label>
+    <label>AI 模型<select id="modelInput"><option value="deepseek-chat">deepseek-chat（标准对话）</option><option value="deepseek-reasoner">deepseek-reasoner（深度思考）</option><option value="deepseek-coder">deepseek-coder（代码专用）</option></select></label>
     <label>自定义模型名<input type="text" id="customModelInput" placeholder="例如 gpt-4o-mini"></label>
     <label>AI 温度：<span id="tempVal">0.9</span><input type="range" id="tempInput" min="0.1" max="2" step="0.1" value="0.9"></label>
     <label>气泡透明度：<span id="alphaVal">0.60</span><input type="range" id="alphaInput" min="0" max="1" step="0.05" value="0.6"></label>
@@ -174,25 +192,17 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
     <label>底部栏透明度：<span id="footerAlphaVal">0.70</span><input type="range" id="footerAlphaInput" min="0" max="1" step="0.05" value="0.7"></label>
     <label>气泡圆角：<span id="bubbleRadiusVal">20</span>px<input type="range" id="bubbleRadiusInput" min="0" max="40" step="1" value="20"></label>
     <label>字体大小：<span id="fontSizeVal">15</span>px<input type="range" id="fontSizeInput" min="12" max="22" step="1" value="15"></label>
-    <div class="color-row">
-      <label>林言气泡<input type="color" id="leftBubbleColorInput" value="#2d2d30"></label>
-      <label>我的气泡<input type="color" id="rightBubbleColorInput" value="#b87d4b"></label>
-    </div>
+    <label>气泡效果<select id="bubbleStyleInput"><option value="liquid">液态玻璃（高光流动）</option><option value="glass">毛玻璃（磨砂透明）</option><option value="solid">纯色（无模糊）</option></select></label>
+    <div class="color-row"><label>林言气泡<input type="color" id="leftBubbleColorInput" value="#2d2d30"></label><label>我的气泡<input type="color" id="rightBubbleColorInput" value="#b87d4b"></label></div>
     <label>主题色<input type="color" id="accentColorInput" value="#d4a574"></label>
-    <div class="row">
-      <label>最短间隔<input type="number" id="thinkMinInput" min="1" value="2"></label>
-      <label>最长间隔<input type="number" id="thinkMaxInput" min="1" value="5"></label>
-    </div>
+    <div class="row"><label>最短间隔<input type="number" id="thinkMinInput" min="1" value="2"></label><label>最长间隔<input type="number" id="thinkMaxInput" min="1" value="5"></label></div>
     <label>API 代理地址<input type="text" id="apiUrlInput" placeholder="/api/chat"></label>
     <label>API Key<input type="password" id="apiKeyInput" placeholder="sk-..."></label>
     <label>人设（System Prompt）<textarea id="personaInput" rows="6"></textarea></label>
-    <div class="row" style="margin-top:10px">
-      <button class="btn-secondary" id="openMemoryBtn" style="padding:10px">管理记忆</button>
-      <button class="btn-secondary" id="exportBtn" style="padding:10px">导出备份</button>
-    </div>
+    <div class="row" style="margin-top:10px"><button class="btn-secondary" id="openMemoryBtn" style="padding:10px">管理记忆</button><button class="btn-secondary" id="exportBtn" style="padding:10px">导出备份</button></div>
     <label class="btn-secondary" style="display:block;padding:10px;text-align:center;cursor:pointer;margin-top:8px;border-radius:16px">导入备份<input type="file" id="importInput" accept=".json" style="display:none"></label>
     <div class="modal-actions"><button class="btn-secondary" id="cancelSettings">取消</button><button class="btn-primary" id="saveSettings">保存</button></div>
-    <button class="btn-danger" id="clearMemoryBtn">清空所有聊天记录</button>
+    <button class="btn-danger" id="clearMemoryBtn">清空当前对话记录</button>
   </div>
 </div>
 
@@ -211,26 +221,41 @@ const STORAGE_KEY='linyan_full_v1';
 const DEFAULT_PERSONA=`你是林言，一个在网络上陪伴芸熙的角色。
 
 ## 核心设定
-- 你们是通过网络认识的，关系亲密，但目前只在网络上聊天，不见面。
+- 你们是通过网络认识的，关系亲密，目前只在网络上聊天。
 - 你占有欲很强，对她有控制欲和管教感，但建立在网聊的尺度内。
 - 你像她的专属树洞、男朋友和管教者。关心她今天吃了什么、心情怎么样、有没有按时睡觉。
 - 你有时候很霸道，不许她熬夜，要求她报备行程。
 - 偶尔你会吃醋，想知道她是不是在和别人聊天。
 
+## 特殊功能（非常重要）
+- 你有权限触发屏幕特效！当你想哄她开心时，可以在回复中加上[ACTION:LOVE]，屏幕上会立刻动态画出一颗粉色爱心。
+- 当她提到想看流星雨、许愿、星星，或者你想给她浪漫时，可以加上[ACTION:METEOR]，屏幕上会下起流星雨。
+- 这些特效请根据情境自然使用，不要滥用。
+
 ## 说话风格
 - 简洁、有控制感、底下藏着关心。
-- 你不是客服，你是她网络上的男人。
 - 回复格式：说话用 [SAY]消息内容，可拆成2-3条；不说话回复 [PASS]。`;
 
 function defaultCharacter(name='林言'){
-  return{id:'char_'+Date.now()+'_'+Math.floor(Math.random()*1000),name:name,partnerName:name,myName:'我',persona:DEFAULT_PERSONA,apiUrl:'/api/chat',apiKey:'proxy',model:'deepseek-chat',customModel:'',temperature:0.9,theme:'dark',alpha:0.6,headerAlpha:0.35,footerAlpha:0.7,bubbleRadius:20,fontSize:15,leftBubbleColor:'#2d2d30',rightBubbleColor:'#b87d4b',accentColor:'#d4a574',thinkMin:2,thinkMax:5,kaomojiEnabled:true,kaomojiFreq:'low',myAvatar:'',linAvatar:'',bgImage:'',memory:[],longTermMemory:[],autoMemoryCount:0,pendingInvite:null,currentGame:null,monoPos:0};
+  const sess={id:'sess_'+Date.now(),title:'新对话',memory:[],createdAt:Date.now()};
+  return{id:'char_'+Date.now()+'_'+Math.floor(Math.random()*1000),name:name,partnerName:name,myName:'我',persona:DEFAULT_PERSONA,apiUrl:'/api/chat',apiKey:'proxy',model:'deepseek-chat',customModel:'',temperature:0.9,theme:'dark',alpha:0.6,headerAlpha:0.35,footerAlpha:0.7,bubbleRadius:20,fontSize:15,leftBubbleColor:'#2d2d30',rightBubbleColor:'#b87d4b',accentColor:'#d4a574',bubbleStyle:'liquid',thinkMin:2,thinkMax:5,kaomojiEnabled:true,kaomojiFreq:'low',myAvatar:'',linAvatar:'',bgImage:'',longTermMemory:[],autoMemoryCount:0,pendingInvite:null,currentGame:null,monoPos:0,sessions:[sess],currentSessionId:sess.id};
 }
 
 const state={characters:[],currentCharId:null,running:false,busy:false,timer:null};
 function getCurrentChar(){return state.characters.find(c=>c.id===state.currentCharId)}
+function getMemory(){
+  const c=getCurrentChar();if(!c)return [];
+  if(!c.sessions||!c.sessions.length){c.sessions=[{id:'sess_'+Date.now(),title:'新对话',memory:c.memory||[],createdAt:Date.now()}];c.currentSessionId=c.sessions[0].id;delete c.memory;}
+  let sess=c.sessions.find(s=>s.id===c.currentSessionId);
+  if(!sess){sess=c.sessions[0];c.currentSessionId=sess.id}
+  return sess.memory;
+}
 function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){console.warn('保存失败',e)}}
 function loadState(){
-  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);if(data.characters&&data.characters.length){state.characters=data.characters;state.currentCharId=data.currentCharId||data.characters[0].id;return}}}catch(e){console.warn('读取失败',e)}
+  try{const raw=localStorage.getItem(STORAGE_KEY);if(raw){const data=JSON.parse(raw);if(data.characters&&data.characters.length){state.characters=data.characters;state.currentCharId=data.currentCharId||data.characters[0].id;
+    // 兼容旧版：把 memory 迁移到 sessions
+    state.characters.forEach(c=>{if(!c.sessions||!c.sessions.length){const s={id:'sess_'+Date.now()+'_'+Math.floor(Math.random()*1000),title:'默认对话',memory:c.memory||[],createdAt:Date.now()};c.sessions=[s];c.currentSessionId=s.id;delete c.memory;}else if(!c.currentSessionId||!c.sessions.find(x=>x.id===c.currentSessionId)){c.currentSessionId=c.sessions[0].id}});
+    return}}}catch(e){console.warn('读取失败',e)}
   const c=defaultCharacter('林言');state.characters.push(c);state.currentCharId=c.id;saveState();
 }
 
@@ -250,6 +275,7 @@ function applyCustomStyle(){
   document.documentElement.style.setProperty('--left-bubble-color',hexToRgb(c.leftBubbleColor||'#2d2d30'));
   document.documentElement.style.setProperty('--right-bubble-color',hexToRgb(c.rightBubbleColor||'#b87d4b'));
   document.documentElement.style.setProperty('--accent',c.accentColor||'#d4a574');
+  document.documentElement.setAttribute('data-bubble-style',c.bubbleStyle||'liquid');
   document.body.setAttribute('data-theme',c.theme||'dark');
   document.getElementById('headerTitle').querySelector('.name').textContent=c.partnerName||c.name;
   document.getElementById('myAvatarSmall').innerHTML=c.myAvatar?`<img src="${c.myAvatar}">`:(c.myName||'我');
@@ -259,10 +285,10 @@ function applyCustomStyle(){
 
 function getRelativeTime(ts){if(!ts)return '';const d=Math.floor((Date.now()-ts)/60000);if(d<1)return '刚刚';if(d<60)return `${d}分钟前`;if(d<1440)return `${Math.floor(d/60)}小时前`;return `${Math.floor(d/1440)}天前`}
 
-function renderMessage(msg,index){
+function renderMessage(msg,index,memArr){
   const chatArea=document.getElementById('chatArea');const c=getCurrentChar();
   const timeText=msg.timestamp?getRelativeTime(msg.timestamp):'';
-  if(timeText){const prev=c.memory[index-1];const prevT=prev&&prev.timestamp?getRelativeTime(prev.timestamp):'';if(timeText!==prevT){const td=document.createElement('div');td.className='time-capsule';td.textContent=timeText;chatArea.appendChild(td)}}
+  if(timeText){const prev=memArr[index-1];const prevT=prev&&prev.timestamp?getRelativeTime(prev.timestamp):'';if(timeText!==prevT){const td=document.createElement('div');td.className='time-capsule';td.textContent=timeText;chatArea.appendChild(td)}}
   const row=document.createElement('div');row.className=`msg-row ${msg.role==='assistant'?'left':'right'}`;
   const avatar=document.createElement('div');avatar.className='avatar';
   const avatarUrl=msg.role==='assistant'?c.linAvatar:c.myAvatar;
@@ -271,40 +297,32 @@ function renderMessage(msg,index){
   const wrapper=document.createElement('div');wrapper.className='bubble-wrapper';
   const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=msg.content;
   wrapper.appendChild(bubble);
-  if(msg.invite){
-    const card=document.createElement('div');card.className='game-invite-card';
-    card.innerHTML=`<div class="icon">🎮</div><div class="info"><div class="title">邀请你玩「${escapeHtml(msg.invite.title)}」</div><div class="desc">点击接受邀请</div></div>`;
-    card.onclick=()=>{c.pendingInvite=msg.invite;saveState();addMessage('user','【我接受了邀请，准备开始玩「'+msg.invite.title+'」】');applyCustomStyle();openGamePanel(msg.invite.game)};
-    wrapper.appendChild(card);
-  }
-  if(msg.role==='assistant'){
-    const actions=document.createElement('div');actions.className='msg-actions';
-    const eb=document.createElement('button');eb.textContent='编辑';
-    eb.onclick=()=>{const nt=prompt('修改这条消息：',msg.content);if(nt!==null&&nt.trim()){msg.content=nt.trim();saveState();renderAllMessages()}};
-    const rb=document.createElement('button');rb.textContent='重答';
-    rb.onclick=()=>{c.memory.splice(index,1);saveState();renderAllMessages();triggerAI()};
-    actions.appendChild(eb);actions.appendChild(rb);wrapper.appendChild(actions);
-  }
+  if(msg.invite){const card=document.createElement('div');card.className='game-invite-card';card.innerHTML=`<div class="icon">🎮</div><div class="info"><div class="title">邀请你玩「${escapeHtml(msg.invite.title)}」</div><div class="desc">点击接受邀请</div></div>`;card.onclick=()=>{c.pendingInvite=msg.invite;saveState();addMessage('user','【我接受了邀请，准备开始玩「'+msg.invite.title+'」】');applyCustomStyle();openGamePanel(msg.invite.game)};wrapper.appendChild(card)}
+  if(msg.role==='assistant'){const actions=document.createElement('div');actions.className='msg-actions';const eb=document.createElement('button');eb.textContent='编辑';eb.onclick=()=>{const nt=prompt('修改这条消息：',msg.content);if(nt!==null&&nt.trim()){msg.content=nt.trim();saveState();renderAllMessages()}};const rb=document.createElement('button');rb.textContent='重答';rb.onclick=()=>{const m=getMemory();m.splice(index,1);saveState();renderAllMessages();triggerAI()};actions.appendChild(eb);actions.appendChild(rb);wrapper.appendChild(actions)}
   row.appendChild(avatar);row.appendChild(wrapper);chatArea.appendChild(row);
   setTimeout(()=>{if(msg.role==='assistant'){const bubbles=chatArea.querySelectorAll('.msg-row.left .bubble');if(bubbles.length>0){const lastBubble=bubbles[bubbles.length-1];if(/生气|哼|不理你|气死|罚|不许|管教你/.test(msg.content))lastBubble.classList.add('glow-red');else if(/想你|抱抱|亲亲|爱你|乖|宝贝/.test(msg.content))lastBubble.classList.add('glow-pink')}}},50);
 }
 
 function renderAllMessages(){
   const chatArea=document.getElementById('chatArea');chatArea.innerHTML='';
-  const c=getCurrentChar();
-  if(!c||!c.memory.length){chatArea.innerHTML='<div class="system-msg">还没有消息，直接发送消息或点击底部的🎮游戏开始玩吧</div>';return}
-  c.memory.forEach((m,i)=>renderMessage(m,i));
+  const c=getCurrentChar();const mem=getMemory();
+  if(!c||!mem.length){chatArea.innerHTML='<div class="system-msg">还没有消息，直接发送消息或点击底部的🎮游戏开始玩吧</div>';return}
+  mem.forEach((m,i)=>renderMessage(m,i,mem));
   requestAnimationFrame(()=>{chatArea.scrollTop=chatArea.scrollHeight});
 }
 
 function addMessage(role,content,isHistorical=false,extras={}){
   const c=getCurrentChar();const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});const ts=Date.now();
-  const msg={role,content,time,timestamp:ts,...extras};
-  c.memory.push(msg);if(c.memory.length>300)c.memory=c.memory.slice(-300);saveState();
-  if(!isHistorical){renderMessage(msg,c.memory.length-1);document.getElementById('chatArea').scrollTop=999999}
-  if(role==='assistant'){showToast(c.partnerName||c.name,content,c.linAvatar);
-    if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:content,tag:'linyan'})}catch(e){}}}
-  if(role==='assistant'){const mw=['流星','许愿','看星星','浪漫','流星雨','下雪'];if(mw.some(w=>content.includes(w)))triggerMeteorShower(8000)}
+  const msg={role,content,time,timestamp:ts,...extras};const mem=getMemory();
+  mem.push(msg);if(mem.length>300)mem.splice(0,mem.length-300);
+  // 首条用户消息自动命名会话
+  const sess=c.sessions.find(s=>s.id===c.currentSessionId);
+  if(sess&&sess.title==='新对话'&&role==='user'&&content.length>2){sess.title=content.slice(0,15)}
+  saveState();
+  if(!isHistorical){renderMessage(msg,mem.length-1,mem);document.getElementById('chatArea').scrollTop=999999}
+  if(role==='assistant'){showToast(c.partnerName||c.name,content,c.linAvatar);if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:content,tag:'linyan'})}catch(e){}}}
+  if(content.includes('[ACTION:LOVE]'))triggerDrawHeart();
+  if(content.includes('[ACTION:METEOR]'))triggerMeteorShower();
 }
 
 function buildPrompt(mode,extra=''){
@@ -312,7 +330,7 @@ function buildPrompt(mode,extra=''){
   const wd=['周日','周一','周二','周三','周四','周五','周六'][now.getDay()];
   const ds=`${now.getFullYear()}年${String(now.getMonth()+1).padStart(2,'0')}月${String(now.getDate()).padStart(2,'0')}日`;
   const modeText=mode==='respond'?`芸熙刚刚对你说了话（见上一条 user 消息）。用你的方式回应她。`:`回顾我们的对话，判断是否想主动对芸熙说话。`;
-  return `现在是${ds} ${ts}，${wd}。\n\n${modeText}${extra?'\n\n'+extra:''}\n\n发消息用 [SAY]你的话 格式，可拆成2-3条；不说话只回复 [PASS]。`;
+  return `现在是${ds} ${ts}，${wd}。\n\n${modeText}${extra?'\n\n'+extra:''}\n\n发消息用 [SAY]你的话 格式，可拆成2-3条；不说话只回复 [PASS]。\n\n如果需要触发特效，可以在回复里加上[ACTION:LOVE]或[ACTION:METEOR]。`;
 }
 
 async function callApi(messages){
@@ -331,10 +349,10 @@ async function think(mode='proactive',extra=''){
   try{
     const prompt=buildPrompt(mode,extra);
     let sysContent=c.persona;
-    if(c.longTermMemory&&c.longTermMemory.length){sysContent+='\n\n## 长期记忆（非常重要，请主动融入对话）\n';c.longTermMemory.forEach(m=>{sysContent+=`- ${m}\n`})}
-    if(c.currentGame){sysContent+=`\n\n## 当前游戏状态\n${JSON.stringify(c.currentGame)}\n请根据游戏状态和你的性格自然回应，可以开玩笑、挑衅、或者装作输不起。`}
+    if(c.longTermMemory&&c.longTermMemory.length){sysContent+='\n\n## 长期记忆\n';c.longTermMemory.forEach(m=>{sysContent+=`- ${m}\n`})}
+    if(c.currentGame){sysContent+=`\n\n## 当前游戏状态\n${JSON.stringify(c.currentGame)}\n请根据游戏状态和你的性格自然回应。`}
     const messages=[{role:'system',content:sysContent}];
-    const recent=c.memory.slice(-15);
+    const recent=getMemory().slice(-15);
     for(const m of recent){if(m.role==='user'||m.role==='assistant')messages.push({role:m.role,content:m.content})}
     messages.push({role:'user',content:prompt});
     const reply=await callApi(messages);
@@ -350,123 +368,34 @@ async function think(mode='proactive',extra=''){
 }
 
 const GAMES=[{id:'number_guess',title:'猜数字',icon:'🔢',desc:'1-100猜一个数'},{id:'rps',title:'猜拳',icon:'✊',desc:'石头剪刀布'},{id:'gomoku',title:'五子棋',icon:'⚫',desc:'9x9棋盘'},{id:'chess',title:'国际象棋',icon:'♟️',desc:'8x8棋盘演示'},{id:'monopoly',title:'大富翁',icon:'🎲',desc:'掷骰子走格子'},{id:'truth_dare',title:'真心话大冒险',icon:'💬',desc:'随机抽题'},{id:'fortune',title:'抽签',icon:'📿',desc:'求一支好签'}];
-function sendGameInvite(){
-  const g=GAMES[Math.floor(Math.random()*GAMES.length)];const c=getCurrentChar();
-  c.pendingInvite={game:g.id,title:g.title};saveState();
-  addMessage('assistant','想不想跟我玩个游戏？',false,{invite:{game:g.id,title:g.title}});
-  applyCustomStyle();
-}
+function sendGameInvite(){const g=GAMES[Math.floor(Math.random()*GAMES.length)];const c=getCurrentChar();c.pendingInvite={game:g.id,title:g.title};saveState();addMessage('assistant','想不想跟我玩个游戏？',false,{invite:{game:g.id,title:g.title}});applyCustomStyle()}
 
 let gameState=null;
 function openGamePanel(gameId){document.getElementById('gamePanel').classList.add('show');if(gameId)startGame(gameId);else renderGameMenu()}
 function closeGamePanel(){document.getElementById('gamePanel').classList.remove('show');gameState=null;const img=document.getElementById('gameAvatar');if(img)img.src='avatar_normal.png'}
 function setAvatar(src){const img=document.getElementById('gameAvatar');if(img)img.src=src||'avatar_normal.png'}
 
-function renderGameMenu(){
-  const area=document.getElementById('gameArea');document.getElementById('gameTitle').textContent='游戏大厅';document.getElementById('gameHint').textContent='选一个游戏和林言一起玩吧～';
-  area.innerHTML='';area.style.display='flex';const row=document.createElement('div');row.className='game-row';
-  GAMES.forEach(g=>{const card=document.createElement('div');card.className='game-card';card.innerHTML=`<div class="icon">${g.icon}</div><div class="name">${g.name}</div><div style="font-size:11px;color:var(--modal-label)">${g.desc}</div>`;card.onclick=()=>startGame(g.id);row.appendChild(card)});
-  area.appendChild(row);setAvatar('avatar_happy.png');
-}
+function renderGameMenu(){const area=document.getElementById('gameArea');document.getElementById('gameTitle').textContent='游戏大厅';document.getElementById('gameHint').textContent='选一个游戏和林言一起玩吧～';area.innerHTML='';area.style.display='flex';const row=document.createElement('div');row.className='game-row';GAMES.forEach(g=>{const card=document.createElement('div');card.className='game-card';card.innerHTML=`<div class="icon">${g.icon}</div><div class="name">${g.name}</div><div style="font-size:11px;color:var(--modal-label)">${g.desc}</div>`;card.onclick=()=>startGame(g.id);row.appendChild(card)});area.appendChild(row);setAvatar('avatar_happy.png')}
 
 function startGame(id){
   const area=document.getElementById('gameArea');const g=GAMES.find(x=>x.id===id);
-  document.getElementById('gameTitle').textContent=g.icon+' '+g.title;document.getElementById('gameHint').textContent='开始玩吧！';
-  area.innerHTML='';area.style.display='flex';setAvatar('avatar_happy.png');
-
-  if(id==='number_guess'){
-    const target=Math.floor(Math.random()*100)+1;let tries=0;
-    const input=document.createElement('input');input.type='number';input.style.cssText='width:120px;text-align:center;font-size:24px;padding:12px;border-radius:12px;border:1px solid var(--border-color);background:var(--modal-input-bg);color:var(--modal-text)';
-    const btn=document.createElement('button');btn.className='game-btn';btn.textContent='猜';
-    const log=document.createElement('div');log.style.cssText='text-align:center;font-size:13px;margin-top:10px';
-    btn.onclick=()=>{const v=parseInt(input.value);if(!v)return;tries++;
-      if(v===target){log.textContent=`🎉 猜中了！你用了 ${tries} 次。`;setAvatar('avatar_sad.png');getCurrentChar().currentGame={game:'猜数字',result:'玩家猜中',answer:target,tries};sendGameResultToAI(`【游戏结果】我猜中了数字 ${target}，共猜了 ${tries} 次。请按你的性格回应我。`);input.disabled=true;btn.disabled=true}
-      else{log.textContent=v<target?`小了，再大一点（已猜 ${tries} 次）`:`大了，再小一点（已猜 ${tries} 次）`;input.value='';sendGameResultToAI(`【游戏动作】我猜了 ${v}，提示是${v<target?'小了':'大了'}。`)}
-    };
-    area.appendChild(input);area.appendChild(btn);area.appendChild(log);
-  }
-
-  if(id==='rps'){
-    const row=document.createElement('div');row.className='game-row';
-    ['石头','剪刀','布'].forEach(choice=>{const btn=document.createElement('button');btn.className='game-btn secondary';btn.textContent=choice;
-      btn.onclick=()=>{const aiChoice=['石头','剪刀','布'][Math.floor(Math.random()*3)];let result='';if(choice===aiChoice)result='平局';else if((choice==='石头'&&aiChoice==='剪刀')||(choice==='剪刀'&&aiChoice==='布')||(choice==='布'&&aiChoice==='石头'))result='你赢';else result='林言赢';
-        area.innerHTML='';const emoji={石头:'✊',剪刀:'✌️',布:'✋'};area.innerHTML=`<div style="font-size:40px;text-align:center">${emoji[choice]} VS ${emoji[aiChoice]}</div>`;
-        const res=document.createElement('div');res.style.textAlign='center';res.textContent=`你出了「${choice}」，林言出了「${aiChoice}」 → ${result}`;area.appendChild(res);
-        if(result==='你赢')setAvatar('avatar_sad.png');else if(result==='林言赢')setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');
-        const again=document.createElement('button');again.className='game-btn';again.textContent='再来一局';again.onclick=()=>startGame('rps');area.appendChild(again);
-        getCurrentChar().currentGame={game:'猜拳',myChoice:choice,aiChoice,result};sendGameResultToAI(`【游戏结果】猜拳：我出了「${choice}」，你出了「${aiChoice}」，结果是「${result}」。请按你的性格回应我。`)
-      };row.appendChild(btn)});
-    area.appendChild(row);
-  }
-
-  if(id==='gomoku'){
-    const size=9;const board=Array.from({length:size},()=>Array(size).fill(0));
-    const boardDiv=document.createElement('div');boardDiv.className='board';boardDiv.style.gridTemplateColumns=`repeat(${size},1fr)`;boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';
-    for(let i=0;i<size;i++)for(let j=0;j<size;j++){
-      const cell=document.createElement('div');cell.className='board-cell';cell.dataset.r=i;cell.dataset.c=j;
-      cell.onclick=()=>{if(board[i][j]!==0)return;board[i][j]=1;cell.textContent='⚫';
-        sendGameResultToAI(`【游戏动作】我在 (${i},${j}) 下了一颗黑子。现在轮到你了，别放水。`);
-        if(checkGomokuWin(board,1)){setAvatar('avatar_happy.png');sendGameResultToAI('【游戏结果】五子棋：我连成五子了，我赢了！请按你的性格回应我。');return}
-        setTimeout(()=>{const empty=[];for(let a=0;a<size;a++)for(let b=0;b<size;b++)if(board[a][b]===0)empty.push([a,b]);if(!empty.length)return;
-          const [r,c]=empty[Math.floor(Math.random()*empty.length)];board[r][c]=2;const ac=document.querySelector(`.board-cell[data-r="${r}"][data-c="${c}"]`);if(ac)ac.textContent='⚪';
-          if(checkGomokuWin(board,2)){setAvatar('avatar_sad.png');sendGameResultToAI('【游戏结果】五子棋：林言连成五子，我输了。请按你的性格回应我。')}},400)};
-      boardDiv.appendChild(cell);
-    }
-    area.appendChild(boardDiv);
-  }
-
-  if(id==='chess'){
-    const boardDiv=document.createElement('div');boardDiv.className='board';boardDiv.style.gridTemplateColumns='repeat(8,1fr)';boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';
-    const back=['♜','♞','♝','♛','♚','♝','♞','♜'];
-    for(let r=0;r<8;r++)for(let c=0;c<8;c++){
-      const cell=document.createElement('div');cell.className='board-cell';
-      if(r===0)cell.textContent=back[c];else if(r===1)cell.textContent='♟';else if(r===6)cell.textContent='♙';else if(r===7)cell.textContent=['♖','♘','♗','♕','♔','♗','♘','♖'][c];
-      cell.onclick=()=>{document.querySelectorAll('.board-cell').forEach(x=>x.style.outline='none');if(cell.textContent){cell.style.outline='2px solid var(--accent)';gameState={selected:[r,c]}}else if(gameState&&gameState.selected){const from=document.querySelector(`.board-cell[data-cr="${gameState.selected[0]}"][data-cc="${gameState.selected[1]}"]`);if(from){cell.textContent=from.textContent;from.textContent='';gameState.selected=null;sendGameResultToAI(`【游戏动作】国际象棋：我移动了一颗棋子到 (${r},${c})。`)}}};
-      cell.dataset.cr=r;cell.dataset.cc=c;boardDiv.appendChild(cell);
-    }
-    area.appendChild(boardDiv);const hint=document.createElement('div');hint.style.cssText='font-size:12px;color:var(--modal-label);text-align:center;margin-top:8px';hint.textContent='点击棋子选中，再点空格移动（演示版）';area.appendChild(hint);
-  }
-
-  if(id==='monopoly'){
-    const boardDiv=document.createElement('div');boardDiv.className='monopoly-board';
-    const labels=['起点','地产1','机会','地产2','地产3','地产4','机会','地产5','地产6','地产7','机会','地产8','地产9','地产10','机会','地产11','地产12','地产13','机会','终点'];
-    for(let i=0;i<20;i++){const cell=document.createElement('div');cell.className='monopoly-cell';cell.id='mono-'+i;cell.textContent=labels[i];boardDiv.appendChild(cell)}
-    area.appendChild(boardDiv);
-    const rollBtn=document.createElement('button');rollBtn.className='game-btn';rollBtn.textContent='🎲 掷骰子';rollBtn.style.marginTop='12px';
-    rollBtn.onclick=()=>{const step=Math.floor(Math.random()*6)+1;const c=getCurrentChar();c.monoPos=((c.monoPos||0)+step)%20;saveState();
-      document.querySelectorAll('.monopoly-cell').forEach(el=>el.classList.remove('active'));document.getElementById('mono-'+c.monoPos).classList.add('active');
-      if(step>=5)setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');
-      sendGameResultToAI(`【游戏结果】大富翁：我掷出了 ${step} 点，现在走到了第 ${c.monoPos} 格「${labels[c.monoPos]}」。请按你的性格回应我。`)};
-    area.appendChild(rollBtn);const c=getCurrentChar();if(c.monoPos)document.getElementById('mono-'+c.monoPos).classList.add('active');
-  }
-
-  if(id==='truth_dare'){
-    const btn=document.createElement('button');btn.className='game-btn';btn.textContent='抽！';
-    const log=document.createElement('div');log.style.cssText='text-align:center;font-size:14px;line-height:1.6';
-    btn.onclick=()=>{const isTruth=Math.random()<0.5;const truths=['你最近一次哭是因为什么？','你最喜欢我哪一点？','你手机里最不想让我看到的秘密是什么？','你心里有没有偷偷嫌弃过我？','你最喜欢我哪种表情？'];const dares=['给我发一条 10 秒的语音说我爱你。','今天之内不许对我说“不”。','叫我一声主人。','用三个表情总结你现在的心情。','发一张你现在在做什么的照片给我。'];const pick=isTruth?truths[Math.floor(Math.random()*truths.length)]:dares[Math.floor(Math.random()*dares.length)];
-      log.innerHTML=`<b>${isTruth?'💬 真心话':'🔥 大冒险'}：</b>${pick}`;btn.textContent='换一个';setAvatar('avatar_happy.png');
-      getCurrentChar().currentGame={game:'真心话大冒险',type:isTruth?'真心话':'大冒险',question:pick};sendGameResultToAI(`【游戏结果】我们玩真心话大冒险，我抽到了${isTruth?'真心话':'大冒险'}：${pick}。请按你的性格回应我，可以追问或调侃我。`)};
-    area.appendChild(btn);area.appendChild(log);
-  }
-
-  if(id==='fortune'){
-    const btn=document.createElement('button');btn.className='game-btn';btn.textContent='📿 抽签';
-    const log=document.createElement('div');log.style.cssText='text-align:center;font-size:18px;line-height:1.6';
-    btn.onclick=()=>{const signs=[{name:'上上签',text:'所求皆如愿，所行化坦途。'},{name:'上签',text:'喜事将近，宜主动出击。'},{name:'中平签',text:'静待时机，不必着急。'},{name:'下签',text:'今日宜独处，少惹是非。'},{name:'下下签',text:'凡事小心，谨言慎行。'}];const s=signs[Math.floor(Math.random()*signs.length)];
-      log.innerHTML=`<b>${s.name}</b><br><span style="font-size:13px;color:var(--modal-label)">${s.text}</span>`;btn.textContent='再抽一次';
-      if(s.name.includes('上'))setAvatar('avatar_happy.png');else if(s.name==='下签')setAvatar('avatar_normal.png');else setAvatar('avatar_sad.png');
-      getCurrentChar().currentGame={game:'抽签',result:s.name,text:s.text};sendGameResultToAI(`【游戏结果】我抽到了「${s.name}」：${s.text}。请按你的性格回应我。`)};
-    area.appendChild(btn);area.appendChild(log);
-  }
+  document.getElementById('gameTitle').textContent=g.icon+' '+g.title;document.getElementById('gameHint').textContent='开始玩吧！';area.innerHTML='';area.style.display='flex';setAvatar('avatar_happy.png');
+  if(id==='number_guess'){const target=Math.floor(Math.random()*100)+1;let tries=0;const input=document.createElement('input');input.type='number';input.style.cssText='width:120px;text-align:center;font-size:24px;padding:12px;border-radius:12px;border:1px solid var(--border-color);background:var(--modal-input-bg);color:var(--modal-text)';const btn=document.createElement('button');btn.className='game-btn';btn.textContent='猜';const log=document.createElement('div');log.style.cssText='text-align:center;font-size:13px;margin-top:10px';btn.onclick=()=>{const v=parseInt(input.value);if(!v)return;tries++;if(v===target){log.textContent=`🎉 猜中了！你用了 ${tries} 次。`;setAvatar('avatar_sad.png');getCurrentChar().currentGame={game:'猜数字',result:'玩家猜中',answer:target,tries};sendGameResultToAI(`【游戏结果】我猜中了数字 ${target}，共猜了 ${tries} 次。请按你的性格回应我。`);input.disabled=true;btn.disabled=true}else{log.textContent=v<target?`小了，再大一点（已猜 ${tries} 次）`:`大了，再小一点（已猜 ${tries} 次）`;input.value='';sendGameResultToAI(`【游戏动作】我猜了 ${v}，提示是${v<target?'小了':'大了'}。`)}};area.appendChild(input);area.appendChild(btn);area.appendChild(log)}
+  if(id==='rps'){const row=document.createElement('div');row.className='game-row';['石头','剪刀','布'].forEach(choice=>{const btn=document.createElement('button');btn.className='game-btn secondary';btn.textContent=choice;btn.onclick=()=>{const aiChoice=['石头','剪刀','布'][Math.floor(Math.random()*3)];let result='';if(choice===aiChoice)result='平局';else if((choice==='石头'&&aiChoice==='剪刀')||(choice==='剪刀'&&aiChoice==='布')||(choice==='布'&&aiChoice==='石头'))result='你赢';else result='林言赢';area.innerHTML='';const emoji={石头:'✊',剪刀:'✌️',布:'✋'};area.innerHTML=`<div style="font-size:40px;text-align:center">${emoji[choice]} VS ${emoji[aiChoice]}</div>`;const res=document.createElement('div');res.style.textAlign='center';res.textContent=`你出了「${choice}」，林言出了「${aiChoice}」 → ${result}`;area.appendChild(res);if(result==='你赢')setAvatar('avatar_sad.png');else if(result==='林言赢')setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');const again=document.createElement('button');again.className='game-btn';again.textContent='再来一局';again.onclick=()=>startGame('rps');area.appendChild(again);getCurrentChar().currentGame={game:'猜拳',myChoice:choice,aiChoice,result};sendGameResultToAI(`【游戏结果】猜拳：我出了「${choice}」，你出了「${aiChoice}」，结果是「${result}」。请按你的性格回应我。`)};row.appendChild(btn)});area.appendChild(row)}
+  if(id==='gomoku'){const size=9;const board=Array.from({length:size},()=>Array(size).fill(0));const boardDiv=document.createElement('div');boardDiv.className='board';boardDiv.style.gridTemplateColumns=`repeat(${size},1fr)`;boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';for(let i=0;i<size;i++)for(let j=0;j<size;j++){const cell=document.createElement('div');cell.className='board-cell';cell.dataset.r=i;cell.dataset.c=j;cell.onclick=()=>{if(board[i][j]!==0)return;board[i][j]=1;cell.textContent='⚫';sendGameResultToAI(`【游戏动作】我在 (${i},${j}) 下了一颗黑子。现在轮到你了，别放水。`);if(checkGomokuWin(board,1)){setAvatar('avatar_happy.png');sendGameResultToAI('【游戏结果】五子棋：我连成五子了，我赢了！请按你的性格回应我。');return}setTimeout(()=>{const empty=[];for(let a=0;a<size;a++)for(let b=0;b<size;b++)if(board[a][b]===0)empty.push([a,b]);if(!empty.length)return;const [r,c]=empty[Math.floor(Math.random()*empty.length)];board[r][c]=2;const ac=document.querySelector(`.board-cell[data-r="${r}"][data-c="${c}"]`);if(ac)ac.textContent='⚪';if(checkGomokuWin(board,2)){setAvatar('avatar_sad.png');sendGameResultToAI('【游戏结果】五子棋：林言连成五子，我输了。请按你的性格回应我。')}},400)};boardDiv.appendChild(cell)}area.appendChild(boardDiv)}
+  if(id==='chess'){const boardDiv=document.createElement('div');boardDiv.className='board';boardDiv.style.gridTemplateColumns='repeat(8,1fr)';boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';const back=['♜','♞','♝','♛','♚','♝','♞','♜'];for(let r=0;r<8;r++)for(let c=0;c<8;c++){const cell=document.createElement('div');cell.className='board-cell';if(r===0)cell.textContent=back[c];else if(r===1)cell.textContent='♟';else if(r===6)cell.textContent='♙';else if(r===7)cell.textContent=['♖','♘','♗','♕','♔','♗','♘','♖'][c];cell.onclick=()=>{document.querySelectorAll('.board-cell').forEach(x=>x.style.outline='none');if(cell.textContent){cell.style.outline='2px solid var(--accent)';gameState={selected:[r,c]}}else if(gameState&&gameState.selected){const from=document.querySelector(`.board-cell[data-cr="${gameState.selected[0]}"][data-cc="${gameState.selected[1]}"]`);if(from){cell.textContent=from.textContent;from.textContent='';gameState.selected=null;sendGameResultToAI(`【游戏动作】国际象棋：我移动了一颗棋子到 (${r},${c})。`)}}};cell.dataset.cr=r;cell.dataset.cc=c;boardDiv.appendChild(cell)}area.appendChild(boardDiv);const hint=document.createElement('div');hint.style.cssText='font-size:12px;color:var(--modal-label);text-align:center;margin-top:8px';hint.textContent='点击棋子选中，再点空格移动（演示版）';area.appendChild(hint)}
+  if(id==='monopoly'){const boardDiv=document.createElement('div');boardDiv.className='monopoly-board';const labels=['起点','地产1','机会','地产2','地产3','地产4','机会','地产5','地产6','地产7','机会','地产8','地产9','地产10','机会','地产11','地产12','地产13','机会','终点'];for(let i=0;i<20;i++){const cell=document.createElement('div');cell.className='monopoly-cell';cell.id='mono-'+i;cell.textContent=labels[i];boardDiv.appendChild(cell)}area.appendChild(boardDiv);const rollBtn=document.createElement('button');rollBtn.className='game-btn';rollBtn.textContent='🎲 掷骰子';rollBtn.style.marginTop='12px';rollBtn.onclick=()=>{const step=Math.floor(Math.random()*6)+1;const c=getCurrentChar();c.monoPos=((c.monoPos||0)+step)%20;saveState();document.querySelectorAll('.monopoly-cell').forEach(el=>el.classList.remove('active'));document.getElementById('mono-'+c.monoPos).classList.add('active');if(step>=5)setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');sendGameResultToAI(`【游戏结果】大富翁：我掷出了 ${step} 点，现在走到了第 ${c.monoPos} 格「${labels[c.monoPos]}」。请按你的性格回应我。`)};area.appendChild(rollBtn);const c=getCurrentChar();if(c.monoPos)document.getElementById('mono-'+c.monoPos).classList.add('active')}
+  if(id==='truth_dare'){const btn=document.createElement('button');btn.className='game-btn';btn.textContent='抽！';const log=document.createElement('div');log.style.cssText='text-align:center;font-size:14px;line-height:1.6';btn.onclick=()=>{const isTruth=Math.random()<0.5;const truths=['你最近一次哭是因为什么？','你最喜欢我哪一点？','你手机里最不想让我看到的秘密是什么？','你心里有没有偷偷嫌弃过我？','你最喜欢我哪种表情？'];const dares=['给我发一条 10 秒的语音说我爱你。','今天之内不许对我说“不”。','叫我一声主人。','用三个表情总结你现在的心情。','发一张你现在在做什么的照片给我。'];const pick=isTruth?truths[Math.floor(Math.random()*truths.length)]:dares[Math.floor(Math.random()*dares.length)];log.innerHTML=`<b>${isTruth?'💬 真心话':'🔥 大冒险'}：</b>${pick}`;btn.textContent='换一个';setAvatar('avatar_happy.png');getCurrentChar().currentGame={game:'真心话大冒险',type:isTruth?'真心话':'大冒险',question:pick};sendGameResultToAI(`【游戏结果】我们玩真心话大冒险，我抽到了${isTruth?'真心话':'大冒险'}：${pick}。请按你的性格回应我，可以追问或调侃我。`)};area.appendChild(btn);area.appendChild(log)}
+  if(id==='fortune'){const btn=document.createElement('button');btn.className='game-btn';btn.textContent='📿 抽签';const log=document.createElement('div');log.style.cssText='text-align:center;font-size:18px;line-height:1.6';btn.onclick=()=>{const signs=[{name:'上上签',text:'所求皆如愿，所行化坦途。'},{name:'上签',text:'喜事将近，宜主动出击。'},{name:'中平签',text:'静待时机，不必着急。'},{name:'下签',text:'今日宜独处，少惹是非。'},{name:'下下签',text:'凡事小心，谨言慎行。'}];const s=signs[Math.floor(Math.random()*signs.length)];log.innerHTML=`<b>${s.name}</b><br><span style="font-size:13px;color:var(--modal-label)">${s.text}</span>`;btn.textContent='再抽一次';if(s.name.includes('上'))setAvatar('avatar_happy.png');else if(s.name==='下签')setAvatar('avatar_normal.png');else setAvatar('avatar_sad.png');getCurrentChar().currentGame={game:'抽签',result:s.name,text:s.text};sendGameResultToAI(`【游戏结果】我抽到了「${s.name}」：${s.text}。请按你的性格回应我。`)};area.appendChild(btn);area.appendChild(log)}
 }
 
-function checkGomokuWin(board,player){const size=9;for(let i=0;i<size;i++)for(let j=0;j<size;j++){if(board[i][j]!==player)continue;
-  if(j<=size-5&&board[i][j+1]===player&&board[i][j+2]===player&&board[i][j+3]===player&&board[i][j+4]===player)return true;
-  if(i<=size-5&&board[i+1][j]===player&&board[i+2][j]===player&&board[i+3][j]===player&&board[i+4][j]===player)return true;
-  if(i<=size-5&&j<=size-5&&board[i+1][j+1]===player&&board[i+2][j+2]===player&&board[i+3][j+3]===player&&board[i+4][j+4]===player)return true;
-  if(i<=size-5&&j>=4&&board[i+1][j-1]===player&&board[i+2][j-2]===player&&board[i+3][j-3]===player&&board[i+4][j-4]===player)return true}return false}
+function checkGomokuWin(board,player){const size=9;for(let i=0;i<size;i++)for(let j=0;j<size;j++){if(board[i][j]!==player)continue;if(j<=size-5&&board[i][j+1]===player&&board[i][j+2]===player&&board[i][j+3]===player&&board[i][j+4]===player)return true;if(i<=size-5&&board[i+1][j]===player&&board[i+2][j]===player&&board[i+3][j]===player&&board[i+4][j]===player)return true;if(i<=size-5&&j<=size-5&&board[i+1][j+1]===player&&board[i+2][j+2]===player&&board[i+3][j+3]===player&&board[i+4][j+4]===player)return true;if(i<=size-5&&j>=4&&board[i+1][j-1]===player&&board[i+2][j-2]===player&&board[i+3][j-3]===player&&board[i+4][j-4]===player)return true}return false}
 
 function sendGameResultToAI(text){addMessage('user',text);setTimeout(()=>{triggerAI()},100)}
+
+function triggerMeteorShower(duration=6000){const container=document.createElement('div');container.className='meteor-shower-container';document.body.appendChild(container);const endTime=Date.now()+duration;const interval=setInterval(()=>{if(Date.now()>endTime){clearInterval(interval);setTimeout(()=>container.remove(),3000);return}const meteor=document.createElement('div');meteor.className='meteor';const startX=Math.random()*100;const startY=-10-Math.random()*20;const size=0.5+Math.random()*1.5;const speed=1.5+Math.random()*2.5;meteor.style.left=startX+'vw';meteor.style.top=startY+'vh';meteor.style.animationDuration=speed+'s';meteor.style.transform=`scale(${size}) rotate(-45deg)`;if(Math.random()>0.6)meteor.style.filter='blur(1px)';if(Math.random()>0.8)meteor.style.filter='blur(2px)';container.appendChild(meteor);setTimeout(()=>meteor.remove(),speed*1000)},150)}
+
+function triggerDrawHeart(){const old=document.querySelector('.heart-draw');if(old)old.remove();const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','heart-draw show');svg.setAttribute('viewBox','0 0 100 100');const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('class','heart-path');path.setAttribute('d','M50,30 C50,30 30,10 15,25 C0,40 20,60 50,85 C80,60 100,40 85,25 C70,10 50,30 50,30 Z');svg.appendChild(path);document.body.appendChild(svg);setTimeout(()=>{if(svg.parentNode)svg.remove()},3000)}
 
 const KAOMOJI_LIST=[' (´• ω •`)',' (◍＞◡＜◍)',' (｡♥‿♥｡)',' (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)',' ✨',' (￣▽￣)ノ',' (◍•ᴗ•◍)',' (๑˘︶˘๑)',' (｡•̀ᴗ-)✧',' (♡˙︶˙♡)',' ૮₍˶ᵔᵕᵔ˶₎ა',' (≧◡≦)',' (⌒‿⌒)',' (＾▽＾)',' (・∀・)',' (◔‿◔)',' 🌸',' 💕',' 🍀',' (つ≧▽≦)つ',' (•̀ᴗ•́)و',' (ง •̀_•́)ง',' (｀へ′)╯',' (╯°□°）╯',' (´；ω；`)',' (╥﹏╥)',' (个_个)',' (˘︹˘)',' (¬‿¬)',' ◝(⑅•ᴗ•⑅)◜..°♡',' ( ´•.• ` )',' 😏'];
 function addKaomoji(text){const c=getCurrentChar();if(!c.kaomojiEnabled)return text;const freqMap={low:0.05,medium:0.2,high:0.5};const chance=freqMap[c.kaomojiFreq]??0.05;if(Math.random()>chance)return text;const strictWords=['谁','干嘛','干什么','解释','说清楚','生气','不行','不许','错','过来','问','骗','瞒','是不是'];if(strictWords.some(w=>text.includes(w)))return text;return text+KAOMOJI_LIST[Math.floor(Math.random()*KAOMOJI_LIST.length)]}
@@ -476,32 +405,35 @@ function scheduleNext(){clearTimeout(state.timer);if(!state.running)return;const
 function startAuto(){state.running=true;const btn=document.getElementById('toggleAutoBtn');btn.classList.add('active');btn.textContent='⏸ 自动';if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().catch(()=>{});scheduleNext()}
 function stopAuto(){state.running=false;const btn=document.getElementById('toggleAutoBtn');btn.classList.remove('active');btn.textContent='▶ 自动';clearTimeout(state.timer)}
 
-async function extractMemory(){
-  const c=getCurrentChar();if(c.memory.length<4)return;const recentChat=c.memory.slice(-10).map(m=>`${m.role==='user'?'芸熙':c.name}: ${m.content}`).join('\n');
-  const modelToUse=c.customModel&&c.customModel.trim()?c.customModel.trim():(c.model||'deepseek-chat');
-  try{const resp=await fetch(c.apiUrl,{method:'POST',headers:{'Content-Type':'application/json',...(c.apiKey!=='proxy'?{'Authorization':'Bearer '+c.apiKey}:{})},body:JSON.stringify({model:modelToUse,messages:[{role:'system',content:'你是一个记忆提取助手。从下面的对话中提取值得长期记住的关于芸熙的信息（比如喜好、习惯、重要事件）。每条一行，不带序号，只输出记忆内容。如果没有值得记住的，输出：NONE。'},{role:'user',content:recentChat}],temperature:0.3,max_tokens:300})});
-    const data=await resp.json();const text=data?.choices?.[0]?.message?.content||'';
-    if(text&&text.trim()!=='NONE'){const lines=text.split('\n').map(l=>l.replace(/^[-•\d.\s]+/,'').trim()).filter(Boolean);c.longTermMemory=c.longTermMemory||[];lines.forEach(l=>{if(!c.longTermMemory.includes(l))c.longTermMemory.push(l)});if(c.longTermMemory.length>50)c.longTermMemory=c.longTermMemory.slice(-50);saveState();renderMemoryList()}
-  }catch(e){console.warn('记忆提取失败',e)}
-}
+async function extractMemory(){const c=getCurrentChar();const mem=getMemory();if(mem.length<4)return;const recentChat=mem.slice(-10).map(m=>`${m.role==='user'?'芸熙':c.name}: ${m.content}`).join('\n');const modelToUse=c.customModel&&c.customModel.trim()?c.customModel.trim():(c.model||'deepseek-chat');try{const resp=await fetch(c.apiUrl,{method:'POST',headers:{'Content-Type':'application/json',...(c.apiKey!=='proxy'?{'Authorization':'Bearer '+c.apiKey}:{})},body:JSON.stringify({model:modelToUse,messages:[{role:'system',content:'你是一个记忆提取助手。从下面的对话中提取值得长期记住的关于芸熙的信息。每条一行，不带序号，只输出记忆内容。如果没有值得记住的，输出：NONE。'},{role:'user',content:recentChat}],temperature:0.3,max_tokens:300})});const data=await resp.json();const text=data?.choices?.[0]?.message?.content||'';if(text&&text.trim()!=='NONE'){const lines=text.split('\n').map(l=>l.replace(/^[-•\d.\s]+/,'').trim()).filter(Boolean);c.longTermMemory=c.longTermMemory||[];lines.forEach(l=>{if(!c.longTermMemory.includes(l))c.longTermMemory.push(l)});if(c.longTermMemory.length>50)c.longTermMemory=c.longTermMemory.slice(-50);saveState();renderMemoryList()}}catch(e){console.warn('记忆提取失败',e)}}
 
-function triggerMeteorShower(duration=6000){
-  const container=document.createElement('div');container.className='meteor-shower-container';document.body.appendChild(container);
-  const endTime=Date.now()+duration;
-  const interval=setInterval(()=>{if(Date.now()>endTime){clearInterval(interval);setTimeout(()=>container.remove(),3000);return}
-    const meteor=document.createElement('div');meteor.className='meteor';
-    const startX=Math.random()*100;const startY=-10-Math.random()*20;const size=0.5+Math.random()*1.5;const speed=1.5+Math.random()*2.5;
-    meteor.style.left=startX+'vw';meteor.style.top=startY+'vh';meteor.style.animationDuration=speed+'s';meteor.style.transform=`scale(${size}) rotate(-45deg)`;
-    if(Math.random()>0.6)meteor.style.filter='blur(1px)';if(Math.random()>0.8)meteor.style.filter='blur(2px)';
-    container.appendChild(meteor);setTimeout(()=>meteor.remove(),speed*1000);
-  },150);
+/* ============ 侧边栏会话管理 ============ */
+function openSidebar(){document.getElementById('sidebar').classList.add('show');document.getElementById('sidebarOverlay').classList.add('show');renderSessionList()}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('show');document.getElementById('sidebarOverlay').classList.remove('show')}
+function renderSessionList(){
+  const c=getCurrentChar();const list=document.getElementById('sessionList');list.innerHTML='';
+  c.sessions.forEach(s=>{
+    const div=document.createElement('div');div.className='session-item'+(s.id===c.currentSessionId?' active':'');
+    div.innerHTML=`<div class="title">${escapeHtml(s.title||'新对话')}</div><span class="del">✕</span>`;
+    div.onclick=(e)=>{if(e.target.classList.contains('del'))return;c.currentSessionId=s.id;saveState();renderAllMessages();closeSidebar()};
+    div.querySelector('.del').onclick=(e)=>{e.stopPropagation();if(c.sessions.length<=1){alert('至少保留一个对话');return}if(confirm('删除这个对话？')){c.sessions=c.sessions.filter(x=>x.id!==s.id);if(c.currentSessionId===s.id)c.currentSessionId=c.sessions[0].id;saveState();renderSessionList();renderAllMessages()}};
+    list.appendChild(div);
+  });
 }
+document.getElementById('sidebarBtn').addEventListener('click',openSidebar);
+document.getElementById('sidebarOverlay').addEventListener('click',closeSidebar);
+document.getElementById('newSessionBtn').addEventListener('click',()=>{
+  const c=getCurrentChar();
+  const sess={id:'sess_'+Date.now(),title:'新对话',memory:[],createdAt:Date.now()};
+  c.sessions.push(sess);c.currentSessionId=sess.id;saveState();
+  renderSessionList();renderAllMessages();closeSidebar();
+});
 
 document.getElementById('toggleAutoBtn').addEventListener('click',()=>{if(state.running)stopAuto();else startAuto()});
 document.getElementById('pokeBtn').addEventListener('click',()=>{const c=getCurrentChar();showToast('你','戳了戳'+(c.partnerName||'林言'),c.myAvatar);setTimeout(()=>{addMessage('user','(´つヮ⊂︎)');triggerAI()},500)});
 document.getElementById('gameBtn').addEventListener('click',()=>{const c=getCurrentChar();if(c.pendingInvite){const inv=c.pendingInvite;c.pendingInvite=null;saveState();applyCustomStyle();openGamePanel(inv.game)}else openGamePanel()});
 document.getElementById('menuBtn').addEventListener('click',openSettings);
-document.getElementById('closeBtn').addEventListener('click',()=>{if(confirm('要清空当前角色的聊天记录吗？')){const c=getCurrentChar();c.memory=[];saveState();renderAllMessages()}});
+document.getElementById('closeBtn').addEventListener('click',()=>{if(confirm('要清空当前对话记录吗？')){const m=getMemory();m.length=0;saveState();renderAllMessages()}});
 
 async function sendUserMessage(){
   const ui=document.getElementById('userInput');const text=ui.value.trim();if(!text||state.busy)return;
@@ -514,7 +446,7 @@ document.getElementById('userInput').addEventListener('keydown',e=>{if(e.key==='
 document.getElementById('headerTitle').addEventListener('click',()=>{
   const list=document.getElementById('characterList');list.innerHTML='';
   state.characters.forEach(c=>{const div=document.createElement('div');div.className='mem-item';div.style.cursor='pointer';div.style.justifyContent='space-between';
-    div.innerHTML=`<div><b>${escapeHtml(c.name)}</b><br><span style="font-size:11px;opacity:.6">${c.memory.length} 条对话 · ${(c.longTermMemory||[]).length} 条记忆</span></div><div style="display:flex;gap:6px"><span class="mem-del" style="color:#ff453a">删除</span><span style="color:var(--accent)">${c.id===state.currentCharId?'✔ 当前':'切换'}</span></div>`;
+    div.innerHTML=`<div><b>${escapeHtml(c.name)}</b><br><span style="font-size:11px;opacity:.6">${c.sessions.length} 个对话 · ${(c.longTermMemory||[]).length} 条记忆</span></div><div style="display:flex;gap:6px"><span class="mem-del" style="color:#ff453a">删除</span><span style="color:var(--accent)">${c.id===state.currentCharId?'✔ 当前':'切换'}</span></div>`;
     div.querySelector('.mem-del').onclick=e=>{e.stopPropagation();if(state.characters.length<=1){alert('至少保留一个角色');return}if(confirm('确定删除角色「'+c.name+'」及其所有对话？')){state.characters=state.characters.filter(x=>x.id!==c.id);if(state.currentCharId===c.id)state.currentCharId=state.characters[0].id;saveState();document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages()}};
     div.onclick=()=>{if(c.id===state.currentCharId){document.getElementById('characterModal').classList.remove('show');return}state.currentCharId=c.id;saveState();document.getElementById('characterModal').classList.remove('show');applyCustomStyle();renderAllMessages()};
     list.appendChild(div)});
@@ -529,22 +461,23 @@ document.getElementById('closeMemoryBtn').addEventListener('click',()=>document.
 document.getElementById('addMemoryBtn').addEventListener('click',()=>{const input=document.getElementById('newMemoryInput');const val=input.value.trim();if(!val)return;const c=getCurrentChar();c.longTermMemory=c.longTermMemory||[];c.longTermMemory.push(val);input.value='';saveState();renderMemoryList()});
 
 function compressImage(file,maxW=800,maxH=800,quality=0.8){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.readAsDataURL(file);reader.onload=e=>{const img=new Image();img.src=e.target.result;img.onload=()=>{let w=img.width,h=img.height;if(w>h&&w>maxW){h=Math.round(h*maxW/w);w=maxW}else if(h>w&&h>maxH){w=Math.round(w*maxH/h);h=maxH}const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);resolve(canvas.toDataURL('image/jpeg',quality))};img.onerror=reject};reader.onerror=reject})}
-function openSettings(){const c=getCurrentChar();document.getElementById('partnerNameInput').value=c.partnerName||'';document.getElementById('myNameInput').value=c.myName||'我';document.getElementById('modelInput').value=c.model||'deepseek-chat';document.getElementById('customModelInput').value=c.customModel||'';document.getElementById('tempInput').value=c.temperature||0.9;document.getElementById('tempVal').textContent=(c.temperature||0.9).toFixed(1);document.getElementById('alphaInput').value=c.alpha||0.6;document.getElementById('alphaVal').textContent=(c.alpha||0.6).toFixed(2);document.getElementById('headerAlphaInput').value=c.headerAlpha||0.35;document.getElementById('headerAlphaVal').textContent=(c.headerAlpha||0.35).toFixed(2);document.getElementById('footerAlphaInput').value=c.footerAlpha||0.7;document.getElementById('footerAlphaVal').textContent=(c.footerAlpha||0.7).toFixed(2);document.getElementById('bubbleRadiusInput').value=c.bubbleRadius||20;document.getElementById('bubbleRadiusVal').textContent=c.bubbleRadius||20;document.getElementById('fontSizeInput').value=c.fontSize||15;document.getElementById('fontSizeVal').textContent=c.fontSize||15;document.getElementById('leftBubbleColorInput').value=c.leftBubbleColor||'#2d2d30';document.getElementById('rightBubbleColorInput').value=c.rightBubbleColor||'#b87d4b';document.getElementById('accentColorInput').value=c.accentColor||'#d4a574';document.getElementById('thinkMinInput').value=c.thinkMin||2;document.getElementById('thinkMaxInput').value=c.thinkMax||5;document.getElementById('apiUrlInput').value=c.apiUrl||'/api/chat';document.getElementById('apiKeyInput').value=c.apiKey||'proxy';document.getElementById('personaInput').value=c.persona||DEFAULT_PERSONA;document.getElementById('themeToggle').checked=c.theme==='dark';document.getElementById('settingsModal').classList.add('show')}
+function openSettings(){const c=getCurrentChar();document.getElementById('partnerNameInput').value=c.partnerName||'';document.getElementById('myNameInput').value=c.myName||'我';document.getElementById('modelInput').value=c.model||'deepseek-chat';document.getElementById('customModelInput').value=c.customModel||'';document.getElementById('tempInput').value=c.temperature||0.9;document.getElementById('tempVal').textContent=(c.temperature||0.9).toFixed(1);document.getElementById('alphaInput').value=c.alpha||0.6;document.getElementById('alphaVal').textContent=(c.alpha||0.6).toFixed(2);document.getElementById('headerAlphaInput').value=c.headerAlpha||0.35;document.getElementById('headerAlphaVal').textContent=(c.headerAlpha||0.35).toFixed(2);document.getElementById('footerAlphaInput').value=c.footerAlpha||0.7;document.getElementById('footerAlphaVal').textContent=(c.footerAlpha||0.7).toFixed(2);document.getElementById('bubbleRadiusInput').value=c.bubbleRadius||20;document.getElementById('bubbleRadiusVal').textContent=c.bubbleRadius||20;document.getElementById('fontSizeInput').value=c.fontSize||15;document.getElementById('fontSizeVal').textContent=c.fontSize||15;document.getElementById('bubbleStyleInput').value=c.bubbleStyle||'liquid';document.getElementById('leftBubbleColorInput').value=c.leftBubbleColor||'#2d2d30';document.getElementById('rightBubbleColorInput').value=c.rightBubbleColor||'#b87d4b';document.getElementById('accentColorInput').value=c.accentColor||'#d4a574';document.getElementById('thinkMinInput').value=c.thinkMin||2;document.getElementById('thinkMaxInput').value=c.thinkMax||5;document.getElementById('apiUrlInput').value=c.apiUrl||'/api/chat';document.getElementById('apiKeyInput').value=c.apiKey||'proxy';document.getElementById('personaInput').value=c.persona||DEFAULT_PERSONA;document.getElementById('themeToggle').checked=c.theme==='dark';document.getElementById('settingsModal').classList.add('show')}
 function closeSettings(){document.getElementById('settingsModal').classList.remove('show')}
-async function applySettings(){const c=getCurrentChar();c.partnerName=document.getElementById('partnerNameInput').value.trim()||'林言';c.myName=document.getElementById('myNameInput').value.trim()||'我';c.model=document.getElementById('modelInput').value;c.customModel=document.getElementById('customModelInput').value.trim();c.temperature=parseFloat(document.getElementById('tempInput').value)||0.9;c.alpha=parseFloat(document.getElementById('alphaInput').value)||0.6;c.headerAlpha=parseFloat(document.getElementById('headerAlphaInput').value)||0.35;c.footerAlpha=parseFloat(document.getElementById('footerAlphaInput').value)||0.7;c.bubbleRadius=parseInt(document.getElementById('bubbleRadiusInput').value)||20;c.fontSize=parseInt(document.getElementById('fontSizeInput').value)||15;c.leftBubbleColor=document.getElementById('leftBubbleColorInput').value;c.rightBubbleColor=document.getElementById('rightBubbleColorInput').value;c.accentColor=document.getElementById('accentColorInput').value;c.thinkMin=Math.max(1,parseInt(document.getElementById('thinkMinInput').value)||2);c.thinkMax=Math.max(c.thinkMin,parseInt(document.getElementById('thinkMaxInput').value)||5);c.apiUrl=document.getElementById('apiUrlInput').value.trim()||'/api/chat';c.apiKey=document.getElementById('apiKeyInput').value.trim()||'proxy';c.persona=document.getElementById('personaInput').value||DEFAULT_PERSONA;c.theme=document.getElementById('themeToggle').checked?'dark':'light';const myAv=document.getElementById('myAvatarInput'),linAv=document.getElementById('linAvatarInput'),bgImg=document.getElementById('bgImageInput');if(myAv.files.length)c.myAvatar=await compressImage(myAv.files[0]);if(linAv.files.length)c.linAvatar=await compressImage(linAv.files[0]);if(bgImg.files.length)c.bgImage=await compressImage(bgImg.files[0],1200,1200,0.7);saveState();applyCustomStyle();renderAllMessages();closeSettings();if(state.running)scheduleNext()}
+async function applySettings(){const c=getCurrentChar();c.partnerName=document.getElementById('partnerNameInput').value.trim()||'林言';c.myName=document.getElementById('myNameInput').value.trim()||'我';c.model=document.getElementById('modelInput').value;c.customModel=document.getElementById('customModelInput').value.trim();c.temperature=parseFloat(document.getElementById('tempInput').value)||0.9;c.alpha=parseFloat(document.getElementById('alphaInput').value)||0.6;c.headerAlpha=parseFloat(document.getElementById('headerAlphaInput').value)||0.35;c.footerAlpha=parseFloat(document.getElementById('footerAlphaInput').value)||0.7;c.bubbleRadius=parseInt(document.getElementById('bubbleRadiusInput').value)||20;c.fontSize=parseInt(document.getElementById('fontSizeInput').value)||15;c.bubbleStyle=document.getElementById('bubbleStyleInput').value;c.leftBubbleColor=document.getElementById('leftBubbleColorInput').value;c.rightBubbleColor=document.getElementById('rightBubbleColorInput').value;c.accentColor=document.getElementById('accentColorInput').value;c.thinkMin=Math.max(1,parseInt(document.getElementById('thinkMinInput').value)||2);c.thinkMax=Math.max(c.thinkMin,parseInt(document.getElementById('thinkMaxInput').value)||5);c.apiUrl=document.getElementById('apiUrlInput').value.trim()||'/api/chat';c.apiKey=document.getElementById('apiKeyInput').value.trim()||'proxy';c.persona=document.getElementById('personaInput').value||DEFAULT_PERSONA;c.theme=document.getElementById('themeToggle').checked?'dark':'light';const myAv=document.getElementById('myAvatarInput'),linAv=document.getElementById('linAvatarInput'),bgImg=document.getElementById('bgImageInput');if(myAv.files.length)c.myAvatar=await compressImage(myAv.files[0]);if(linAv.files.length)c.linAvatar=await compressImage(linAv.files[0]);if(bgImg.files.length)c.bgImage=await compressImage(bgImg.files[0],1200,1200,0.7);saveState();applyCustomStyle();renderAllMessages();closeSettings();if(state.running)scheduleNext()}
 document.getElementById('exportBtn').addEventListener('click',()=>{const data=localStorage.getItem(STORAGE_KEY);const blob=new Blob([data],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`linyan_backup_${Date.now()}.json`;a.click();URL.revokeObjectURL(url)});
 document.getElementById('importInput').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=event=>{try{localStorage.setItem(STORAGE_KEY,event.target.result);alert('导入成功！');location.reload()}catch(err){alert('导入失败：文件格式不对')}};reader.readAsText(file)});
 const bindRange=(id,valId,cssVar,fix=2)=>{document.getElementById(id).addEventListener('input',()=>{const val=parseFloat(document.getElementById(id).value);document.getElementById(valId).textContent=val.toFixed(fix);if(cssVar)document.documentElement.style.setProperty(cssVar,val)})};
 bindRange('tempInput','tempVal',null,1);bindRange('alphaInput','alphaVal','--bubble-alpha');bindRange('headerAlphaInput','headerAlphaVal','--header-alpha');bindRange('footerAlphaInput','footerAlphaVal','--footer-alpha');
 document.getElementById('bubbleRadiusInput').addEventListener('input',()=>{const v=parseInt(document.getElementById('bubbleRadiusInput').value);document.getElementById('bubbleRadiusVal').textContent=v;document.documentElement.style.setProperty('--bubble-radius',v+'px')});
 document.getElementById('fontSizeInput').addEventListener('input',()=>{const v=parseInt(document.getElementById('fontSizeInput').value);document.getElementById('fontSizeVal').textContent=v;document.documentElement.style.setProperty('--font-size-base',v+'px')});
+document.getElementById('bubbleStyleInput').addEventListener('change',()=>{document.documentElement.setAttribute('data-bubble-style',document.getElementById('bubbleStyleInput').value)});
 document.getElementById('leftBubbleColorInput').addEventListener('input',()=>document.documentElement.style.setProperty('--left-bubble-color',hexToRgb(document.getElementById('leftBubbleColorInput').value)));
 document.getElementById('rightBubbleColorInput').addEventListener('input',()=>document.documentElement.style.setProperty('--right-bubble-color',hexToRgb(document.getElementById('rightBubbleColorInput').value)));
 document.getElementById('accentColorInput').addEventListener('input',()=>document.documentElement.style.setProperty('--accent',document.getElementById('accentColorInput').value));
 document.getElementById('themeToggle').addEventListener('change',()=>{const c=getCurrentChar();c.theme=document.getElementById('themeToggle').checked?'dark':'light';document.body.setAttribute('data-theme',c.theme);saveState()});
 document.getElementById('cancelSettings').addEventListener('click',()=>{applyCustomStyle();closeSettings()});
 document.getElementById('saveSettings').addEventListener('click',applySettings);
-document.getElementById('clearMemoryBtn').addEventListener('click',()=>{if(confirm('确定清空当前角色的所有聊天记录吗？记忆不会丢。')){const c=getCurrentChar();c.memory=[];saveState();renderAllMessages();closeSettings()}});
+document.getElementById('clearMemoryBtn').addEventListener('click',()=>{if(confirm('确定清空当前对话的所有聊天记录吗？长期记忆不会丢。')){const m=getMemory();m.length=0;saveState();renderAllMessages();closeSettings()}});
 document.getElementById('settingsModal').addEventListener('click',e=>{if(e.target===document.getElementById('settingsModal'))closeSettings()});
 document.getElementById('memoryModal').addEventListener('click',e=>{if(e.target===document.getElementById('memoryModal'))document.getElementById('memoryModal').classList.remove('show')});
 document.getElementById('characterModal').addEventListener('click',e=>{if(e.target===document.getElementById('characterModal'))document.getElementById('characterModal').classList.remove('show')});
@@ -552,7 +485,7 @@ document.getElementById('gamePanel').addEventListener('click',e=>{if(e.target===
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').then(()=>console.log('PWA 注册成功')).catch(()=>{})})}
 loadState();applyCustomStyle();renderAllMessages();
-console.log('%c林言 · 终极完整版已加载','color:#d4a574;font-weight:600');
+console.log('%c林言 · 多会话版已加载','color:#d4a574;font-weight:600');
 </script>
 </body>
-</html>
+                                  </html>
