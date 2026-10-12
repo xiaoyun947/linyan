@@ -118,7 +118,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .bubble.glow-red{box-shadow:0 0 15px rgba(255,69,58,.6)!important;border:1px solid rgba(255,69,58,.4)!important;animation:shake .5s ease-in-out}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 .bubble.glow-pink{box-shadow:0 0 20px rgba(255,105,180,.6)!important;border:1px solid rgba(255,105,180,.4)!important}
-/* 流星雨特效 - 优化成图里的长尾流星 */
+/* 流星雨特效 */
 .meteor-shower-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;background:transparent}
 .meteor{position:absolute;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.9),#fff);border-radius:50%;box-shadow:0 0 20px rgba(255,255,255,1),0 0 40px rgba(255,255,255,.5),0 0 80px rgba(255,255,255,.2);opacity:0;transform:rotate(-45deg);transform-origin:top center;animation:meteorFall linear forwards}
 @keyframes meteorFall{0%{transform:translate(120vw,-100px) rotate(-45deg);opacity:1}100%{transform:translate(-100px,120vh) rotate(-45deg);opacity:0}}
@@ -307,23 +307,34 @@ function renderAllMessages(){
 
 function addMessage(role,content,isHistorical=false,extras={}){
   const c=getCurrentChar();const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});const ts=Date.now();
-  const msg={role,content,time,timestamp:ts,...extras};const mem=getMemory();
+  
+  // 1. 先处理标签和特效（核心修复点）
+  let displayContent = content;
+  if(displayContent.includes('[ACTION:LOVE]')){
+    triggerDrawHeart();
+    displayContent = displayContent.replace(/\[ACTION:LOVE\]/g, '');
+  }
+  if(displayContent.includes('[ACTION:METEOR]')){
+    triggerMeteorShower();
+    displayContent = displayContent.replace(/\[ACTION:METEOR\]/g, '');
+  }
+  if(role==='user'){
+    if(displayContent.includes('流星雨')||displayContent.includes('流星')) triggerMeteorShower();
+    if(displayContent.includes('爱心')||displayContent.includes('画心')) triggerDrawHeart();
+  }
+  
+  // 2. 使用清理后的内容创建消息并保存
+  const finalContent = displayContent.trim();
+  const msg={role,content:finalContent,time,timestamp:ts,...extras};
+  const mem=getMemory();
   mem.push(msg);if(mem.length>300)mem.splice(0,mem.length-300);
   const sess=c.sessions.find(s=>s.id===c.currentSessionId);
-  if(sess&&sess.title==='新对话'&&role==='user'&&content.length>2){sess.title=content.slice(0,15)}
+  if(sess&&sess.title==='新对话'&&role==='user'&&finalContent.length>2){sess.title=finalContent.slice(0,15)}
   saveState();
-  if(!isHistorical){renderMessage(msg,mem.length-1,mem);document.getElementById('chatArea').scrollTop=999999}
-  if(role==='assistant'){showToast(c.partnerName||c.name,content,c.linAvatar);if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:content,tag:'linyan'})}catch(e){}}}
   
-  // 触发特效并清理标签
-  let displayContent = content;
-  if(content.includes('[ACTION:LOVE]')){triggerDrawHeart();displayContent = displayContent.replace(/\[ACTION:LOVE\]/g, '');}
-  if(content.includes('[ACTION:METEOR]')){triggerMeteorShower();displayContent = displayContent.replace(/\[ACTION:METEOR\]/g, '');}
-  if(role==='user'){
-    if(content.includes('流星雨')||content.includes('流星')) triggerMeteorShower();
-    if(content.includes('爱心')||content.includes('画心')) triggerDrawHeart();
-  }
-  msg.content = displayContent.trim();
+  // 3. 渲染
+  if(!isHistorical){renderMessage(msg,mem.length-1,mem);document.getElementById('chatArea').scrollTop=999999}
+  if(role==='assistant'){showToast(c.partnerName||c.name,finalContent,c.linAvatar);if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:finalContent,tag:'linyan'})}catch(e){}}}
 }
 
 function buildPrompt(mode,extra=''){
@@ -528,25 +539,26 @@ function checkGomokuWin(board,player){const size=9;for(let i=0;i<size;i++)for(le
 
 function sendGameResultToAI(text){addMessage('user',text);setTimeout(()=>{triggerAI()},100)}
 
-function triggerMeteorShower(duration=6000){
+function triggerMeteorShower(duration=8000){
+  console.log("流星雨特效触发");
   const container=document.createElement('div');container.className='meteor-shower-container';document.body.appendChild(container);
   const endTime=Date.now()+duration;
   const interval=setInterval(()=>{
     if(Date.now()>endTime){clearInterval(interval);setTimeout(()=>container.remove(),3000);return}
     const meteor=document.createElement('div');meteor.className='meteor';
-    // 让流星变得更长更亮
-    const w=1.5+Math.random()*2;
-    const h=200+Math.random()*250;
+    // 让流星更大更长更亮
+    const w=2+Math.random()*2;
+    const h=250+Math.random()*250;
     meteor.style.width=w+'px';meteor.style.height=h+'px';
     const startX=Math.random()*120-20;
     const startY=-120-Math.random()*100;
     meteor.style.left=startX+'vw';meteor.style.top=startY+'vh';
-    const speed=2+Math.random()*2; // 稍微放慢，显得优雅
+    const speed=1.5+Math.random()*1.5;
     meteor.style.animationDuration=speed+'s';
-    meteor.style.animationDelay=(Math.random()*1.5)+'s';
+    meteor.style.animationDelay=(Math.random()*1)+'s';
     container.appendChild(meteor);
     setTimeout(()=>meteor.remove(),(speed+3)*1000);
-  },200); // 间隔拉大，避免满屏乱刷
+  },300);
 }
 
 function triggerDrawHeart(){const old=document.querySelector('.heart-draw');if(old)old.remove();const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','heart-draw show');svg.setAttribute('viewBox','0 0 100 100');const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('class','heart-path');path.setAttribute('d','M50,30 C50,30 30,10 15,25 C0,40 20,60 50,85 C80,60 100,40 85,25 C70,10 50,30 50,30 Z');svg.appendChild(path);document.body.appendChild(svg);setTimeout(()=>{if(svg.parentNode)svg.remove()},3000)}
