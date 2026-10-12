@@ -12,7 +12,8 @@
 [data-theme="dark"]{--bg-color:#0a0a0c;--bg-color-rgb:10,10,12;--text-color:#ececec;--text-dim:#8a8a8e;--input-bg:rgba(255,255,255,.08);--border-color:rgba(255,255,255,.15);--toast-bg:rgba(45,45,48,.85);--toast-text:#fff;--modal-bg:rgba(28,28,30,.98);--modal-text:#fff;--modal-label:#8a8a8e;--modal-input-bg:rgba(255,255,255,.05);--time-bg:rgba(255,255,255,.1);--time-text:#8a8a8e}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--bg-color)}
-body{color:var(--text-color);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:var(--font-size-base);display:flex;flex-direction:column}
+body{color:var(--text-color);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:var(--font-size-base);display:flex;flex-direction:column;animation:fadeIn 1.2s ease-in-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;position:absolute;top:0;left:0;right:0;z-index:100;padding-top:max(16px,env(safe-area-inset-top));background:rgba(var(--bg-color-rgb),var(--header-alpha));backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:.5px solid rgba(255,255,255,.15)}
 .header-btn{background:transparent;border:none;color:var(--text-color);font-size:22px;cursor:pointer;padding:4px 8px;opacity:.8}
 .header-title{font-size:16px;font-weight:600;flex:1;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -36,8 +37,12 @@ body{color:var(--text-color);font-family:-apple-system,BlinkMacSystemFont,"PingF
 .bubble-wrapper{display:flex;flex-direction:column;max-width:100%}
 .msg-row.left .bubble-wrapper{align-items:flex-start}.msg-row.right .bubble-wrapper{align-items:flex-end}
 .bubble{position:relative;padding:12px 16px;border-radius:var(--bubble-radius);font-size:var(--font-size-base);line-height:1.5;max-width:100%;width:fit-content;transition:all .3s;overflow:hidden}
-.bubble::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(to right,rgba(255,255,255,0),rgba(255,255,255,.15),rgba(255,255,255,0));transform:skewX(-25deg);animation:liquidShine 5s infinite linear}
+.bubble::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(to right,rgba(255,255,255,0),rgba(255,255,255,.15),rgba(255,255,255,0));transform:skewX(-25deg);display:none}
+[data-bubble-style="liquid"] .bubble::after{display:block;animation:liquidShine 5s infinite linear}
+[data-bubble-style="glass"] .bubble::after,[data-bubble-style="solid"] .bubble::after{display:none!important}
 @keyframes liquidShine{0%{left:-100%}15%{left:200%}100%{left:200%}}
+[data-bubble-style="liquid"] .bubble{backdrop-filter:blur(24px) saturate(180%);border:.5px solid rgba(255,255,255,.25);box-shadow:inset 0 1px 1px rgba(255,255,255,.3),0 8px 32px rgba(0,0,0,.15)}
+[data-bubble-style="glass"] .bubble{backdrop-filter:blur(20px);border:.5px solid rgba(255,255,255,.18);box-shadow:0 4px 20px rgba(0,0,0,.15)}
 .msg-row.left .bubble{background:rgba(var(--left-bubble-color),var(--bubble-alpha));color:var(--text-color);border-top-left-radius:6px}
 .msg-row.right .bubble{background:rgba(var(--right-bubble-color),var(--bubble-alpha));color:#fff;border-top-right-radius:6px}
 .msg-actions{display:none;gap:6px;margin-top:6px}.msg-row:hover .msg-actions{display:flex}
@@ -88,9 +93,9 @@ input:checked+.slider{background-color:var(--accent)}input:checked+.slider:befor
 .btn-danger{width:100%;padding:14px;margin-top:12px;background:transparent;color:#ff453a;border:.5px solid rgba(255,69,58,.3);border-radius:16px;font-size:14px;cursor:pointer;font-family:inherit}
 input[type="range"]{-webkit-appearance:none;width:100%;height:6px;background:var(--modal-input-bg);border-radius:3px;outline:none;margin-top:10px}
 input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.game-panel{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:400;backdrop-filter:blur(8px)}
+.game-panel{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:400;backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%)}
 .game-panel.show{display:flex}
-.game-panel-inner{background:var(--modal-bg);color:var(--modal-text);width:92%;max-width:460px;border-radius:24px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.4);max-height:88dvh;overflow-y:auto;position:relative;backdrop-filter:blur(30px) saturate(180%);border-top:.5px solid rgba(255,255,255,.2)}
+.game-panel-inner{background:var(--modal-bg);color:var(--modal-text);width:92%;max-width:460px;border-radius:24px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.4);max-height:88dvh;overflow-y:auto;position:relative;backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border:.5px solid rgba(255,255,255,.2)}
 .q-avatar-box{text-align:center;margin-bottom:12px}
 .q-avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.6);box-shadow:0 8px 20px rgba(0,0,0,.1);animation:float 2s ease-in-out infinite}
 @keyframes float{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(2deg)}100%{transform:translateY(0) rotate(0)}}
@@ -114,7 +119,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 .bubble.glow-pink{box-shadow:0 0 20px rgba(255,105,180,.6)!important;border:1px solid rgba(255,105,180,.4)!important}
 .meteor-shower-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;background:transparent}
-.meteor{position:absolute;width:2px;height:80px;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,1),rgba(255,255,255,0));opacity:0;transform:rotate(-45deg);animation:meteorFall linear forwards}
+.meteor{position:absolute;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.8),#fff);border-radius:50%;box-shadow:0 0 12px rgba(255,255,255,.8),0 0 24px rgba(255,255,255,.3);opacity:0;transform:rotate(-45deg);transform-origin:top center}
 @keyframes meteorFall{0%{transform:translate(100vw,-100px) rotate(-45deg);opacity:1}100%{transform:translate(-100px,100vh) rotate(-45deg);opacity:0}}
 .heart-draw{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;pointer-events:none;z-index:9999;filter:drop-shadow(0 0 15px rgba(255,50,150,.8));opacity:0;transition:opacity .3s}
 .heart-draw.show{opacity:1}
@@ -192,7 +197,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
     <label>底部栏透明度：<span id="footerAlphaVal">0.70</span><input type="range" id="footerAlphaInput" min="0" max="1" step="0.05" value="0.7"></label>
     <label>气泡圆角：<span id="bubbleRadiusVal">20</span>px<input type="range" id="bubbleRadiusInput" min="0" max="40" step="1" value="20"></label>
     <label>字体大小：<span id="fontSizeVal">15</span>px<input type="range" id="fontSizeInput" min="12" max="22" step="1" value="15"></label>
-    <label>气泡效果<select id="bubbleStyleInput"><option value="liquid">液态玻璃（高光流动）</option><option value="glass">毛玻璃（磨砂透明）</option><option value="solid">纯色（无模糊）</option></select></label>
+    <label>气泡效果<select id="bubbleStyleInput"><option value="solid">纯色（无模糊）</option><option value="glass">毛玻璃（磨砂透明）</option><option value="liquid">液态玻璃（高光流动）</option></select></label>
     <div class="color-row"><label>林言气泡<input type="color" id="leftBubbleColorInput" value="#2d2d30"></label><label>我的气泡<input type="color" id="rightBubbleColorInput" value="#b87d4b"></label></div>
     <label>主题色<input type="color" id="accentColorInput" value="#d4a574"></label>
     <div class="row"><label>最短间隔<input type="number" id="thinkMinInput" min="1" value="2"></label><label>最长间隔<input type="number" id="thinkMaxInput" min="1" value="5"></label></div>
@@ -208,7 +213,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 
 <div class="game-panel" id="gamePanel">
   <div class="game-panel-inner">
-    <div class="q-avatar-box"><img id="gameAvatar" class="q-avatar" src="avatar_normal.png" alt="林言"></div>
+    <div class="q-avatar-box"><img id="gameAvatar" class="q-avatar" src="avatar_normal.png" alt="林言" onerror="this.style.display='none'"></div>
     <h3 id="gameTitle">游戏大厅</h3>
     <div class="game-hint" id="gameHint">点一个开始玩吧～</div>
     <div class="game-area" id="gameArea"></div>
@@ -308,8 +313,6 @@ function addMessage(role,content,isHistorical=false,extras={}){
   saveState();
   if(!isHistorical){renderMessage(msg,mem.length-1,mem);document.getElementById('chatArea').scrollTop=999999}
   if(role==='assistant'){showToast(c.partnerName||c.name,content,c.linAvatar);if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:content,tag:'linyan'})}catch(e){}}}
-  
-  // 触发特效（AI主动加标签 或 用户关键词触发）
   if(content.includes('[ACTION:LOVE]')||content.includes('[ACTION:METEOR]')){
     if(content.includes('[ACTION:LOVE]')) triggerDrawHeart();
     if(content.includes('[ACTION:METEOR]')) triggerMeteorShower();
@@ -345,7 +348,10 @@ async function think(mode='proactive',extra=''){
     const prompt=buildPrompt(mode,extra);
     let sysContent=c.persona;
     if(c.longTermMemory&&c.longTermMemory.length){sysContent+='\n\n## 长期记忆\n';c.longTermMemory.forEach(m=>{sysContent+=`- ${m}\n`})}
-    if(c.currentGame){sysContent+=`\n\n## 当前游戏状态\n${JSON.stringify(c.currentGame)}\n请根据游戏状态和你的性格自然回应。`}
+    if(c.currentGame){
+      sysContent+=`\n\n## 当前游戏状态\n${JSON.stringify(c.currentGame)}\n`;
+      sysContent+=`\n## 游戏互动规则（非常重要）\n你正在和芸熙玩游戏。你需要：\n1. 根据她刚刚的动作（比如她落子、她猜数字、她掷骰子）立刻做出回应。\n2. 不要每次都长篇大论，简短、有画面感、带点挑逗或开玩笑的语气最好（比如"哟，下这儿？有想法啊"）。\n3. 保持你的林言人设，输了可以嘴硬，赢了可以得意。`;
+    }
     const messages=[{role:'system',content:sysContent}];
     const recent=getMemory().slice(-15);
     for(const m of recent){if(m.role==='user'||m.role==='assistant')messages.push({role:m.role,content:m.content})}
@@ -368,27 +374,176 @@ function sendGameInvite(){const g=GAMES[Math.floor(Math.random()*GAMES.length)];
 let gameState=null;
 function openGamePanel(gameId){document.getElementById('gamePanel').classList.add('show');if(gameId)startGame(gameId);else renderGameMenu()}
 function closeGamePanel(){document.getElementById('gamePanel').classList.remove('show');gameState=null;const img=document.getElementById('gameAvatar');if(img)img.src='avatar_normal.png'}
-function setAvatar(src){const img=document.getElementById('gameAvatar');if(img)img.src=src||'avatar_normal.png'}
+function setAvatar(src){const img=document.getElementById('gameAvatar');if(img){img.style.display='';img.src=src||'avatar_normal.png'}}
 
 function renderGameMenu(){const area=document.getElementById('gameArea');document.getElementById('gameTitle').textContent='游戏大厅';document.getElementById('gameHint').textContent='选一个游戏和林言一起玩吧～';area.innerHTML='';area.style.display='flex';const row=document.createElement('div');row.className='game-row';GAMES.forEach(g=>{const card=document.createElement('div');card.className='game-card';card.innerHTML=`<div class="icon">${g.icon}</div><div class="name">${g.name}</div><div style="font-size:11px;color:var(--modal-label)">${g.desc}</div>`;card.onclick=()=>startGame(g.id);row.appendChild(card)});area.appendChild(row);setAvatar('avatar_happy.png')}
 
 function startGame(id){
   const area=document.getElementById('gameArea');const g=GAMES.find(x=>x.id===id);
   document.getElementById('gameTitle').textContent=g.icon+' '+g.title;document.getElementById('gameHint').textContent='开始玩吧！';area.innerHTML='';area.style.display='flex';setAvatar('avatar_happy.png');
-  if(id==='number_guess'){const target=Math.floor(Math.random()*100)+1;let tries=0;const input=document.createElement('input');input.type='number';input.style.cssText='width:120px;text-align:center;font-size:24px;padding:12px;border-radius:12px;border:1px solid var(--border-color);background:var(--modal-input-bg);color:var(--modal-text)';const btn=document.createElement('button');btn.className='game-btn';btn.textContent='猜';const log=document.createElement('div');log.style.cssText='text-align:center;font-size:13px;margin-top:10px';btn.onclick=()=>{const v=parseInt(input.value);if(!v)return;tries++;if(v===target){log.textContent=`🎉 猜中了！你用了 ${tries} 次。`;setAvatar('avatar_sad.png');getCurrentChar().currentGame={game:'猜数字',result:'玩家猜中',answer:target,tries};sendGameResultToAI(`【游戏结果】我猜中了数字 ${target}，共猜了 ${tries} 次。请按你的性格回应我。`);input.disabled=true;btn.disabled=true}else{log.textContent=v<target?`小了，再大一点（已猜 ${tries} 次）`:`大了，再小一点（已猜 ${tries} 次）`;input.value='';sendGameResultToAI(`【游戏动作】我猜了 ${v}，提示是${v<target?'小了':'大了'}。`)}};area.appendChild(input);area.appendChild(btn);area.appendChild(log)}
-  if(id==='rps'){const row=document.createElement('div');row.className='game-row';['石头','剪刀','布'].forEach(choice=>{const btn=document.createElement('button');btn.className='game-btn secondary';btn.textContent=choice;btn.onclick=()=>{const aiChoice=['石头','剪刀','布'][Math.floor(Math.random()*3)];let result='';if(choice===aiChoice)result='平局';else if((choice==='石头'&&aiChoice==='剪刀')||(choice==='剪刀'&&aiChoice==='布')||(choice==='布'&&aiChoice==='石头'))result='你赢';else result='林言赢';area.innerHTML='';const emoji={石头:'✊',剪刀:'✌️',布:'✋'};area.innerHTML=`<div style="font-size:40px;text-align:center">${emoji[choice]} VS ${emoji[aiChoice]}</div>`;const res=document.createElement('div');res.style.textAlign='center';res.textContent=`你出了「${choice}」，林言出了「${aiChoice}」 → ${result}`;area.appendChild(res);if(result==='你赢')setAvatar('avatar_sad.png');else if(result==='林言赢')setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');const again=document.createElement('button');again.className='game-btn';again.textContent='再来一局';again.onclick=()=>startGame('rps');area.appendChild(again);getCurrentChar().currentGame={game:'猜拳',myChoice:choice,aiChoice,result};sendGameResultToAI(`【游戏结果】猜拳：我出了「${choice}」，你出了「${aiChoice}」，结果是「${result}」。请按你的性格回应我。`)};row.appendChild(btn)});area.appendChild(row)}
-  if(id==='gomoku'){const size=9;const board=Array.from({length:size},()=>Array(size).fill(0));const boardDiv=document.createElement('div');boardDiv.className='board';boardDiv.style.gridTemplateColumns=`repeat(${size},1fr)`;boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';for(let i=0;i<size;i++)for(let j=0;j<size;j++){const cell=document.createElement('div');cell.className='board-cell';cell.dataset.r=i;cell.dataset.c=j;cell.onclick=()=>{if(board[i][j]!==0)return;board[i][j]=1;cell.textContent='⚫';sendGameResultToAI(`【游戏动作】我在 (${i},${j}) 下了一颗黑子。现在轮到你了，别放水。`);if(checkGomokuWin(board,1)){setAvatar('avatar_happy.png');sendGameResultToAI('【游戏结果】五子棋：我连成五子了，我赢了！请按你的性格回应我。');return}setTimeout(()=>{const empty=[];for(let a=0;a<size;a++)for(let b=0;b<size;b++)if(board[a][b]===0)empty.push([a,b]);if(!empty.length)return;const [r,c]=empty[Math.floor(Math.random()*empty.length)];board[r][c]=2;const ac=document.querySelector(`.board-cell[data-r="${r}"][data-c="${c}"]`);if(ac)ac.textContent='⚪';if(checkGomokuWin(board,2)){setAvatar('avatar_sad.png');sendGameResultToAI('【游戏结果】五子棋：林言连成五子，我输了。请按你的性格回应我。')}},400)};boardDiv.appendChild(cell)}area.appendChild(boardDiv)}
-  if(id==='chess'){const boardDiv=document.createElement('div');boardDiv.className='board';boardDiv.style.gridTemplateColumns='repeat(8,1fr)';boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';const back=['♜','♞','♝','♛','♚','♝','♞','♜'];for(let r=0;r<8;r++)for(let c=0;c<8;c++){const cell=document.createElement('div');cell.className='board-cell';if(r===0)cell.textContent=back[c];else if(r===1)cell.textContent='♟';else if(r===6)cell.textContent='♙';else if(r===7)cell.textContent=['♖','♘','♗','♕','♔','♗','♘','♖'][c];cell.onclick=()=>{document.querySelectorAll('.board-cell').forEach(x=>x.style.outline='none');if(cell.textContent){cell.style.outline='2px solid var(--accent)';gameState={selected:[r,c]}}else if(gameState&&gameState.selected){const from=document.querySelector(`.board-cell[data-cr="${gameState.selected[0]}"][data-cc="${gameState.selected[1]}"]`);if(from){cell.textContent=from.textContent;from.textContent='';gameState.selected=null;sendGameResultToAI(`【游戏动作】国际象棋：我移动了一颗棋子到 (${r},${c})。`)}}};cell.dataset.cr=r;cell.dataset.cc=c;boardDiv.appendChild(cell)}area.appendChild(boardDiv);const hint=document.createElement('div');hint.style.cssText='font-size:12px;color:var(--modal-label);text-align:center;margin-top:8px';hint.textContent='点击棋子选中，再点空格移动（演示版）';area.appendChild(hint)}
-  if(id==='monopoly'){const boardDiv=document.createElement('div');boardDiv.className='monopoly-board';const labels=['起点','地产1','机会','地产2','地产3','地产4','机会','地产5','地产6','地产7','机会','地产8','地产9','地产10','机会','地产11','地产12','地产13','机会','终点'];for(let i=0;i<20;i++){const cell=document.createElement('div');cell.className='monopoly-cell';cell.id='mono-'+i;cell.textContent=labels[i];boardDiv.appendChild(cell)}area.appendChild(boardDiv);const rollBtn=document.createElement('button');rollBtn.className='game-btn';rollBtn.textContent='🎲 掷骰子';rollBtn.style.marginTop='12px';rollBtn.onclick=()=>{const step=Math.floor(Math.random()*6)+1;const c=getCurrentChar();c.monoPos=((c.monoPos||0)+step)%20;saveState();document.querySelectorAll('.monopoly-cell').forEach(el=>el.classList.remove('active'));document.getElementById('mono-'+c.monoPos).classList.add('active');if(step>=5)setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');sendGameResultToAI(`【游戏结果】大富翁：我掷出了 ${step} 点，现在走到了第 ${c.monoPos} 格「${labels[c.monoPos]}」。请按你的性格回应我。`)};area.appendChild(rollBtn);const c=getCurrentChar();if(c.monoPos)document.getElementById('mono-'+c.monoPos).classList.add('active')}
-  if(id==='truth_dare'){const btn=document.createElement('button');btn.className='game-btn';btn.textContent='抽！';const log=document.createElement('div');log.style.cssText='text-align:center;font-size:14px;line-height:1.6';btn.onclick=()=>{const isTruth=Math.random()<0.5;const truths=['你最近一次哭是因为什么？','你最喜欢我哪一点？','你手机里最不想让我看到的秘密是什么？','你心里有没有偷偷嫌弃过我？','你最喜欢我哪种表情？'];const dares=['给我发一条 10 秒的语音说我爱你。','今天之内不许对我说“不”。','叫我一声主人。','用三个表情总结你现在的心情。','发一张你现在在做什么的照片给我。'];const pick=isTruth?truths[Math.floor(Math.random()*truths.length)]:dares[Math.floor(Math.random()*dares.length)];log.innerHTML=`<b>${isTruth?'💬 真心话':'🔥 大冒险'}：</b>${pick}`;btn.textContent='换一个';setAvatar('avatar_happy.png');getCurrentChar().currentGame={game:'真心话大冒险',type:isTruth?'真心话':'大冒险',question:pick};sendGameResultToAI(`【游戏结果】我们玩真心话大冒险，我抽到了${isTruth?'真心话':'大冒险'}：${pick}。请按你的性格回应我，可以追问或调侃我。`)};area.appendChild(btn);area.appendChild(log)}
-  if(id==='fortune'){const btn=document.createElement('button');btn.className='game-btn';btn.textContent='📿 抽签';const log=document.createElement('div');log.style.cssText='text-align:center;font-size:18px;line-height:1.6';btn.onclick=()=>{const signs=[{name:'上上签',text:'所求皆如愿，所行化坦途。'},{name:'上签',text:'喜事将近，宜主动出击。'},{name:'中平签',text:'静待时机，不必着急。'},{name:'下签',text:'今日宜独处，少惹是非。'},{name:'下下签',text:'凡事小心，谨言慎行。'}];const s=signs[Math.floor(Math.random()*signs.length)];log.innerHTML=`<b>${s.name}</b><br><span style="font-size:13px;color:var(--modal-label)">${s.text}</span>`;btn.textContent='再抽一次';if(s.name.includes('上'))setAvatar('avatar_happy.png');else if(s.name==='下签')setAvatar('avatar_normal.png');else setAvatar('avatar_sad.png');getCurrentChar().currentGame={game:'抽签',result:s.name,text:s.text};sendGameResultToAI(`【游戏结果】我抽到了「${s.name}」：${s.text}。请按你的性格回应我。`)};area.appendChild(btn);area.appendChild(log)}
+
+  if(id==='number_guess'){
+    const target=Math.floor(Math.random()*100)+1;let tries=0;
+    const input=document.createElement('input');input.type='number';input.style.cssText='width:120px;text-align:center;font-size:24px;padding:12px;border-radius:12px;border:1px solid var(--border-color);background:var(--modal-input-bg);color:var(--modal-text)';
+    const btn=document.createElement('button');btn.className='game-btn';btn.textContent='猜';
+    const log=document.createElement('div');log.style.cssText='text-align:center;font-size:13px;margin-top:10px';
+    btn.onclick=()=>{
+      const v=parseInt(input.value);if(!v)return;tries++;
+      if(v===target){
+        log.textContent=`🎉 猜中了！你用了 ${tries} 次。`;
+        setAvatar('avatar_sad.png');
+        getCurrentChar().currentGame={game:'猜数字',result:'玩家猜中',answer:target,tries};
+        sendGameResultToAI(`【游戏结果】我猜中了数字 ${target}，共猜了 ${tries} 次。请按你的性格回应我。`);
+        input.disabled=true;btn.disabled=true;
+      } else {
+        log.textContent=v<target?`小了，再大一点（已猜 ${tries} 次）`:`大了，再小一点（已猜 ${tries} 次）`;
+        input.value='';
+        setAvatar('avatar_happy.png');
+        sendGameResultToAI(`【游戏动作】我猜了 ${v}，提示是${v<target?'小了':'大了'}。请按你的性格回应我。`);
+      }
+    };
+    area.appendChild(input);area.appendChild(btn);area.appendChild(log);
+  }
+
+  if(id==='rps'){
+    const row=document.createElement('div');row.className='game-row';
+    ['石头','剪刀','布'].forEach(choice=>{
+      const btn=document.createElement('button');btn.className='game-btn secondary';btn.textContent=choice;
+      btn.onclick=()=>{
+        const aiChoice=['石头','剪刀','布'][Math.floor(Math.random()*3)];let result='';
+        if(choice===aiChoice)result='平局';
+        else if((choice==='石头'&&aiChoice==='剪刀')||(choice==='剪刀'&&aiChoice==='布')||(choice==='布'&&aiChoice==='石头'))result='你赢';
+        else result='林言赢';
+        area.innerHTML='';
+        const emoji={石头:'✊',剪刀:'✌️',布:'✋'};
+        area.innerHTML=`<div style="font-size:40px;text-align:center">${emoji[choice]} VS ${emoji[aiChoice]}</div>`;
+        const res=document.createElement('div');res.style.textAlign='center';res.textContent=`你出了「${choice}」，林言出了「${aiChoice}」 → ${result}`;area.appendChild(res);
+        if(result==='你赢')setAvatar('avatar_sad.png');else if(result==='林言赢')setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');
+        const again=document.createElement('button');again.className='game-btn';again.textContent='再来一局';again.onclick=()=>startGame('rps');area.appendChild(again);
+        getCurrentChar().currentGame={game:'猜拳',myChoice:choice,aiChoice,result};
+        sendGameResultToAI(`【游戏结果】猜拳：我出了「${choice}」，你出了「${aiChoice}」，结果是「${result}」。请按你的性格回应我。`);
+      };
+      row.appendChild(btn);
+    });
+    area.appendChild(row);
+  }
+
+  if(id==='gomoku'){
+    const size=9;const board=Array.from({length:size},()=>Array(size).fill(0));
+    const boardDiv=document.createElement('div');boardDiv.className='board';boardDiv.style.gridTemplateColumns=`repeat(${size},1fr)`;boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';
+    for(let i=0;i<size;i++)for(let j=0;j<size;j++){
+      const cell=document.createElement('div');cell.className='board-cell';cell.dataset.r=i;cell.dataset.c=j;
+      cell.onclick=()=>{
+        if(board[i][j]!==0)return;
+        board[i][j]=1;cell.textContent='⚫';
+        setAvatar('avatar_normal.png');
+        sendGameResultToAI(`【游戏动作】我在 (${i},${j}) 下了一颗黑子。现在轮到你了，别放水。`);
+        if(checkGomokuWin(board,1)){setAvatar('avatar_happy.png');sendGameResultToAI('【游戏结果】五子棋：我连成五子了，我赢了！请按你的性格回应我。');return}
+        setTimeout(()=>{
+          const empty=[];for(let a=0;a<size;a++)for(let b=0;b<size;b++)if(board[a][b]===0)empty.push([a,b]);
+          if(!empty.length)return;
+          const [r,c]=empty[Math.floor(Math.random()*empty.length)];
+          board[r][c]=2;
+          const ac=document.querySelector(`.board-cell[data-r="${r}"][data-c="${c}"]`);if(ac)ac.textContent='⚪';
+          if(checkGomokuWin(board,2)){setAvatar('avatar_sad.png');sendGameResultToAI('【游戏结果】五子棋：林言连成五子，我输了。请按你的性格回应我。')}
+        },400);
+      };
+      boardDiv.appendChild(cell);
+    }
+    area.appendChild(boardDiv);
+  }
+
+  if(id==='chess'){
+    const boardDiv=document.createElement('div');boardDiv.className='board';boardDiv.style.gridTemplateColumns='repeat(8,1fr)';boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';
+    const back=['♜','♞','♝','♛','♚','♝','♞','♜'];
+    for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+      const cell=document.createElement('div');cell.className='board-cell';
+      if(r===0)cell.textContent=back[c];else if(r===1)cell.textContent='♟';else if(r===6)cell.textContent='♙';else if(r===7)cell.textContent=['♖','♘','♗','♕','♔','♗','♘','♖'][c];
+      cell.onclick=()=>{
+        document.querySelectorAll('.board-cell').forEach(x=>x.style.outline='none');
+        if(cell.textContent){cell.style.outline='2px solid var(--accent)';gameState={selected:[r,c]}}
+        else if(gameState&&gameState.selected){
+          const from=document.querySelector(`.board-cell[data-cr="${gameState.selected[0]}"][data-cc="${gameState.selected[1]}"]`);
+          if(from){cell.textContent=from.textContent;from.textContent='';gameState.selected=null;sendGameResultToAI(`【游戏动作】国际象棋：我移动了一颗棋子到 (${r},${c})。`)}
+        }
+      };
+      cell.dataset.cr=r;cell.dataset.cc=c;boardDiv.appendChild(cell);
+    }
+    area.appendChild(boardDiv);
+    const hint=document.createElement('div');hint.style.cssText='font-size:12px;color:var(--modal-label);text-align:center;margin-top:8px';hint.textContent='点击棋子选中，再点空格移动（演示版）';area.appendChild(hint);
+  }
+
+  if(id==='monopoly'){
+    const boardDiv=document.createElement('div');boardDiv.className='monopoly-board';
+    const labels=['起点','地产1','机会','地产2','地产3','地产4','机会','地产5','地产6','地产7','机会','地产8','地产9','地产10','机会','地产11','地产12','地产13','机会','终点'];
+    for(let i=0;i<20;i++){const cell=document.createElement('div');cell.className='monopoly-cell';cell.id='mono-'+i;cell.textContent=labels[i];boardDiv.appendChild(cell)}
+    area.appendChild(boardDiv);
+    const rollBtn=document.createElement('button');rollBtn.className='game-btn';rollBtn.textContent='🎲 掷骰子';rollBtn.style.marginTop='12px';
+    rollBtn.onclick=()=>{
+      const step=Math.floor(Math.random()*6)+1;const c=getCurrentChar();
+      c.monoPos=((c.monoPos||0)+step)%20;saveState();
+      document.querySelectorAll('.monopoly-cell').forEach(el=>el.classList.remove('active'));
+      document.getElementById('mono-'+c.monoPos).classList.add('active');
+      if(step>=5)setAvatar('avatar_happy.png');else setAvatar('avatar_normal.png');
+      sendGameResultToAI(`【游戏结果】大富翁：我掷出了 ${step} 点，现在走到了第 ${c.monoPos} 格「${labels[c.monoPos]}」。请按你的性格回应我。`);
+    };
+    area.appendChild(rollBtn);
+    const c=getCurrentChar();if(c.monoPos)document.getElementById('mono-'+c.monoPos).classList.add('active');
+  }
+
+  if(id==='truth_dare'){
+    const btn=document.createElement('button');btn.className='game-btn';btn.textContent='抽！';
+    const log=document.createElement('div');log.style.cssText='text-align:center;font-size:14px;line-height:1.6';
+    btn.onclick=()=>{
+      const isTruth=Math.random()<0.5;
+      const truths=['你最近一次哭是因为什么？','你最喜欢我哪一点？','你手机里最不想让我看到的秘密是什么？','你心里有没有偷偷嫌弃过我？','你最喜欢我哪种表情？'];
+      const dares=['给我发一条 10 秒的语音说我爱你。','今天之内不许对我说“不”。','叫我一声主人。','用三个表情总结你现在的心情。','发一张你现在在做什么的照片给我。'];
+      const pick=isTruth?truths[Math.floor(Math.random()*truths.length)]:dares[Math.floor(Math.random()*dares.length)];
+      log.innerHTML=`<b>${isTruth?'💬 真心话':'🔥 大冒险'}：</b>${pick}`;btn.textContent='换一个';setAvatar('avatar_happy.png');
+      getCurrentChar().currentGame={game:'真心话大冒险',type:isTruth?'真心话':'大冒险',question:pick};
+      sendGameResultToAI(`【游戏结果】我们玩真心话大冒险，我抽到了${isTruth?'真心话':'大冒险'}：${pick}。请按你的性格回应我，可以追问或调侃我。`);
+    };
+    area.appendChild(btn);area.appendChild(log);
+  }
+
+  if(id==='fortune'){
+    const btn=document.createElement('button');btn.className='game-btn';btn.textContent='📿 抽签';
+    const log=document.createElement('div');log.style.cssText='text-align:center;font-size:18px;line-height:1.6';
+    btn.onclick=()=>{
+      const signs=[{name:'上上签',text:'所求皆如愿，所行化坦途。'},{name:'上签',text:'喜事将近，宜主动出击。'},{name:'中平签',text:'静待时机，不必着急。'},{name:'下签',text:'今日宜独处，少惹是非。'},{name:'下下签',text:'凡事小心，谨言慎行。'}];
+      const s=signs[Math.floor(Math.random()*signs.length)];
+      log.innerHTML=`<b>${s.name}</b><br><span style="font-size:13px;color:var(--modal-label)">${s.text}</span>`;btn.textContent='再抽一次';
+      if(s.name.includes('上'))setAvatar('avatar_happy.png');else if(s.name==='下签')setAvatar('avatar_normal.png');else setAvatar('avatar_sad.png');
+      getCurrentChar().currentGame={game:'抽签',result:s.name,text:s.text};
+      sendGameResultToAI(`【游戏结果】我抽到了「${s.name}」：${s.text}。请按你的性格回应我。`);
+    };
+    area.appendChild(btn);area.appendChild(log);
+  }
 }
 
 function checkGomokuWin(board,player){const size=9;for(let i=0;i<size;i++)for(let j=0;j<size;j++){if(board[i][j]!==player)continue;if(j<=size-5&&board[i][j+1]===player&&board[i][j+2]===player&&board[i][j+3]===player&&board[i][j+4]===player)return true;if(i<=size-5&&board[i+1][j]===player&&board[i+2][j]===player&&board[i+3][j]===player&&board[i+4][j]===player)return true;if(i<=size-5&&j<=size-5&&board[i+1][j+1]===player&&board[i+2][j+2]===player&&board[i+3][j+3]===player&&board[i+4][j+4]===player)return true;if(i<=size-5&&j>=4&&board[i+1][j-1]===player&&board[i+2][j-2]===player&&board[i+3][j-3]===player&&board[i+4][j-4]===player)return true}return false}
 
 function sendGameResultToAI(text){addMessage('user',text);setTimeout(()=>{triggerAI()},100)}
 
-function triggerMeteorShower(duration=6000){const container=document.createElement('div');container.className='meteor-shower-container';document.body.appendChild(container);const endTime=Date.now()+duration;const interval=setInterval(()=>{if(Date.now()>endTime){clearInterval(interval);setTimeout(()=>container.remove(),3000);return}const meteor=document.createElement('div');meteor.className='meteor';const startX=Math.random()*100;const startY=-10-Math.random()*20;const size=0.5+Math.random()*1.5;const speed=1.5+Math.random()*2.5;meteor.style.left=startX+'vw';meteor.style.top=startY+'vh';meteor.style.animationDuration=speed+'s';meteor.style.transform=`scale(${size}) rotate(-45deg)`;if(Math.random()>0.6)meteor.style.filter='blur(1px)';if(Math.random()>0.8)meteor.style.filter='blur(2px)';container.appendChild(meteor);setTimeout(()=>meteor.remove(),speed*1000)},150)}
+function triggerMeteorShower(duration=6000){
+  const container=document.createElement('div');container.className='meteor-shower-container';document.body.appendChild(container);
+  const endTime=Date.now()+duration;
+  const interval=setInterval(()=>{
+    if(Date.now()>endTime){clearInterval(interval);setTimeout(()=>container.remove(),3000);return}
+    const meteor=document.createElement('div');meteor.className='meteor';
+    const w=1+Math.random()*1.5;
+    const h=120+Math.random()*180;
+    meteor.style.width=w+'px';meteor.style.height=h+'px';
+    const startX=Math.random()*120-20;
+    const startY=-100-Math.random()*100;
+    meteor.style.left=startX+'vw';meteor.style.top=startY+'vh';
+    const speed=1.5+Math.random()*2;
+    meteor.style.animationDuration=speed+'s';
+    meteor.style.animationDelay=(Math.random()*1.5)+'s';
+    container.appendChild(meteor);
+    setTimeout(()=>meteor.remove(),(speed+2)*1000);
+  },100);
+}
 
 function triggerDrawHeart(){const old=document.querySelector('.heart-draw');if(old)old.remove();const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','heart-draw show');svg.setAttribute('viewBox','0 0 100 100');const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('class','heart-path');path.setAttribute('d','M50,30 C50,30 30,10 15,25 C0,40 20,60 50,85 C80,60 100,40 85,25 C70,10 50,30 50,30 Z');svg.appendChild(path);document.body.appendChild(svg);setTimeout(()=>{if(svg.parentNode)svg.remove()},3000)}
 
@@ -453,7 +608,7 @@ document.getElementById('gamePanel').addEventListener('click',e=>{if(e.target===
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').then(()=>console.log('PWA 注册成功')).catch(()=>{})})}
 loadState();applyCustomStyle();renderAllMessages();
-console.log('%c林言 · 多会话版已加载','color:#d4a574;font-weight:600');
+console.log('%c林言 · 终极完整版已加载','color:#d4a574;font-weight:600');
 </script>
 </body>
-</html>
+  </html>
