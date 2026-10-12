@@ -118,10 +118,12 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .bubble.glow-red{box-shadow:0 0 15px rgba(255,69,58,.6)!important;border:1px solid rgba(255,69,58,.4)!important;animation:shake .5s ease-in-out}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 .bubble.glow-pink{box-shadow:0 0 20px rgba(255,105,180,.6)!important;border:1px solid rgba(255,105,180,.4)!important}
-/* 流星雨特效 */
+/* 特效核心 CSS 修复 */
 .meteor-shower-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;background:transparent}
-.meteor{position:absolute;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.9),#fff);border-radius:50%;box-shadow:0 0 20px rgba(255,255,255,1),0 0 40px rgba(255,255,255,.5),0 0 80px rgba(255,255,255,.2);opacity:0;transform:rotate(-45deg);transform-origin:top center;animation:meteorFall linear forwards}
-@keyframes meteorFall{0%{transform:translate(120vw,-100px) rotate(-45deg);opacity:1}100%{transform:translate(-100px,120vh) rotate(-45deg);opacity:0}}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle linear infinite;box-shadow:0 0 8px #fff}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.meteor{position:absolute;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.9),#fff);border-radius:999px;box-shadow:0 0 15px rgba(255,255,255,.8),0 0 30px rgba(255,255,255,.4);opacity:0;transform:rotate(-45deg);transform-origin:top center;animation:meteorFall linear forwards}
+@keyframes meteorFall{0%{transform:translate(120vw,-100px) rotate(-45deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translate(-20vw,120vh) rotate(-45deg);opacity:0}}
 .heart-draw{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;pointer-events:none;z-index:9999;filter:drop-shadow(0 0 15px rgba(255,50,150,.8));opacity:0;transition:opacity .3s}
 .heart-draw.show{opacity:1}
 .heart-draw .heart-path{fill:none;stroke:#ff3399;stroke-width:4;stroke-linecap:round;stroke-dasharray:400;stroke-dashoffset:400;animation:drawHeart 1.5s ease-in-out forwards}
@@ -308,7 +310,7 @@ function renderAllMessages(){
 function addMessage(role,content,isHistorical=false,extras={}){
   const c=getCurrentChar();const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});const ts=Date.now();
   
-  // 1. 先处理标签和特效（核心修复点）
+  // 1. 先处理标签和特效
   let displayContent = content;
   if(displayContent.includes('[ACTION:LOVE]')){
     triggerDrawHeart();
@@ -539,26 +541,48 @@ function checkGomokuWin(board,player){const size=9;for(let i=0;i<size;i++)for(le
 
 function sendGameResultToAI(text){addMessage('user',text);setTimeout(()=>{triggerAI()},100)}
 
-function triggerMeteorShower(duration=8000){
+function triggerMeteorShower(duration = 8000) {
   console.log("流星雨特效触发");
-  const container=document.createElement('div');container.className='meteor-shower-container';document.body.appendChild(container);
-  const endTime=Date.now()+duration;
-  const interval=setInterval(()=>{
-    if(Date.now()>endTime){clearInterval(interval);setTimeout(()=>container.remove(),3000);return}
-    const meteor=document.createElement('div');meteor.className='meteor';
-    // 让流星更大更长更亮
-    const w=2+Math.random()*2;
-    const h=250+Math.random()*250;
-    meteor.style.width=w+'px';meteor.style.height=h+'px';
-    const startX=Math.random()*120-20;
-    const startY=-120-Math.random()*100;
-    meteor.style.left=startX+'vw';meteor.style.top=startY+'vh';
-    const speed=1.5+Math.random()*1.5;
-    meteor.style.animationDuration=speed+'s';
-    meteor.style.animationDelay=(Math.random()*1)+'s';
+  const container = document.createElement('div');
+  container.className = 'meteor-shower-container';
+  document.body.appendChild(container);
+
+  // 1. 先布满闪烁的小星星
+  for (let i = 0; i < 80; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = 1 + Math.random() * 2;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.top = Math.random() * 100 + 'vh';
+    star.style.animationDuration = (1 + Math.random() * 2) + 's';
+    star.style.animationDelay = (Math.random() * 2) + 's';
+    container.appendChild(star);
+  }
+
+  // 2. 然后一颗颗长流星划过
+  const endTime = Date.now() + duration;
+  const interval = setInterval(() => {
+    if (Date.now() > endTime) {
+      clearInterval(interval);
+      setTimeout(() => container.remove(), 3000);
+      return;
+    }
+    const meteor = document.createElement('div');
+    meteor.className = 'meteor';
+    // 随机长短，显得自然
+    const h = 100 + Math.random() * 200;
+    meteor.style.height = h + 'px';
+    // 随机起点
+    meteor.style.left = (Math.random() * 80 + 10) + 'vw';
+    meteor.style.top = (-20 - Math.random() * 30) + 'vh';
+    // 随机速度，不要太快
+    const speed = 1.5 + Math.random() * 2;
+    meteor.style.animationDuration = speed + 's';
     container.appendChild(meteor);
-    setTimeout(()=>meteor.remove(),(speed+3)*1000);
-  },300);
+    setTimeout(() => meteor.remove(), speed * 1000);
+  }, 300);
 }
 
 function triggerDrawHeart(){const old=document.querySelector('.heart-draw');if(old)old.remove();const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','heart-draw show');svg.setAttribute('viewBox','0 0 100 100');const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('class','heart-path');path.setAttribute('d','M50,30 C50,30 30,10 15,25 C0,40 20,60 50,85 C80,60 100,40 85,25 C70,10 50,30 50,30 Z');svg.appendChild(path);document.body.appendChild(svg);setTimeout(()=>{if(svg.parentNode)svg.remove()},3000)}
