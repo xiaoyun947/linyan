@@ -166,9 +166,9 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
   <div class="status-bar" id="statusBar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>林言正在思考...</div>
   <div class="action-row">
     <button class="action-btn" id="toggleAutoBtn">▶ 自动</button>
-    <button class="action-btn" id="magicBtn" style="background:rgba(255,105,180,0.15);border-color:rgba(255,105,180,0.4);color:#ff69b4;">✨ 流星</button>
-    <button class="action-btn" id="heartBtn" style="background:rgba(255,105,180,0.15);border-color:rgba(255,105,180,0.4);color:#ff69b4;">💖 爱心</button>
-    <button class="action-btn" id="gameBtn">🎮 游戏<span class="badge-dot" id="gameBadge" style="display:none"></span></button>
+    <button class="action-btn" id="pokeBtn">(´つヮ⊂︎)</button>
+    <button class="action-btn" id="effectsBtn" style="background:rgba(255,105,180,0.15);border-color:rgba(255,105,180,0.4);color:#ff69b4;">ο(=•ω＜=)ρ⌒☆</button>
+    <button class="action-btn" id="gameBtn">🎮 游戏</button>
     <button class="action-btn" onclick="openSettings()">⚙️ 设置</button>
   </div>
   <div class="input-row">
@@ -308,7 +308,6 @@ function renderAllMessages(){
 function addMessage(role,content,isHistorical=false,extras={}){
   const c=getCurrentChar();const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});const ts=Date.now();
   
-  // 自动特效检测
   let displayContent = content;
   if (/爱心|画心|爱你|比心|抱抱|亲亲/.test(displayContent) || displayContent.includes('[ACTION:LOVE]')) {
     triggerDrawHeart();
@@ -593,15 +592,17 @@ document.getElementById('newSessionBtn').addEventListener('click',()=>{const c=g
 
 document.getElementById('toggleAutoBtn').addEventListener('click',()=>{if(state.running)stopAuto();else startAuto()});
 document.getElementById('pokeBtn').addEventListener('click',()=>{const c=getCurrentChar();showToast('你','戳了戳'+(c.partnerName||'林言'),c.myAvatar);setTimeout(()=>{addMessage('user','(´つヮ⊂︎)');triggerAI()},500)});
-document.getElementById('magicBtn').addEventListener('click',()=>{
-  triggerMeteorShower();
-  addMessage('user','（我抬头看天，想和你一起看流星雨 ✨）');
-  setTimeout(()=>{triggerAI()},300);
-});
-document.getElementById('heartBtn').addEventListener('click',()=>{
-  triggerDrawHeart();
-  addMessage('user','（我在屏幕上画了一颗爱心给你 💖）');
-  setTimeout(()=>{triggerAI()},300);
+document.getElementById('effectsBtn').addEventListener('click',()=>{
+  const choice = prompt("选择特效：\n1. 流星雨 ✨\n2. 爱心 💖\n\n请输入数字：");
+  if(choice === '1'){
+    triggerMeteorShower();
+    addMessage('user','（我抬头看天，想和你一起看流星雨 ✨）');
+    setTimeout(()=>{triggerAI()},300);
+  } else if(choice === '2'){
+    triggerDrawHeart();
+    addMessage('user','（我在屏幕上画了一颗爱心给你 💖）');
+    setTimeout(()=>{triggerAI()},300);
+  }
 });
 document.getElementById('gameBtn').addEventListener('click',()=>{const c=getCurrentChar();if(c.pendingInvite){const inv=c.pendingInvite;c.pendingInvite=null;saveState();applyCustomStyle();openGamePanel(inv.game)}else openGamePanel()});
 document.getElementById('menuBtn').addEventListener('click',openSettings);
