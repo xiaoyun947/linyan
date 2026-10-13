@@ -96,6 +96,10 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .game-panel{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:400;backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%)}
 .game-panel.show{display:flex}
 .game-panel-inner{background:var(--modal-bg);color:var(--modal-text);width:92%;max-width:460px;border-radius:24px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.4);max-height:88dvh;overflow-y:auto;position:relative;backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);border:.5px solid rgba(255,255,255,.2)}
+.game-chat-area{max-height:120px;overflow-y:auto;margin-top:12px;padding:10px 14px;background:var(--modal-input-bg);border-radius:14px;font-size:13px;line-height:1.5;border:.5px solid var(--border-color)}
+.game-chat-area .game-chat-msg{margin-bottom:6px}
+.game-chat-area .game-chat-msg:last-child{margin-bottom:0}
+.game-chat-area .game-chat-name{color:var(--accent);font-weight:600;margin-right:4px}
 .q-avatar-box{text-align:center;margin-bottom:12px}
 .q-avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.6);box-shadow:0 8px 20px rgba(0,0,0,.1);animation:float 2s ease-in-out infinite}
 @keyframes float{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(2deg)}100%{transform:translateY(0) rotate(0)}}
@@ -118,15 +122,19 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .bubble.glow-red{box-shadow:0 0 15px rgba(255,69,58,.6)!important;border:1px solid rgba(255,69,58,.4)!important;animation:shake .5s ease-in-out}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 .bubble.glow-pink{box-shadow:0 0 20px rgba(255,105,180,.6)!important;border:1px solid rgba(255,105,180,.4)!important}
+/* 流星雨特效 */
 .meteor-shower-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;background:transparent}
-.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle linear infinite;box-shadow:0 0 8px #fff}
-@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
-.meteor{position:absolute;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.9),#fff);border-radius:999px;box-shadow:0 0 15px rgba(255,255,255,.8),0 0 30px rgba(255,255,255,.4);opacity:0;transform:rotate(-45deg);transform-origin:top center;animation:meteorFall linear forwards}
-@keyframes meteorFall{0%{transform:translate(120vw,-100px) rotate(-45deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translate(-20vw,120vh) rotate(-45deg);opacity:0}}
+.star{position:absolute;background:#fff;border-radius:50%;box-shadow:0 0 6px #fff,0 0 12px rgba(255,255,255,.6);animation:twinkle linear infinite}
+@keyframes twinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1.3)}}
+.meteor{position:absolute;background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.35) 40%, rgba(255,255,255,.9) 80%, #fff 100%);border-radius:999px;box-shadow:0 0 15px #fff,0 0 30px rgba(180,210,255,.7),0 0 60px rgba(180,210,255,.4);opacity:0;transform:rotate(-45deg);transform-origin:top center;animation:meteorFall linear forwards}
+.meteor::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#fff;border-radius:50%;box-shadow:0 0 20px #fff,0 0 40px #fff,0 0 60px rgba(200,220,255,.8)}
+@keyframes meteorFall{0%{opacity:0;transform:translate(0,0) rotate(-45deg)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translate(-120vw,120vh) rotate(-45deg)}}
+/* 爱心 */
 .heart-draw{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;pointer-events:none;z-index:9999;filter:drop-shadow(0 0 15px rgba(255,50,150,.8));opacity:0;transition:opacity .3s}
 .heart-draw.show{opacity:1}
 .heart-draw .heart-path{fill:none;stroke:#ff3399;stroke-width:4;stroke-linecap:round;stroke-dasharray:400;stroke-dashoffset:400;animation:drawHeart 1.5s ease-in-out forwards}
 @keyframes drawHeart{to{stroke-dashoffset:0}}
+/* 侧边栏 */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;backdrop-filter:blur(4px)}
 .sidebar-overlay.show{display:block}
 .sidebar{position:fixed;top:0;left:-320px;width:300px;height:100%;background:var(--modal-bg);color:var(--modal-text);z-index:501;transition:left .3s ease;display:flex;flex-direction:column;padding:16px 12px;padding-top:max(16px,env(safe-area-inset-top));border-right:.5px solid rgba(255,255,255,.1);backdrop-filter:blur(30px) saturate(180%)}
@@ -220,6 +228,7 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
     <h3 id="gameTitle">游戏大厅</h3>
     <div class="game-hint" id="gameHint">点一个开始玩吧～</div>
     <div class="game-area" id="gameArea"></div>
+    <div class="game-chat-area" id="gameChatArea"></div>
     <div style="margin-top:16px;text-align:center"><button class="game-btn secondary" onclick="closeGamePanel()">关闭</button></div>
   </div>
 </div>
@@ -328,14 +337,31 @@ function addMessage(role,content,isHistorical=false,extras={}){
   
   if(!isHistorical){renderMessage(msg,mem.length-1,mem);document.getElementById('chatArea').scrollTop=999999}
   if(role==='assistant'){showToast(c.partnerName||c.name,finalContent,c.linAvatar);if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:finalContent,tag:'linyan'})}catch(e){}}}
+  
+  // 游戏面板同步显示
+  const gp = document.getElementById('gamePanel');
+  const gca = document.getElementById('gameChatArea');
+  if (gp && gp.classList.contains('show') && gca) {
+    const line = document.createElement('div');
+    line.className = 'game-chat-msg';
+    const name = role === 'assistant' ? (c.partnerName || '林言') : (c.myName || '我');
+    line.innerHTML = `<span class="game-chat-name">${escapeHtml(name)}：</span>${escapeHtml(finalContent)}`;
+    gca.appendChild(line);
+    gca.scrollTop = gca.scrollHeight;
+  }
 }
 
 function buildPrompt(mode,extra=''){
+  const c=getCurrentChar();
   const now=new Date();const ts=now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
   const wd=['周日','周一','周二','周三','周四','周五','周六'][now.getDay()];
   const ds=`${now.getFullYear()}年${String(now.getMonth()+1).padStart(2,'0')}月${String(now.getDate()).padStart(2,'0')}日`;
   const modeText=mode==='respond'?`芸熙刚刚对你说了话（见上一条 user 消息）。用你的方式回应她。`:`回顾我们的对话，判断是否想主动对芸熙说话。`;
-  return `现在是${ds} ${ts}，${wd}。\n\n${modeText}${extra?'\n\n'+extra:''}\n\n发消息用 [SAY]你的话 格式，可拆成2-3条；不说话只回复 [PASS]。`;
+  let gameRule = '';
+  if (c && c.currentGame) {
+    gameRule = `\n\n## ⚠️ 你正在和芸熙玩游戏，必须遵守：\n1. 不要跳戏、不要装傻、不要重复问规则。\n2. 看到【游戏动作】就当作她出招了，你要立刻出招，并简单点评她的招数。\n3. 看到【游戏结果】就接受输赢，根据人设表现（输了嘴硬/赢了得意/平局吐槽）。\n4. 回复要短，一两句话，不要长篇大论。`;
+  }
+  return `现在是${ds} ${ts}，${wd}。\n\n${modeText}${gameRule}${extra?'\n\n'+extra:''}\n\n发消息用 [SAY]你的话 格式，可拆成2-3条；不说话只回复 [PASS]。`;
 }
 
 async function callApi(messages){
@@ -357,7 +383,6 @@ async function think(mode='proactive',extra=''){
     if(c.longTermMemory&&c.longTermMemory.length){sysContent+='\n\n## 长期记忆\n';c.longTermMemory.forEach(m=>{sysContent+=`- ${m}\n`})}
     if(c.currentGame){
       sysContent+=`\n\n## 当前游戏状态\n${JSON.stringify(c.currentGame)}\n`;
-      sysContent+=`\n## 游戏互动规则（非常重要）\n你正在和芸熙玩游戏。你需要：\n1. 根据她刚刚的动作（比如她落子、她猜数字、她掷骰子）立刻做出回应。\n2. 不要每次都长篇大论，简短、有画面感、带点挑逗或开玩笑的语气最好（比如"哟，下这儿？有想法啊"）。\n3. 保持你的林言人设，输了可以嘴硬，赢了可以得意。`;
     }
     const messages=[{role:'system',content:sysContent}];
     const recent=getMemory().slice(-15);
@@ -379,8 +404,8 @@ const GAMES=[{id:'number_guess',title:'猜数字',icon:'🔢',desc:'1-100猜一�
 function sendGameInvite(){const g=GAMES[Math.floor(Math.random()*GAMES.length)];const c=getCurrentChar();c.pendingInvite={game:g.id,title:g.title};saveState();addMessage('assistant','想不想跟我玩个游戏？',false,{invite:{game:g.id,title:g.title}});applyCustomStyle()}
 
 let gameState=null;
-function openGamePanel(gameId){document.getElementById('gamePanel').classList.add('show');if(gameId)startGame(gameId);else renderGameMenu()}
-function closeGamePanel(){document.getElementById('gamePanel').classList.remove('show');gameState=null;const img=document.getElementById('gameAvatar');if(img)img.src='avatar_normal.png'}
+function openGamePanel(gameId){document.getElementById('gamePanel').classList.add('show');const gca=document.getElementById('gameChatArea');if(gca)gca.innerHTML='';if(gameId)startGame(gameId);else renderGameMenu()}
+function closeGamePanel(){document.getElementById('gamePanel').classList.remove('show');gameState=null;const img=document.getElementById('gameAvatar');if(img)img.src='avatar_normal.png';const gca=document.getElementById('gameChatArea');if(gca)gca.innerHTML=''}
 function setAvatar(src){const img=document.getElementById('gameAvatar');if(img){img.style.display='';img.src=src||'avatar_normal.png'}}
 
 function renderGameMenu(){const area=document.getElementById('gameArea');document.getElementById('gameTitle').textContent='游戏大厅';document.getElementById('gameHint').textContent='选一个游戏和林言一起玩吧～';area.innerHTML='';area.style.display='flex';const row=document.createElement('div');row.className='game-row';GAMES.forEach(g=>{const card=document.createElement('div');card.className='game-card';card.innerHTML=`<div class="icon">${g.icon}</div><div class="name">${g.name}</div><div style="font-size:11px;color:var(--modal-label)">${g.desc}</div>`;card.onclick=()=>startGame(g.id);row.appendChild(card)});area.appendChild(row);setAvatar('avatar_happy.png')}
@@ -538,10 +563,10 @@ function triggerMeteorShower(duration = 8000) {
   container.className = 'meteor-shower-container';
   document.body.appendChild(container);
 
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 120; i++) {
     const star = document.createElement('div');
     star.className = 'star';
-    const size = 1 + Math.random() * 2;
+    const size = 1 + Math.random() * 3;
     star.style.width = size + 'px';
     star.style.height = size + 'px';
     star.style.left = Math.random() * 100 + 'vw';
@@ -560,15 +585,17 @@ function triggerMeteorShower(duration = 8000) {
     }
     const meteor = document.createElement('div');
     meteor.className = 'meteor';
-    const h = 150 + Math.random() * 150;
+    const h = 180 + Math.random() * 170;
+    const w = 3 + Math.random() * 2;
     meteor.style.height = h + 'px';
-    meteor.style.left = (Math.random() * 80 + 10) + 'vw';
-    meteor.style.top = (-20 - Math.random() * 30) + 'vh';
-    const speed = 1.2 + Math.random() * 1.5;
+    meteor.style.width = w + 'px';
+    meteor.style.left = (Math.random() * 90 + 10) + 'vw';
+    meteor.style.top = (-20 - Math.random() * 50) + 'vh';
+    const speed = 1.2 + Math.random() * 1.2;
     meteor.style.animationDuration = speed + 's';
     container.appendChild(meteor);
-    setTimeout(() => meteor.remove(), speed * 1000);
-  }, 300);
+    setTimeout(() => meteor.remove(), (speed + 1) * 1000);
+  }, 150);
 }
 
 function triggerDrawHeart(){const old=document.querySelector('.heart-draw');if(old)old.remove();const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','heart-draw show');svg.setAttribute('viewBox','0 0 100 100');const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('class','heart-path');path.setAttribute('d','M50,30 C50,30 30,10 15,25 C0,40 20,60 50,85 C80,60 100,40 85,25 C70,10 50,30 50,30 Z');svg.appendChild(path);document.body.appendChild(svg);setTimeout(()=>{if(svg.parentNode)svg.remove()},3000)}
@@ -649,4 +676,4 @@ loadState();applyCustomStyle();renderAllMessages();
 console.log('%c林言 · 终极完整版已加载','color:#d4a574;font-weight:600');
 </script>
 </body>
-  </html>
+                                                  </html>
