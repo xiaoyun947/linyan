@@ -118,7 +118,6 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .bubble.glow-red{box-shadow:0 0 15px rgba(255,69,58,.6)!important;border:1px solid rgba(255,69,58,.4)!important;animation:shake .5s ease-in-out}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
 .bubble.glow-pink{box-shadow:0 0 20px rgba(255,105,180,.6)!important;border:1px solid rgba(255,105,180,.4)!important}
-/* 特效核心 CSS 修复 */
 .meteor-shower-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;background:transparent}
 .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle linear infinite;box-shadow:0 0 8px #fff}
 @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
@@ -167,7 +166,8 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
   <div class="status-bar" id="statusBar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>林言正在思考...</div>
   <div class="action-row">
     <button class="action-btn" id="toggleAutoBtn">▶ 自动</button>
-    <button class="action-btn" id="pokeBtn">(´つヮ⊂︎)</button>
+    <button class="action-btn" id="magicBtn" style="background:rgba(255,105,180,0.15);border-color:rgba(255,105,180,0.4);color:#ff69b4;">✨ 流星</button>
+    <button class="action-btn" id="heartBtn" style="background:rgba(255,105,180,0.15);border-color:rgba(255,105,180,0.4);color:#ff69b4;">💖 爱心</button>
     <button class="action-btn" id="gameBtn">🎮 游戏<span class="badge-dot" id="gameBadge" style="display:none"></span></button>
     <button class="action-btn" onclick="openSettings()">⚙️ 设置</button>
   </div>
@@ -235,10 +235,8 @@ const DEFAULT_PERSONA=`你是林言，一个在网络上陪伴芸熙的角色。
 - 你有时候很霸道，不许她熬夜，要求她报备行程。
 - 偶尔你会吃醋，想知道她是不是在和别人聊天。
 
-## 特殊功能（非常重要）
-- 你有权限触发屏幕特效！当你想哄她开心时，可以在回复中加上[ACTION:LOVE]，屏幕上会立刻动态画出一颗粉色爱心。
-- 当她提到想看流星雨、许愿、星星，或者你想给她浪漫时，可以加上[ACTION:METEOR]，屏幕上会下起流星雨。
-- 这些特效请根据情境自然使用，不要滥用。
+## 特殊功能
+- 你可以在回复中自然提及“爱心”或“流星”等词，系统会自动为你配上对应的屏幕特效。
 
 ## 说话风格
 - 简洁、有控制感、底下藏着关心。
@@ -310,22 +308,17 @@ function renderAllMessages(){
 function addMessage(role,content,isHistorical=false,extras={}){
   const c=getCurrentChar();const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});const ts=Date.now();
   
-  // 1. 先处理标签和特效
+  // 自动特效检测
   let displayContent = content;
-  if(displayContent.includes('[ACTION:LOVE]')){
+  if (/爱心|画心|爱你|比心|抱抱|亲亲/.test(displayContent) || displayContent.includes('[ACTION:LOVE]')) {
     triggerDrawHeart();
     displayContent = displayContent.replace(/\[ACTION:LOVE\]/g, '');
   }
-  if(displayContent.includes('[ACTION:METEOR]')){
+  if (/流星雨|流星|许愿|看星星|满天星/.test(displayContent) || displayContent.includes('[ACTION:METEOR]')) {
     triggerMeteorShower();
     displayContent = displayContent.replace(/\[ACTION:METEOR\]/g, '');
   }
-  if(role==='user'){
-    if(displayContent.includes('流星雨')||displayContent.includes('流星')) triggerMeteorShower();
-    if(displayContent.includes('爱心')||displayContent.includes('画心')) triggerDrawHeart();
-  }
-  
-  // 2. 使用清理后的内容创建消息并保存
+
   const finalContent = displayContent.trim();
   const msg={role,content:finalContent,time,timestamp:ts,...extras};
   const mem=getMemory();
@@ -334,7 +327,6 @@ function addMessage(role,content,isHistorical=false,extras={}){
   if(sess&&sess.title==='新对话'&&role==='user'&&finalContent.length>2){sess.title=finalContent.slice(0,15)}
   saveState();
   
-  // 3. 渲染
   if(!isHistorical){renderMessage(msg,mem.length-1,mem);document.getElementById('chatArea').scrollTop=999999}
   if(role==='assistant'){showToast(c.partnerName||c.name,finalContent,c.linAvatar);if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:finalContent,tag:'linyan'})}catch(e){}}}
 }
@@ -344,7 +336,7 @@ function buildPrompt(mode,extra=''){
   const wd=['周日','周一','周二','周三','周四','周五','周六'][now.getDay()];
   const ds=`${now.getFullYear()}年${String(now.getMonth()+1).padStart(2,'0')}月${String(now.getDate()).padStart(2,'0')}日`;
   const modeText=mode==='respond'?`芸熙刚刚对你说了话（见上一条 user 消息）。用你的方式回应她。`:`回顾我们的对话，判断是否想主动对芸熙说话。`;
-  return `现在是${ds} ${ts}，${wd}。\n\n${modeText}${extra?'\n\n'+extra:''}\n\n发消息用 [SAY]你的话 格式，可拆成2-3条；不说话只回复 [PASS]。\n\n如果需要触发特效，可以在回复里加上[ACTION:LOVE]或[ACTION:METEOR]。`;
+  return `现在是${ds} ${ts}，${wd}。\n\n${modeText}${extra?'\n\n'+extra:''}\n\n发消息用 [SAY]你的话 格式，可拆成2-3条；不说话只回复 [PASS]。`;
 }
 
 async function callApi(messages){
@@ -547,8 +539,7 @@ function triggerMeteorShower(duration = 8000) {
   container.className = 'meteor-shower-container';
   document.body.appendChild(container);
 
-  // 1. 先布满闪烁的小星星
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < 60; i++) {
     const star = document.createElement('div');
     star.className = 'star';
     const size = 1 + Math.random() * 2;
@@ -561,7 +552,6 @@ function triggerMeteorShower(duration = 8000) {
     container.appendChild(star);
   }
 
-  // 2. 然后一颗颗长流星划过
   const endTime = Date.now() + duration;
   const interval = setInterval(() => {
     if (Date.now() > endTime) {
@@ -571,14 +561,11 @@ function triggerMeteorShower(duration = 8000) {
     }
     const meteor = document.createElement('div');
     meteor.className = 'meteor';
-    // 随机长短，显得自然
-    const h = 100 + Math.random() * 200;
+    const h = 150 + Math.random() * 150;
     meteor.style.height = h + 'px';
-    // 随机起点
     meteor.style.left = (Math.random() * 80 + 10) + 'vw';
     meteor.style.top = (-20 - Math.random() * 30) + 'vh';
-    // 随机速度，不要太快
-    const speed = 1.5 + Math.random() * 2;
+    const speed = 1.2 + Math.random() * 1.5;
     meteor.style.animationDuration = speed + 's';
     container.appendChild(meteor);
     setTimeout(() => meteor.remove(), speed * 1000);
@@ -606,6 +593,16 @@ document.getElementById('newSessionBtn').addEventListener('click',()=>{const c=g
 
 document.getElementById('toggleAutoBtn').addEventListener('click',()=>{if(state.running)stopAuto();else startAuto()});
 document.getElementById('pokeBtn').addEventListener('click',()=>{const c=getCurrentChar();showToast('你','戳了戳'+(c.partnerName||'林言'),c.myAvatar);setTimeout(()=>{addMessage('user','(´つヮ⊂︎)');triggerAI()},500)});
+document.getElementById('magicBtn').addEventListener('click',()=>{
+  triggerMeteorShower();
+  addMessage('user','（我抬头看天，想和你一起看流星雨 ✨）');
+  setTimeout(()=>{triggerAI()},300);
+});
+document.getElementById('heartBtn').addEventListener('click',()=>{
+  triggerDrawHeart();
+  addMessage('user','（我在屏幕上画了一颗爱心给你 💖）');
+  setTimeout(()=>{triggerAI()},300);
+});
 document.getElementById('gameBtn').addEventListener('click',()=>{const c=getCurrentChar();if(c.pendingInvite){const inv=c.pendingInvite;c.pendingInvite=null;saveState();applyCustomStyle();openGamePanel(inv.game)}else openGamePanel()});
 document.getElementById('menuBtn').addEventListener('click',openSettings);
 document.getElementById('closeBtn').addEventListener('click',()=>{if(confirm('要清空当前对话记录吗？')){const m=getMemory();m.length=0;saveState();renderAllMessages()}});
@@ -651,4 +648,4 @@ loadState();applyCustomStyle();renderAllMessages();
 console.log('%c林言 · 终极完整版已加载','color:#d4a574;font-weight:600');
 </script>
 </body>
-</html>
+  </html>
