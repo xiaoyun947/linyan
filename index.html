@@ -126,9 +126,14 @@ input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;hei
 .meteor-shower-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;background:transparent}
 .star{position:absolute;background:#fff;border-radius:50%;box-shadow:0 0 6px #fff,0 0 12px rgba(255,255,255,.6);animation:twinkle linear infinite}
 @keyframes twinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1.3)}}
-.meteor{position:absolute;background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.35) 40%, rgba(255,255,255,.9) 80%, #fff 100%);border-radius:999px;box-shadow:0 0 15px #fff,0 0 30px rgba(180,210,255,.7),0 0 60px rgba(180,210,255,.4);opacity:0;transform:rotate(-45deg);transform-origin:top center;animation:meteorFall linear forwards}
+.meteor{position:absolute;background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.35) 40%, rgba(255,255,255,.9) 80%, #fff 100%);border-radius:999px;box-shadow:0 0 15px #fff,0 0 30px rgba(180,210,255,.7),0 0 60px rgba(180,210,255,.4);opacity:0;transform-origin:top right;animation:meteorFall linear forwards}
 .meteor::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#fff;border-radius:50%;box-shadow:0 0 20px #fff,0 0 40px #fff,0 0 60px rgba(200,220,255,.8)}
-@keyframes meteorFall{0%{opacity:0;transform:translate(0,0) rotate(-45deg)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translate(-120vw,120vh) rotate(-45deg)}}
+@keyframes meteorFall{
+  0%{transform:translate(0,0) rotate(45deg);opacity:0}
+  10%{opacity:1}
+  90%{opacity:1}
+  100%{transform:translate(-150vw,150vh) rotate(45deg);opacity:0}
+}
 /* 爱心 */
 .heart-draw{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;pointer-events:none;z-index:9999;filter:drop-shadow(0 0 15px rgba(255,50,150,.8));opacity:0;transition:opacity .3s}
 .heart-draw.show{opacity:1}
@@ -338,7 +343,6 @@ function addMessage(role,content,isHistorical=false,extras={}){
   if(!isHistorical){renderMessage(msg,mem.length-1,mem);document.getElementById('chatArea').scrollTop=999999}
   if(role==='assistant'){showToast(c.partnerName||c.name,finalContent,c.linAvatar);if('Notification' in window&&Notification.permission==='granted'){try{new Notification(c.partnerName||c.name,{body:finalContent,tag:'linyan'})}catch(e){}}}
   
-  // 游戏面板同步显示
   const gp = document.getElementById('gamePanel');
   const gca = document.getElementById('gameChatArea');
   if (gp && gp.classList.contains('show') && gca) {
@@ -461,23 +465,47 @@ function startGame(id){
   }
 
   if(id==='gomoku'){
+    let gameOver = false; // 游戏结束标志
     const size=9;const board=Array.from({length:size},()=>Array(size).fill(0));
     const boardDiv=document.createElement('div');boardDiv.className='board';boardDiv.style.gridTemplateColumns=`repeat(${size},1fr)`;boardDiv.style.width='92%';boardDiv.style.maxWidth='380px';
     for(let i=0;i<size;i++)for(let j=0;j<size;j++){
       const cell=document.createElement('div');cell.className='board-cell';cell.dataset.r=i;cell.dataset.c=j;
       cell.onclick=()=>{
-        if(board[i][j]!==0)return;
+        if(board[i][j]!==0 || gameOver) return; // 若游戏结束或已有棋子则无效
         board[i][j]=1;cell.textContent='⚫';
         setAvatar('avatar_normal.png');
         sendGameResultToAI(`【游戏动作】我在 (${i},${j}) 下了一颗黑子。现在轮到你了，别放水。`);
-        if(checkGomokuWin(board,1)){setAvatar('avatar_happy.png');sendGameResultToAI('【游戏结果】五子棋：我连成五子了，我赢了！请按你的性格回应我。');return}
+        
+        // 玩家胜利判断
+        if(checkGomokuWin(board,1)){
+          gameOver = true;
+          setAvatar('avatar_happy.png');
+          sendGameResultToAI('【游戏结果】五子棋：我连成五子了，我赢了！请按你的性格回应我。');
+          return;
+        }
+        
+        // AI 落子延时
         setTimeout(()=>{
+          if(gameOver) return; // 如果玩家已经赢了，AI 不下棋
+          
           const empty=[];for(let a=0;a<size;a++)for(let b=0;b<size;b++)if(board[a][b]===0)empty.push([a,b]);
-          if(!empty.length)return;
+          if(!empty.length){
+            gameOver = true;
+            setAvatar('avatar_normal.png');
+            sendGameResultToAI('【游戏结果】五子棋：棋盘满了，平局。请按你的性格回应我。');
+            return;
+          }
+          
           const [r,c]=empty[Math.floor(Math.random()*empty.length)];
           board[r][c]=2;
           const ac=document.querySelector(`.board-cell[data-r="${r}"][data-c="${c}"]`);if(ac)ac.textContent='⚪';
-          if(checkGomokuWin(board,2)){setAvatar('avatar_sad.png');sendGameResultToAI('【游戏结果】五子棋：林言连成五子，我输了。请按你的性格回应我。')}
+          
+          // AI 胜利判断
+          if(checkGomokuWin(board,2)){
+            gameOver = true;
+            setAvatar('avatar_sad.png');
+            sendGameResultToAI('【游戏结果】五子棋：林言连成五子，我输了。请按你的性格回应我。');
+          }
         },400);
       };
       boardDiv.appendChild(cell);
@@ -589,8 +617,14 @@ function triggerMeteorShower(duration = 8000) {
     const w = 3 + Math.random() * 2;
     meteor.style.height = h + 'px';
     meteor.style.width = w + 'px';
+    
+    // 固定45度角，从右上到左下
+    meteor.style.transform = 'rotate(45deg)';
+
+    // 从右上角随机位置出发
     meteor.style.left = (Math.random() * 90 + 10) + 'vw';
     meteor.style.top = (-20 - Math.random() * 50) + 'vh';
+    
     const speed = 1.2 + Math.random() * 1.2;
     meteor.style.animationDuration = speed + 's';
     container.appendChild(meteor);
@@ -676,4 +710,4 @@ loadState();applyCustomStyle();renderAllMessages();
 console.log('%c林言 · 终极完整版已加载','color:#d4a574;font-weight:600');
 </script>
 </body>
-                                                  </html>
+</html>
